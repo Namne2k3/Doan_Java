@@ -41,7 +41,7 @@ public class SecurityConfig {
                 // lập mặc định. CORS là một cơ chế bảo mật cho phép các tài nguyên
                 // trên một trang web được yêu cầu từ một domain khác với domain của trang web đó.
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request-> request
+                .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")

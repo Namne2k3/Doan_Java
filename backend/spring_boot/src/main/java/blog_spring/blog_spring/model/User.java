@@ -3,26 +3,47 @@ package blog_spring.blog_spring.model;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
-@Document(collection = "user")
+@Document(collection = "users")
 @Data
 public class User implements UserDetails {
 
     @Id
     private String id;
 
+    @DBRef
+    private List<Order> orders;
+
+    @DBRef
+    private List<WishList> wishLists;
+
+    @DBRef
+    private List<Product> carts;
+
     private String username;
 
     private String email;
 
     private String password;
+
+    private String phone;
+
+    private String address;
+
+    private Date createdAt;
+
+    private Date updatedAt;
 
     private String role;
 

@@ -1,11 +1,15 @@
 import { createContext, useEffect, useState } from "react";
 import { food_list } from "../assets/images";
+
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
 
     const [cartItems, setCartItems] = useState({});
+
+
+
 
     const addToCart = (itemId) => {
         if (!cartItems[itemId]) {

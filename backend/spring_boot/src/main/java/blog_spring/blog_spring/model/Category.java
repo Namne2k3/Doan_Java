@@ -1,19 +1,22 @@
 package blog_spring.blog_spring.model;
 
 import lombok.Data;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "quiz")
 @Data
-public class Quiz {
-
+@Document(collection = "categories")
+public class Category {
     @Id
-    private ObjectId id;
-    private String title;
+    private String id;
+
+    private String name;
+
     private String description;
-    private List<Question> questions;
+
+    @DBRef
+    private List<Product> products;
 }

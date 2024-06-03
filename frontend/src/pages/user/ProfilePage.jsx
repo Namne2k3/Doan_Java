@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { userService } from '../../services'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { StoreContext } from '../../context/StoreContext'
 
 const ProfilePage = () => {
 
     const navigate = useNavigate();
+
     const [profileInfo, setProfileInfo] = useState({})
 
     const fetchProfileData = async () => {

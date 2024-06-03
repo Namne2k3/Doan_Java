@@ -12,10 +12,18 @@ import PlaceOrder from './pages/placeorder/PlaceOrder';
 import Footer from "./components/Footer/Footer";
 import { useState } from "react";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
+import { useContext } from "react";
+import { StoreContext } from "./context/StoreContext";
+import { useEffect } from "react";
 
 function App() {
 
   const [showLogin, setShowLogin] = useState(false);
+  const { fetchProfileData } = useContext(StoreContext)
+
+  useEffect(() => {
+
+  }, [])
 
   return (
     <BrowserRouter>

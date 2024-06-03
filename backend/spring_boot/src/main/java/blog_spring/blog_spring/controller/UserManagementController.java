@@ -14,6 +14,11 @@ public class UserManagementController {
     @Autowired
     private UserManagementService usersManagementService;
 
+    @GetMapping("/api/v1/users")
+    public ResponseEntity<ReqRes> getUsers(){
+        return ResponseEntity.ok(usersManagementService.getAllUsers());
+    }
+
     @PostMapping("/auth/register")
     public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg){
         return ResponseEntity.ok(usersManagementService.register(reg));

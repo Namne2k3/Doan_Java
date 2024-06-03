@@ -4,12 +4,39 @@ import { images } from '../../assets/images'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StoreContext } from '../../context/StoreContext'
+import { useEffect } from 'react'
+import { userService } from '../../services'
+
 
 const Navbar = ({ setShowLogin }) => {
 
     const [menu, setMenu] = useState("home")
 
     const { getTotalCartAmount } = useContext(StoreContext);
+
+    const [profileInfo, setProfileInfo] = useState({})
+
+    const logout = () => {
+        userService.logout();
+        setProfileInfo(null)
+        window.location.href = "/login"
+    }
+
+    const fetchProfileData = async () => {
+        try {
+
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+            if (!token) {
+                window.location.href = "/login"
+            }
+            const response = await userService.getUserProfile(token);
+
+            setProfileInfo(response.user);
+
+        } catch (err) {
+            console.error('Error fetching profile information:', err);
+        }
+    }
 
     return (
         <div className='navbar'>
@@ -31,9 +58,24 @@ const Navbar = ({ setShowLogin }) => {
 
                     </div>
                 </div>
-                <button onClick={() => setShowLogin(true)} className='navbar-button'>
-                    Đăng nhập
-                </button>
+                {
+                    localStorage.getItem('token') != null
+                        ?
+                        <>
+                            <Link to="/profile">
+                                <img src={images.profile_icon} alt="basket_icon" />
+                            </Link>
+                            <button onClick={logout} className='navbar-button'>
+                                Đăng xuất
+                            </button>
+                        </>
+                        :
+                        <>
+                            <button onClick={() => setShowLogin(true)} className='navbar-button'>
+                                Đăng nhập
+                            </button>
+                        </>
+                }
             </div>
         </div>
     )
