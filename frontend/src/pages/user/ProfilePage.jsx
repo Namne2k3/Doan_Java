@@ -8,41 +8,46 @@ const ProfilePage = () => {
 
     const navigate = useNavigate();
 
-    const [profileInfo, setProfileInfo] = useState({})
+    const { setProfileInfo } = useContext(StoreContext);
+    const [userProfile, setUserProfile] = useState({})
 
-    const fetchProfileData = async () => {
-        try {
-
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            if (!token) {
-                navigate("/login")
-            }
-            const response = await userService.getUserProfile(token);
-
-            setProfileInfo(response.user);
-
-        } catch (err) {
-            console.error('Error fetching profile information:', err);
-        }
-    }
 
     const logout = () => {
         userService.logout();
-        navigate("/login")
+        navigate("/")
     }
 
     useEffect(() => {
+
+        const fetchProfileData = async () => {
+            try {
+
+                const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+                if (!token) {
+                    navigate("/")
+                }
+                const response = await userService.getUserProfile(token);
+                console.log("Check res >>> ", response.data);
+
+                setProfileInfo(response.data);
+
+                setUserProfile(response.data);
+            } catch (err) {
+                console.error('Error fetching profile information:', err);
+            }
+        }
+
         fetchProfileData();
     }, [])
 
     return (
         <div className="profile-page-container">
             <h2>Profile Information</h2>
-            <p>Name: {profileInfo.username}</p>
-            <p>Email: {profileInfo.email}</p>
-            {profileInfo.role === "ADMIN" && (
+            <p>Name: {userProfile.username}</p>
+            <p>Email: {userProfile.email}</p>
+            {userProfile.role === "ADMIN" && (
                 <button>
-                    <Link to={`/update-user/${profileInfo.id}`}>
+                    <Link to={`/update-user/${userProfile.id}`}>
                         Update This Profile
                     </Link>
                 </button>

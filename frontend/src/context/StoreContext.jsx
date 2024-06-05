@@ -1,15 +1,29 @@
 import { createContext, useEffect, useState } from "react";
 import { food_list } from "../assets/images";
-
+import { userService } from "../services";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
 
     const [cartItems, setCartItems] = useState({});
+    const [profileInfo, setProfileInfo] = useState({})
 
+    // const fetchProfileData = async () => {
+    //     try {
 
+    //         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+    //         if (!token) {
+    //             window.location.href = "/login"
+    //         }
+    //         const response = await userService.getUserProfile(token);
 
+    //         setProfileInfo(response.data);
+
+    //     } catch (err) {
+    //         console.error('Error fetching profile information:', err);
+    //     }
+    // }
 
     const addToCart = (itemId) => {
         if (!cartItems[itemId]) {
@@ -33,13 +47,16 @@ const StoreContextProvider = (props) => {
         return totalAmount;
     }
 
+
     const contextValue = {
         food_list,
         cartItems,
         setCartItems,
         addToCart,
         removeFromCart,
-        getTotalCartAmount
+        getTotalCartAmount,
+        profileInfo,
+        setProfileInfo
     }
 
 

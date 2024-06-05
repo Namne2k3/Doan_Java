@@ -35,17 +35,44 @@ public class UserManagementService {
 
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
-            user.setRole(registrationRequest.getRole());
+            user.setRole("USER");
             user.setUsername(registrationRequest.getUsername());
             user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            user.setPhone(registrationRequest.getPhone());
+            user.setAddress(registrationRequest.getAddress());
 
             User savedUser = usersRepo.save(user);
 
             if ( savedUser.getId() != null ) {
-                resp.setUser(savedUser);
+                resp.setData(savedUser);
                 resp.setMessage("Saved User Successfully!");
                 resp.setStatusCode(200);
             }
+
+            authenticationManager
+
+                    // authenticationManager.authenticate(...) gọi phương thức authenticate
+                    // và truyền vào đối tượng UsernamePasswordAuthenticationToken.
+                    // AuthenticationManager sau đó sẽ chuyển đối tượng Authentication này tới các
+                    // AuthenticationProvider đã được cấu hình trong ứng dụng.
+                    // ( Trong file SecurityConfig )
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    registrationRequest.getEmail(),
+                                    registrationRequest.getPassword()
+                            )
+                    );
+
+            var userFinded = usersRepo.findByEmail(registrationRequest.getEmail()).orElseThrow();
+            var jwt = jwtUtils.generateToken(userFinded);
+            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), userFinded);
+
+            resp.setStatusCode(200);
+            resp.setToken(jwt);
+            resp.setRole(userFinded.getRole());
+            resp.setRefreshToken(refreshToken);
+            resp.setExpirationTime("24Hrs");
+            resp.setMessage("Registered Successfully!");
 
         } catch(Exception e) {
 
@@ -56,7 +83,7 @@ public class UserManagementService {
         return resp;
     }
 
-    public ReqRes login( ReqRes loginRequest ) {
+    public ReqRes login(ReqRes loginRequest) {
         ReqRes resp = new ReqRes();
 
         try {
@@ -127,7 +154,7 @@ public class UserManagementService {
         try {
             List<User> result = usersRepo.findAll();
             if (!result.isEmpty()) {
-                reqRes.setUserList(result);
+                reqRes.setDataList(result);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Successful");
             } else {
@@ -146,7 +173,7 @@ public class UserManagementService {
         ReqRes reqRes = new ReqRes();
         try {
             User usersById = usersRepo.findById(String.valueOf(id)).orElseThrow(() -> new RuntimeException("User Not found"));
-            reqRes.setUser(usersById);
+            reqRes.setData(usersById);
             reqRes.setStatusCode(200);
             System.out.println("Check user >>> " + usersById);
             System.out.println("Check reqres >>> " + reqRes);
@@ -196,7 +223,7 @@ public class UserManagementService {
                 }
 
                 User savedUser = usersRepo.save(existingUser);
-                reqRes.setUser(savedUser);
+                reqRes.setData(savedUser);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("User updated successfully");
             } else {
@@ -215,7 +242,7 @@ public class UserManagementService {
         try {
             Optional<User> userOptional = usersRepo.findByEmail(email);
             if (userOptional.isPresent()) {
-                reqRes.setUser(userOptional.get());
+                reqRes.setData(userOptional.get());
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("successful");
             } else {

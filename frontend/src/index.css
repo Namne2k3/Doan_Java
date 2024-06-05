@@ -24,6 +24,7 @@ font-family: 'Saira', sans-serif;
 
 body {
   min-height: 100vh;
+  background-color: #fcfcfc;
 }
 
 a {
@@ -43,5 +44,23 @@ a {
 
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes fadeLeft {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .app {
+    width: 95%;
   }
 }

@@ -26,7 +26,7 @@ const LoginPopup = ({ setShowLogin }) => {
                 localStorage.setItem('token', userData.token)
                 localStorage.setItem('role', userData.role)
                 setShowLogin(false)
-                navigate('/profile')
+                window.location.href = "/"
             } else {
                 setError(userData.message)
             }
@@ -45,17 +45,22 @@ const LoginPopup = ({ setShowLogin }) => {
         try {
             // Call the register method from UserService
 
-            const token = localStorage.getItem('token');
-            await userService.register({
-                name: username,
+            const token = localStorage.getItem('token')
+
+            const userData = await userService.register({
+                username: username,
                 email: email,
                 password: password,
                 address: address,
                 phone: phone,
             }, token);
-
-            alert('User registered successfully');
-            navigate('/profile');
+            if (userData.data) {
+                setShowLogin(false)
+                alert('User registered successfully');
+                localStorage.setItem('token', userData.token)
+                localStorage.setItem('role', userData.role)
+                navigate("/")
+            }
 
         } catch (error) {
             console.error('Error registering user:', error);

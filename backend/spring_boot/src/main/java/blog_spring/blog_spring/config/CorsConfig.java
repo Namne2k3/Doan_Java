@@ -29,7 +29,8 @@ public class CorsConfig {
                         // Cho phép tất cả các nguồn gốc (domains) được phép truy cập vào tài nguyên
                         // của ứng dụng. Dấu "*" có nghĩa là không giới hạn nguồn gốc nào cả,
                         // bất kỳ nguồn gốc nào cũng có thể gửi yêu cầu.
-                        .allowedOrigins("*");
+                        .allowedOrigins("http://localhost:3000")
+                        .allowCredentials(true);
             }
         };
     }

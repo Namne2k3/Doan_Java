@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReqRes {
+public class ReqRes<T> {
     private int statusCode;
 
     private String error;
@@ -31,7 +31,11 @@ public class ReqRes {
 
     private String password;
 
-    private User user;
+    private String phone;
 
-    private List<User> userList;
+    private String address;
+
+    private T data;
+
+    private List<T> dataList;
 }

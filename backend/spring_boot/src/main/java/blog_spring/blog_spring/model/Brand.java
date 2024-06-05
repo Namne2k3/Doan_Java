@@ -17,7 +17,4 @@ public class Brand {
     private String name;
 
     private String description;
-
-    @DBRef
-    private List<Product> products;
 }

@@ -16,6 +16,22 @@
     gap: 20px;
     color: #49557e;
     font-size: 18px;
+    animation: fadeIn 0.5s;
+}
+
+.navbar-search {
+    animation: fadeLeft 0.5s;
+}
+
+.navbar-search input {
+    padding: 10px;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    border-color: tomato;
+    background: transparent;
+    color: #49557e;
 }
 
 .navbar-right {

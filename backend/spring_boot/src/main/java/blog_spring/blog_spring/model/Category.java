@@ -17,6 +17,5 @@ public class Category {
 
     private String description;
 
-    @DBRef
-    private List<Product> products;
+    private String image;
 }

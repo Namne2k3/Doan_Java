@@ -27,8 +27,8 @@ const register = async (userData, token) => {
                 Authorization: `Bearer ${token}`
             }
         })
-
         const data = await res.data;
+        console.log("Check data register >>> ", data);
         return data;
 
     } catch (error) {
@@ -126,7 +126,11 @@ function isUser() {
 }
 
 function adminOnly() {
-    return this.isAuthenticated() && this.isAdmin();
+
+    console.log("Check authenticated >>> ", isAuthenticated());
+    console.log("Check isAdmin >>> ", isAdmin());
+
+    return isAuthenticated() && isAdmin();
 }
 
 export {
