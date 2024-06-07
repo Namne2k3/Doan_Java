@@ -31,10 +31,7 @@ public class ReqResProduct<T> {
     private int stock_quantity;
 
     @DBRef
-    private Laptop_Attributes attributes;
-
-    @DBRef
-    private Mobile_Attributes mobile_attributes;
+    private Product_Attributes attributes;
 
     @DBRef
     private Watch_Attributes watch_attributes;

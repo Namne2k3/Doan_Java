@@ -10,6 +10,12 @@
     gap: 20px;
 }
 
+.images-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
 .add-img-upload img {
     width: 120px;
 }
@@ -25,6 +31,7 @@
 
 .add-category-price {
     display: flex;
+    flex-wrap: wrap;
     gap: 30px;
 }
 

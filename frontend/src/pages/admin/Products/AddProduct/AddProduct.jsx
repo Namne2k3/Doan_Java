@@ -1,17 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import "./AddProduct.css"
+
 import { assets } from '../../../../admin_assets/assets'
+
 import axios from 'axios'
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 const AddProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
 
     const [image, setImage] = useState(false)
+
+    const [brands, setBrands] = useState([]);
+
+    const [images, setImages] = useState([]);
+
+    const [categories, setCategories] = useState([]);
+
     const [data, setData] = useState({
         name: "",
+        content: "",
         description: "",
         price: "",
-        category: "Laptop"
+        category: "665eee91d176ea3961e606c0",
+        brand: "665ed539fe581060c7aadd87",
+        quantity: "",
+        watchCount: "0",
+        graphic: "",
+        cpu: "",
+        ram: "8",
+        ssd: "512",
+        panel: "IPS",
+        screen_size: "15",
+        brightness: "",
+        resolution: "1920 x 1080",
+        weight: ""
     })
     const onChangeHandler = (e) => {
         const name = e.target.name;
@@ -24,51 +49,49 @@ const AddProduct = () => {
 
         const formData = new FormData();
         formData.append('name', data.name)
+        formData.append('content', data.content)
         formData.append('description', data.description)
         formData.append('price', Number(data.price))
-        formData.append('category', "665eee7ad176ea3961e606bf")
-        formData.append('image', image);
+        formData.append('category', data.category)
+        formData.append('brand', data.brand)
+        formData.append('quantity', Number(data.quantity))
+        formData.append('watchCount', Number(data.watchCount))
+        formData.append('graphic', data.graphic)
+        formData.append('cpu', data.cpu)
+        formData.append('ram', Number(data.ram))
+        formData.append('ssd', Number(data.ssd))
+        formData.append('panel', data.panel)
+        formData.append('screen_size', data.screen_size)
+        formData.append('brightness', Number(data.brightness))
+        formData.append('weight', Number(data.weight))
+        formData.append('resolution', data.resolution)
+        formData.append('image', image.name);
+        formData.append('images', images.map((item, index) => {
+            return (
+                item.name
+            )
+        }));
 
-        console.log("Check form data >>> ", formData);
+        await handleUpload();
 
-        await handleUpload(image);
-
-        const response = await axios.post(`${BASE_URL}/api/v1/products`, {
-            "name": "MSI Bravo 15",
-            "content": "THĂNG CẤP MẠNH MẼ Hãy tưởng tượng thần thú lôi điểu đang tung cánh trên không, ánh mắt sắc bén dõi theo từng chuyển động của con mồi. Logo lôi điểu được khắc trên nắp máy màu đen, cùng với các đường viền góc cạnh giúp làm nổi bật lên thiết kế mạnh mẽ và đầy phong cách. Ngay từ cái nhìn bên ngoài, các game thủ đã có thể nhận ra ngay sức mạnh của Bravo series - đồng đội đáng tin cậy trong những trận game căng thẳng. TRANG BỊ CÔNG NGHỆ TÂN TIẾN NHẤT Được sản xuất trên dây chuyền 7nm đột phá, vi xử lí di động tối đa tới AMD Ryzen™ 7 5800H và card đồ họa Radeon™ RX 5500M giúp chiếc laptop của bạn sở hữu sức mạnh sánh được với máy desktop, để bạn có trải nghiệm chơi game và đa phương tiện tuyệt vời hơn. THIẾT KẾ RIÊNG CHO CÁC GAME THỦVới đèn nền đỏ, khung bàn phím bằng kim loại và hành trính phím sâu tới 1.7mm, cho cảm giác phản hồi và độ nảy tốt hơn hẳn. Chiếc bàn phím có thiết kế công thái học này sẽ đáp ứng mọi yêu cầu của game thủ. SẴN SÀNG DI ĐỘNG VỚI CHẾ ĐỘ MODERN STANDBY Khởi động tức thời từ trạng thái nghỉ, sẵn sàng chạy hết công suất trong vòng chưa tới 1 giây, giúp bạn nhanh chóng quay trở lại game. Đăng nhập nhanh hơn & Khởi động tức thời Chế độ ngủ đông siêu tiết kiệm điện Kết nối Wi-Fi nhanh hơn & Thông báo",
-            "description": "Phục kích ở nơi hiểm yếu, quan sát kĩ càng kẻ địch trước khi xuất trận mạnh mẽ, Bravo 15 đã sẵn sàng cho chiến trường game rực lửa. Kết hợp giữa vi xử lí AMD Ryzen™ 5000 series và card đồ họa AMD Radeon™ RX 5500M, Bravo 15 sẽ làm thỏa mãn mọi game thủ. Với giải pháp tản nhiệt độc quyền của MSI – Cooler Boost 5, CPU và GPU sẽ thoải mái phát huy được tối đa hiệu năng. Màn hình chuyên game 144Hz mang tới hình ảnh sắc nét và mượt mà, giúp các game thủ bắt kịp mọi tình huống. Tận dụng sức mạnh của Bravo 15 và tung hoành trên chiến trường ảo, giống như lôi điểu trong truyền thuyết!",
-            "price": 20000000,
-            "stock_quantity": 156,
-            "category": {
-                "id": "665dec1a1c0c82440032af8e"
-            },
-            "watchCount": 12000,
-            "brand": {
-                "id": "665ed539fe581060c7aadd87"
-            },
-            "image": image.name,
-            "images": ["https://storage-asset.msi.com/global/picture/image/feature/nb/AMD/Bravo15-5000/bravo-nb.png", "https://storage-asset.msi.com/global/picture/image/feature/nb/AMD/Bravo15-5000/bravo-nb.png", "https://storage-asset.msi.com/global/picture/image/feature/nb/AMD/Bravo15-5000/bravo-nb.png"]
-        })
-        console.log("Check response >>> ", response);
+        const response = await axios.post(`${BASE_URL}/api/v1/products`, formData)
+        console.log("Check response >>> ", response.data);
         if (response.data.statusCode !== 200) {
-            setData({
-                name: "",
-                description: "",
-                price: "",
-                category: "Laptop"
-            })
             setImage(false);
         }
     }
 
     const handleUpload = async () => {
-        if (!image) {
+        if (!image && images.length === 0) {
             alert("Please select a file.");
             return;
         }
 
         const formData = new FormData();
-        formData.append("image", image);
+        if (image) formData.append("image", image);
+        images.forEach((img, index) => {
+            formData.append(`images`, img); // Sử dụng cùng tên 'images' cho các file nhiều ảnh
+        });
 
         try {
             const response = await axios.post(`${BASE_URL}/api/v1/upload`, formData, {
@@ -76,8 +99,9 @@ const AddProduct = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            if (response.data) {
-                console.log("Check response >>> ", response);
+
+            if (response.status !== 200) {
+                alert("Error uploading files. Please try again.");
             }
         } catch (error) {
             console.error("Error uploading file:", error);
@@ -85,17 +109,41 @@ const AddProduct = () => {
         }
     }
     useEffect(() => {
-        // console.log(data);
+
+        const fetchBrands = async () => {
+            try {
+                const response = await axios.get(`${BASE_URL}/api/v1/brands`);
+                if (response.data) {
+                    setBrands(response.data.dataList);
+                }
+
+            } catch (err) {
+                console.error("Error get brands data:", err);
+            }
+        }
+
+        const fetchCategory = async () => {
+            try {
+                const response = await axios.get(`${BASE_URL}/api/v1/categories`);
+                if (response.data) {
+                    setCategories(response.data.dataList);
+                }
+
+            } catch (err) {
+                console.error("Error get categories data:", err);
+            }
+        }
+
+
+        console.log(data);
+        fetchCategory();
+        fetchBrands();
     }, [data])
-
-    // 4:00:00
-
-    const imagePath = process.env.PUBLIC_URL + '/images/';
-
 
     return (
         <div className='add'>
             <form onSubmit={onSubmitHandler} className="flex-col">
+
                 <div className="add-img-upload flex-col">
                     <p>Thêm ảnh sản phẩm</p>
                     <label htmlFor="image">
@@ -106,29 +154,281 @@ const AddProduct = () => {
                         console.log(e.target.files[0]);
                     }} type="file" id='image' hidden required />
                 </div>
+
+                <div className="add-img-upload flex-col">
+                    <p>Thêm nhiều hình ảnh sản phẩm</p>
+                    <label htmlFor="images">
+
+                        {
+                            Array(...images).length !== 0
+                                ?
+                                <div className="images-container">
+                                    {
+                                        Array(...images).map((item, index) =>
+                                            <div key={`img_${index}`} className="img-container">
+                                                <img src={URL.createObjectURL(item)} alt="upload_area_img" />
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                                :
+                                <img src={assets.upload_area} alt="upload_area_img" />
+                        }
+
+                    </label>
+                    <input multiple name='images' accept='image/*' onChange={(e) => setImages(Array(...e.target.files))} type="file" id='images' hidden />
+                </div>
+
                 <div className="add-product-name flex-col">
-                    <p>Tên ản phẩm</p>
-                    <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Nhập tên sản phẩm' />
+                    <p>Tên sản phẩm</p>
+                    <input onInput={onChangeHandler} value={data.name} type="text" name='name' placeholder='Nhập tên sản phẩm' />
                 </div>
+
+                <div className="add-product-name flex-col">
+                    <p>Mô tả phẩm</p>
+                    <input onInput={onChangeHandler} value={data.description} type="text" name='description' placeholder='Nhập mô tả sản phẩm' />
+                </div>
+
                 <div className="add-product-description flex-col">
-                    <p>Mô tả sản phẩm</p>
-                    <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Thêm nội dung sản phẩm'></textarea>
+                    <p>Nội dung sản phẩm</p>
+                    {/* <textarea onInput={onChangeHandler} value={data.content} name="content" rows="6" placeholder='Thêm nội dung sản phẩm'></textarea> */}
+                    <CKEditor
+                        editor={ClassicEditor}
+                        config={{
+                            ckfinder: {
+                                // Upload the images to the server using the CKFinder QuickUpload command.
+                                uploadUrl: `${BASE_URL}/api/v1/ckeditor/upload`
+                            }
+                        }}
+                        data={"<p>Hello from CKEditor 5!</p>"}
+                        onChange={() => {
+                            // console.log(document.getElementsByClassName("ck-content")[0].innerHTML)
+                            setData({ ...data, content: document.getElementsByClassName("ck-content")[0].innerHTML });
+                        }}
+                        onReady={editor => {
+                            console.log('Editor is ready to use!', editor);
+                        }}
+                    />
                 </div>
+
                 <div className="add-category-price">
+
                     <div className="add-category flex-col">
                         <p>Danh mục sản phẩm</p>
-                        <select onChange={onChangeHandler} value={data.category} name="category">
-                            <option value="Laptop">Laptop</option>
-                            <option value="Mobile Phone">Mobile Phone</option>
-                            <option value="Smart Watch">Smart Watch</option>
+                        <select onInput={onChangeHandler} value={data.category} name="category">
+                            {
+                                categories.map((cate, index) =>
+                                    <option value={cate.id} key={`cate_${index}`}>{cate.name}</option>
+                                )
+                            }
+
                         </select>
                     </div>
 
                     <div className="add-price flex-col">
-                        <p>Giá bán sảm phẩm</p>
-                        <input onChange={onChangeHandler} value={data.price} type="number" name='price' placeholder='Giá bán sản phẩm' />
+                        <p>Giá bán sản phẩm</p>
+                        <input onInput={onChangeHandler} value={data.price} type="number" name='price' placeholder='Giá bán sản phẩm' />
+                    </div>
+
+                    <div className="add-price flex-col">
+                        <p>Số lượng sản phẩm</p>
+                        <input onInput={onChangeHandler} value={data.quantity} type="number" name='quantity' placeholder='Số lượng sản phẩm' />
+                    </div>
+
+
+                </div>
+
+                <div className="add-category-price">
+
+                    <div className="add-category flex-col">
+                        <p>Thương hiệu</p>
+                        <select onInput={onChangeHandler} value={data.brand} name="brand">
+                            {
+                                brands.map((brand, index) =>
+                                    <option value={brand.id} key={`brand_${index}`}>{brand.name}</option>
+                                )
+                            }
+                        </select>
+                    </div>
+
+                    <div hidden>
+                        <p>Số lượt xem</p>
+                        <input onInput={onChangeHandler} value={data.watchCount} type="number" name='watchCount' placeholder='Số lượt xem' />
                     </div>
                 </div>
+
+                <p>Thuộc tính sản phẩm</p>
+                {
+                    data.category === "665eee91d176ea3961e606c0" // laptop
+                    &&
+                    <div className="add-category-price">
+                        <div className="add-product-name flex-col">
+                            <p>Card đồ họa</p>
+                            <input onInput={onChangeHandler} value={data.graphic} type="text" name='graphic' placeholder='RX 5500M | GTX 1650 | RTX 3060' />
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Vi xử lý</p>
+                            <input onInput={onChangeHandler} value={data.cpu} type="text" name='cpu' placeholder='Ryzen 5 5600H | Intel Core i5 12500H' />
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Dung lượng RAM</p>
+                            <select onInput={onChangeHandler} value={data.ram} name='ram'>
+                                <option value="8">8GB</option>
+                                <option value="16">16GB</option>
+                                <option value="32">32GB</option>
+                                <option value="64">64GB</option>
+                                <option value="128">128GB</option>
+                            </select>
+
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Dung lượng SSD</p>
+
+                            <select onInput={onChangeHandler} value={data.ssd} name='ssd'>
+                                <option value="128">128GB</option>
+                                <option value="256">256GB</option>
+                                <option value="512">512GB</option>
+                                <option value="1024">1TB</option>
+                                <option value="2048">2TB</option>
+                                <option value="4096">4TB</option>
+                            </select>
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Tấm nền màn hình</p>
+                            <select onInput={onChangeHandler} value={data.panel} name='panel'>
+                                <option value="IPS">IPS</option>
+                                <option value="OLED">OLED</option>
+                                <option value="VA">VA</option>
+                            </select>
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Kích thước màn hình</p>
+                            <select onInput={onChangeHandler} value={data.screen_size} name='screen_size'>
+                                <option value="15">15 inch</option>
+                                <option value="13">13 inch</option>
+                                <option value="14">14 inch</option>
+                                <option value="16">16 inch</option>
+                                <option value="17">17 inch</option>
+                            </select>
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Độ sáng màn hình</p>
+                            <input onInput={onChangeHandler} value={data.brightness} type="number" name='brightness' placeholder='500nit | 600nit | 700nit' />
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Độ phân giải</p>
+                            <select onInput={onChangeHandler} value={data.resolution} name='resolution'>
+                                <option value="1920 x 1080">Full HD</option>
+                                <option value="2160 x 1440">2k</option>
+                                <option value="2880 x 1620">3k</option>
+                                <option value="3840 x 2160">4K</option>
+                            </select>
+                        </div>
+
+                        <div className="add-product-name flex-col">
+                            <p>Trọng lượng</p>
+                            <input onInput={onChangeHandler} value={data.weight} type="number" name='weight' placeholder='1.8 Kb | 2.3 Kg | 2.5 Kg' />
+                        </div>
+                    </div>
+                }
+                {
+                    data.category === "665eee7ad176ea3961e606bf" // mobile phone
+                    &&
+                    <>
+                        <div className="add-category-price">
+                            <div className="add-product-name flex-col">
+                                <p>Card đồ họa</p>
+                                <input onInput={onChangeHandler} value={data.graphic} type="text" name='graphic' placeholder='RX 5500M | GTX 1650 | RTX 3060' />
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Vi xử lý</p>
+                                <input onInput={onChangeHandler} value={data.cpu} type="text" name='cpu' placeholder='Ryzen 5 5600H | Intel Core i5 12500H' />
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Dung lượng RAM</p>
+                                <select onInput={onChangeHandler} value={data.ram} name='ram'>
+                                    <option value="8">8GB</option>
+                                    <option value="16">16GB</option>
+                                    <option value="32">32GB</option>
+                                    <option value="64">64GB</option>
+                                    <option value="128">128GB</option>
+                                </select>
+
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Dung lượng SSD</p>
+
+                                <select onInput={onChangeHandler} value={data.ssd} name='ssd'>
+                                    <option value="128">128GB</option>
+                                    <option value="256">256GB</option>
+                                    <option value="512">512GB</option>
+                                    <option value="1024">1TB</option>
+                                    <option value="2048">2TB</option>
+                                    <option value="4096">4TB</option>
+                                </select>
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Tấm nền màn hình</p>
+                                <select onInput={onChangeHandler} value={data.panel} name='panel'>
+                                    <option value="IPS">IPS</option>
+                                    <option value="OLED">OLED</option>
+                                    <option value="VA">VA</option>
+                                </select>
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Kích thước màn hình</p>
+                                <select onInput={onChangeHandler} value={data.screen_size} name='screen_size'>
+                                    <option value="15">15 inch</option>
+                                    <option value="13">13 inch</option>
+                                    <option value="14">14 inch</option>
+                                    <option value="16">16 inch</option>
+                                    <option value="17">17 inch</option>
+                                </select>
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Độ sáng màn hình</p>
+                                <input onInput={onChangeHandler} value={data.brightness} type="number" name='brightness' placeholder='500nit | 600nit | 700nit' />
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Độ phân giải</p>
+                                <select onInput={onChangeHandler} value={data.resolution} name='resolution'>
+                                    <option value="1920 x 1080">Full HD</option>
+                                    <option value="2160 x 1440">2k</option>
+                                    <option value="2880 x 1620">3k</option>
+                                    <option value="3840 x 2160">4K</option>
+                                </select>
+                            </div>
+
+                            <div className="add-product-name flex-col">
+                                <p>Trọng lượng</p>
+                                <input onInput={onChangeHandler} value={data.weight} type="number" name='weight' placeholder='1.8 Kb | 2.3 Kg | 2.5 Kg' />
+                            </div>
+                        </div>
+                    </>
+                }
+
+                {
+                    data.category === "66615ffbc875cc7d60827534" // watch
+                    &&
+                    <>
+                        Watch
+                    </>
+                }
+
                 <button className='add-btn' type='submit'>Thêm sản phẩm</button>
             </form>
         </div>

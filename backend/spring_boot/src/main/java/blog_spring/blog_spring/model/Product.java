@@ -14,6 +14,7 @@ import java.util.List;
 @Document(collection = "products")
 @Data
 public class Product {
+
     @Id
     private String id;
 
@@ -28,13 +29,7 @@ public class Product {
     private int stock_quantity;
 
     @DBRef
-    private Laptop_Attributes attributes;
-
-    @DBRef
-    private Mobile_Attributes mobile_attributes;
-
-    @DBRef
-    private Watch_Attributes watch_attributes;
+    private Product_Attributes product_attributes;
 
     @DBRef
     private Category category;

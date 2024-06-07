@@ -26,9 +26,15 @@ public class CategoryService {
         ReqResCate reqRes = new ReqResCate();
 
         try {
-            Optional<Category> result = categoryRepository.findById(id);
-            if (result.isPresent()) {
-                reqRes.setData(result);
+            Category result = categoryRepository.findById(id).get();
+            if (result != null) {
+                result.setName(category.getName());
+                result.setDescription(category.getDescription());
+                result.setImage(category.getImage());
+
+                var saved = categoryRepository.save(result);
+
+                reqRes.setData(saved);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Update Successful");
             } else {
@@ -69,6 +75,11 @@ public class CategoryService {
 
         try {
             List<Category> result = categoryRepository.findAll();
+//            if ( category != "" ) {
+//                result = result.stream().filter(p -> p.getName().equals(category)).toList();
+//            }
+
+
             if (!result.isEmpty()) {
                 reqRes.setDataList(result);
                 reqRes.setStatusCode(200);

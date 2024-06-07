@@ -1,18 +1,5 @@
 html {
-  /*
-font-family: 'Montserrat', sans-serif;
-font-family: 'Roboto Slab', serif;
-font-family: 'Roboto Mono', monospace;
-font-family: 'Nunito', sans-serif;
-font-family: 'Noto Serif', serif;
-font-family: 'Lobster', cursive;
-font-family: 'Dancing Script', cursive;
-font-family: 'Patrick Hand', cursive;
-font-family: 'Itim', cursive;
-font-family: 'Saira', sans-serif;
-
-*/
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   scroll-behavior: smooth;
 }
 
@@ -30,6 +17,10 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+.hidden {
+  display: none;
 }
 
 .app {

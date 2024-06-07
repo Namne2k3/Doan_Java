@@ -1,7 +1,6 @@
 package blog_spring.blog_spring.controller;
 
 import blog_spring.blog_spring.dto.ReqResBrand;
-import blog_spring.blog_spring.dto.ReqResCate;
 import blog_spring.blog_spring.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

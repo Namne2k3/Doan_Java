@@ -1,8 +1,12 @@
 package blog_spring.blog_spring.model;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
+@Document(collection = "watch_attributes")
 public class Watch_Attributes {
     @Id
     private String id;

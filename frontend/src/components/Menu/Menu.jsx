@@ -2,7 +2,7 @@ import React from 'react'
 import "./menu.css"
 import { menu_list } from '../../assets/images'
 
-const Menu = ({ category, setCategory }) => {
+const Menu = ({ category, setCategory, menuList }) => {
     return (
         <div className='explore-menu' id='explore-menu'>
             <h1>Khám phá danh mục</h1>
@@ -11,11 +11,11 @@ const Menu = ({ category, setCategory }) => {
             </p>
             <div className="explore-menu-list">
                 {
-                    menu_list.map((item, index) => {
+                    menuList.map((item, index) => {
                         return (
-                            <div onClick={() => setCategory(prev => prev === item.menu_name ? "All" : item.menu_name)} key={index} className='explore-menu-list-item'>
-                                <img className={category === item.menu_name ? "active" : ""} src={item.menu_image} alt='menu_image' />
-                                <p>{item.menu_name}</p>
+                            <div onClick={() => setCategory(prev => prev === item.name ? "" : item.name)} key={index} className='explore-menu-list-item'>
+                                <img className={category === item.name ? "active" : ""} src={item.image} alt='menu_image' />
+                                <p>{item.name}</p>
                             </div>
                         )
                     })

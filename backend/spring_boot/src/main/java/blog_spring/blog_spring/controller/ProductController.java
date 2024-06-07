@@ -1,26 +1,31 @@
 package blog_spring.blog_spring.controller;
 
+import blog_spring.blog_spring.dto.ReqResBrand;
 import blog_spring.blog_spring.dto.ReqResCate;
 import blog_spring.blog_spring.dto.ReqResProduct;
-import blog_spring.blog_spring.model.Brand;
-import blog_spring.blog_spring.model.Category;
-import blog_spring.blog_spring.model.Product;
+import blog_spring.blog_spring.model.*;
+import blog_spring.blog_spring.service.BrandService;
+import blog_spring.blog_spring.service.CategoryService;
 import blog_spring.blog_spring.service.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
+    @Autowired
+    private BrandService brandService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     private ProductService productService;
@@ -37,14 +42,97 @@ public class ProductController {
     }
 
     @PostMapping(value = "/api/v1/products")
-    public ResponseEntity<ReqResProduct> addProduct(@RequestBody Product product){
-        return ResponseEntity.ok(productService.addProduct(product));
+    public ResponseEntity<ReqResProduct> addProduct(
+            @RequestParam("name") String name,
+            @RequestParam("content") String content,
+            @RequestParam("description") String description,
+            @RequestParam("price") double price,
+            @RequestParam("category") String category,
+            @RequestParam("brand") String brand,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("watchCount") int watchCount,
+            @RequestParam("image") String image,
+            @RequestParam("images") List<String> images,
+            @RequestParam("weight") double weight,
+            @RequestParam("resolution") String resolution,
+            @RequestParam("brightness") Integer brightness,
+            @RequestParam("screen_size") String screenSize,
+
+            // Laptop
+            @RequestParam(value = "graphic", required = false) String graphic,
+            @RequestParam(value = "cpu", required = false) String cpu,
+            @RequestParam(value = "ram", required = false) Integer ram,
+            @RequestParam(value = "ssd", required = false) Integer ssd,
+            @RequestParam(value = "panel", required = false) String panel,
+
+            // Mobile
+            @RequestParam(value = "back_camera", required = false) String backCamera,
+            @RequestParam(value = "front_camera", required = false) String frontCamera,
+            @RequestParam(value = "video_feature_back", required = false) String videoFeatureBack,
+            @RequestParam(value = "video_feature_front", required = false) String videoFeatureFront,
+            @RequestParam(value = "video_record", required = false) String videoRecord,
+            @RequestParam(value = "chipset", required = false) String chipset,
+            @RequestParam(value = "gpu", required = false) String gpu,
+            @RequestParam(value = "battery", required = false) String battery,
+            @RequestParam(value = "charge_tech", required = false) String chargeTech,
+
+            // Watch
+            @RequestParam(value = "screen_tech", required = false) String screenTech,
+            @RequestParam(value = "diameter", required = false) String diameter,
+            @RequestParam(value = "design", required = false) String design,
+            @RequestParam(value = "time_change", required = false) Double timeChange,
+            @RequestParam(value = "battery_life", required = false) String batteryLife
+    )
+    {
+        Product p = new Product();
+        p.setName(name);
+        p.setContent(content);
+        p.setDescription(description);
+        p.setPrice(price);
+
+        ReqResCate newCate = categoryService.getById(category);
+        p.setCategory((Category) newCate.getData());
+
+        ReqResBrand newbr = brandService.getById(brand);
+
+        p.setBrand((Brand) newbr.getData());
+        p.setImage(image);
+        p.setImages(images);
+        p.setStock_quantity(quantity);
+        p.setWatchCount(watchCount);
+
+        Product_Attributes at = new Product_Attributes();
+
+        // Laptop
+        if (Objects.equals(category, "665eee91d176ea3961e606c0")) {
+            at.setGraphic(graphic);
+            at.setCpu(cpu);
+            at.setRam(ram);
+            at.setSsd(ssd);
+            at.setPanel(panel);
+            at.setScreen_size(screenSize);
+            at.setBrightness(brightness);
+            at.setResolution(resolution);
+            at.setWeight(weight);
+        }
+
+        // Mobile Phone
+        if (Objects.equals(category, "665eee7ad176ea3961e606bf")) {
+
+        }
+
+        // Watch
+        if (Objects.equals(category, "66615ffbc875cc7d60827534")) {
+
+        }
+
+        return ResponseEntity.ok(productService.addProduct(p, at));
     }
 
-    @PutMapping("/api/v1/products/{id}")
-    public ResponseEntity<ReqResProduct> updateProduct(@PathVariable String id, @RequestBody ReqResProduct reqResProduct){
-        return ResponseEntity.ok(productService.updateProduct(id,reqResProduct));
-    }
+//    @PutMapping("/api/v1/products/{id}")
+//    public ResponseEntity<ReqResProduct> updateProduct(@PathVariable String id, @RequestBody ReqResProduct reqResProduct){
+//        return ResponseEntity.ok(productService.updateProduct(id,reqResProduct));
+//    }
 
     @DeleteMapping("/api/v1/products/{id}")
     public ResponseEntity<ReqResProduct> deleteProduct(@PathVariable String id){

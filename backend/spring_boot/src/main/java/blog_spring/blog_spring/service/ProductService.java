@@ -1,20 +1,12 @@
 package blog_spring.blog_spring.service;
 
-import blog_spring.blog_spring.dto.ReqResBrand;
-import blog_spring.blog_spring.dto.ReqResCate;
 import blog_spring.blog_spring.dto.ReqResProduct;
-import blog_spring.blog_spring.dto.ReqResProduct;
-import blog_spring.blog_spring.model.Brand;
-import blog_spring.blog_spring.model.Category;
 import blog_spring.blog_spring.model.Product;
+import blog_spring.blog_spring.model.Product_Attributes;
 import blog_spring.blog_spring.repository.CategoryRepository;
 import blog_spring.blog_spring.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +17,9 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductAttributeServices productAttributeServices;
 
     public ReqResProduct getById(String id) {
         ReqResProduct reqRes = new ReqResProduct();
@@ -65,11 +60,17 @@ public class ProductService {
             return reqRes;
         }
     }
-    public ReqResProduct addProduct(Product product) {
+    public ReqResProduct addProduct(Product product, Product_Attributes at) {
         ReqResProduct resp = new ReqResProduct();
         try {
             product.setCreatedAt(new Date());
             product.setUpdatedAt(new Date());
+
+            var savedAttr = productAttributeServices.addProductAttributes(at);
+
+            // luu attrbiute tai day
+
+            product.setProduct_attributes((Product_Attributes) savedAttr.getData());
             var savedProduct = productRepository.save(product);
             if ( savedProduct.getId() != null ) {
                 resp.setStatusCode(200);
@@ -87,42 +88,42 @@ public class ProductService {
         return resp;
     }
 
-    public ReqResProduct updateProduct(String id, ReqResProduct registrationRequest) {
-        ReqResProduct resp = new ReqResProduct();
-
-        try {
-            Product product = productRepository.findById(id).get();
-
-            product.setName(registrationRequest.getName());
-            product.setContent(registrationRequest.getContent());
-            product.setDescription(registrationRequest.getDescription());
-            product.setPrice(registrationRequest.getPrice());
-            product.setStock_quantity(registrationRequest.getStock_quantity());
-            product.setAttributes(registrationRequest.getAttributes());
-            product.setMobile_attributes(registrationRequest.getMobile_attributes());
-            product.setWatch_attributes(registrationRequest.getWatch_attributes());
-            product.setCategory(registrationRequest.getCategory());
-            product.setBrand(registrationRequest.getBrand());
-            product.setWatchCount(registrationRequest.getWatchCount());
-            product.setUpdatedAt(new Date());
-            product.setImage(registrationRequest.getImage());
-            product.setImages(registrationRequest.getImages());
-
-
-            var saved = productRepository.save(product);
-
-            if ( saved.getId() != null ) {
-                resp.setStatusCode(200);
-                resp.setMessage("Updated Product Successful");
-                resp.setData(saved);
-            }
-
-        } catch(Exception e) {
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
-    }
+//    public ReqResProduct updateProduct(String id, ReqResProduct registrationRequest) {
+//        ReqResProduct resp = new ReqResProduct();
+//
+//        try {
+//            Product product = productRepository.findById(id).get();
+//
+//            product.setName(registrationRequest.getName());
+//            product.setContent(registrationRequest.getContent());
+//            product.setDescription(registrationRequest.getDescription());
+//            product.setPrice(registrationRequest.getPrice());
+//            product.setStock_quantity(registrationRequest.getStock_quantity());
+//            product.setAttributes(registrationRequest.getAttributes());
+//            product.setMobile_attributes(registrationRequest.getMobile_attributes());
+//            product.setWatch_attributes(registrationRequest.getWatch_attributes());
+//            product.setCategory(registrationRequest.getCategory());
+//            product.setBrand(registrationRequest.getBrand());
+//            product.setWatchCount(registrationRequest.getWatchCount());
+//            product.setUpdatedAt(new Date());
+//            product.setImage(registrationRequest.getImage());
+//            product.setImages(registrationRequest.getImages());
+//
+//
+//            var saved = productRepository.save(product);
+//
+//            if ( saved.getId() != null ) {
+//                resp.setStatusCode(200);
+//                resp.setMessage("Updated Product Successful");
+//                resp.setData(saved);
+//            }
+//
+//        } catch(Exception e) {
+//            resp.setStatusCode(500);
+//            resp.setError(e.getMessage());
+//        }
+//        return resp;
+//    }
 
     public ReqResProduct deleteProduct(String id) {
         ReqResProduct reqRes = new ReqResProduct();

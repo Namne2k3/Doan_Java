@@ -32,7 +32,7 @@ const Navbar = ({ setShowLogin }) => {
                     navigate("/")
                 }
                 const response = await userService.getUserProfile(token);
-                console.log("Check res >>> ", response.data);
+                // console.log("Check res >>> ", response.data);
 
                 setUserProfile(response.data);
             } catch (err) {
