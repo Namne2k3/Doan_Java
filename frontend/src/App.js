@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { userService } from './services';
-import LoginPage from './pages/auth/Login';
 import ProfilePage from './pages/user/ProfilePage';
 import RegistrationPage from './pages/auth/Register';
 import UserManagementPage from './pages/user/UserManagementPage';
@@ -10,20 +9,23 @@ import Home from './pages/home/Home';
 import Cart from './pages/cart/Cart';
 import PlaceOrder from './pages/placeorder/PlaceOrder';
 import Footer from "./components/Footer/Footer";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
-import { useContext } from "react";
-import { StoreContext } from "./context/StoreContext";
-import { useEffect } from "react";
 import Admin from "./pages/admin/Admin";
 import AddProduct from "./pages/admin/Products/AddProduct/AddProduct";
 import ListProduct from "./pages/admin/Products/ListProduct/ListProduct";
 import ListOrder from "./pages/admin/Orders/ListOrder/ListOrder";
 import UpdateProduct from "./pages/admin/Products/UpdateProduct/UpdateProduct";
+import { StoreContext } from "./context/StoreContext";
 
 function App() {
 
   const [showLogin, setShowLogin] = useState(false);
+  const { fetchProfileData } = useContext(StoreContext);
+
+  useEffect(() => {
+    fetchProfileData()
+  }, [])
 
   return (
     <BrowserRouter>

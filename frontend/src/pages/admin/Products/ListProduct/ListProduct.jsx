@@ -9,8 +9,7 @@ const ListProduct = () => {
 
     // const [category, setCategory] = useState("Watch")
     // const [category, setCategory] = useState("Mobile Phone")
-    const [category, setCategory] = useState("Laptopasdasd")
-    const [shouldFetch, setShouldFetch] = useState(true);
+    const [category, setCategory] = useState("Laptop")
     const [products, setProducts] = useState([])
 
     const removeProduct = async (e, id) => {
@@ -26,7 +25,6 @@ const ListProduct = () => {
         } else {
             toast(response.data.message)
         }
-
     }
 
     const fetchAllProductsByCategory = async () => {
@@ -34,15 +32,14 @@ const ListProduct = () => {
         const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
         if (response.data.statusCode === 200) {
             setProducts(prev => response.data.dataList || [])
-            // console.log("Check products >>> ", products);
         } else if (response.data.statusCode = 404) {
             setProducts(prev => response.data.dataList || [])
             console.log(response.data.message)
         } else {
             console.log(response.data.message)
         }
-
     }
+
     useEffect(() => {
         toast.promise(
             fetchAllProductsByCategory(),
@@ -53,28 +50,7 @@ const ListProduct = () => {
             },
             { containerId: 'A' }
         )
-        // fetchAllProductsByCategory();
     }, [])
-    // useEffect(() => {
-    //     if (shouldFetch) {
-    //         toast.promise(
-    //             fetchAllProductsByCategory(),
-    //             {
-    //                 pending: 'Loading Data Products',
-    //                 success: 'Loaded All Products Successfully 👌',
-    //                 error: 'Error rejected loading product 🤯'
-    //             },
-    //             { containerId: 'A' }
-    //         );
-    //         setShouldFetch(false); // Reset lại state này sau khi fetch dữ liệu
-    //     }
-    // }, [shouldFetch]); // Chỉ chạy khi `shouldFetch` thay đổi
-
-    // // Effect để cập nhật việc fetch dữ liệu khi `category` thay đổi
-    // useEffect(() => {
-    //     setShouldFetch(true);
-    // }, [category]);
-
     return (
         <>
             <div className='list add flex-col'>

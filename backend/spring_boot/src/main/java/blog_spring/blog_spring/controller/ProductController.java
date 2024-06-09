@@ -7,6 +7,7 @@ import blog_spring.blog_spring.model.*;
 import blog_spring.blog_spring.service.BrandService;
 import blog_spring.blog_spring.service.CategoryService;
 import blog_spring.blog_spring.service.ProductService;
+import blog_spring.blog_spring.service.UserManagementService;
 import com.mongodb.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class ProductController {
 
     @Autowired
     private BrandService brandService;
+
+    @Autowired
+    private UserManagementService userManagementService;
 
     @Autowired
     private CategoryService categoryService;
@@ -159,4 +163,5 @@ public class ProductController {
     public ResponseEntity<ReqResProduct> deleteProduct(@PathVariable String id){
         return ResponseEntity.ok(productService.deleteProduct(id));
     }
+
 }

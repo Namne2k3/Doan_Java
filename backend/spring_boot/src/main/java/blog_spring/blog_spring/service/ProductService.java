@@ -1,13 +1,15 @@
 package blog_spring.blog_spring.service;
 
 import blog_spring.blog_spring.dto.ReqResProduct;
+import blog_spring.blog_spring.model.Cart;
 import blog_spring.blog_spring.model.Product;
 import blog_spring.blog_spring.model.Product_Attributes;
-import blog_spring.blog_spring.repository.CategoryRepository;
-import blog_spring.blog_spring.repository.ProductAttributesRepository;
-import blog_spring.blog_spring.repository.ProductRepository;
+import blog_spring.blog_spring.model.User;
+import blog_spring.blog_spring.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,11 +18,7 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
 
-    @Autowired
-    private ProductAttributeServices productAttributeServices;
     @Autowired
     private ProductAttributesRepository productAttributesRepository;
 
@@ -68,6 +66,7 @@ public class ProductService {
             return reqRes;
         }
     }
+
     public ReqResProduct addProduct(Product product, Product_Attributes at) {
         ReqResProduct resp = new ReqResProduct();
         try {
@@ -75,7 +74,6 @@ public class ProductService {
             product.setUpdatedAt(new Date());
 
             var savedAttr = productAttributesRepository.save(at);
-
 
             // luu attrbiute tai day
             if ( savedAttr.getId() != null ) {

@@ -23,13 +23,13 @@ public class User implements UserDetails {
     private String id;
 
     @DBRef
-    private List<Order> orders;
+    private List<Order> orders ;
 
     @DBRef
-    private List<WishList> wishLists;
+    private List<WishList> wishLists ;
 
     @DBRef
-    private List<Product> carts;
+    private List<Cart> carts ;
 
     private String username;
 
