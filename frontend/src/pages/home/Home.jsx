@@ -11,13 +11,20 @@ const Home = () => {
     const [category, setCategory] = useState("")
     const [menuList, setMenuList] = useState([])
 
-    useEffect(async () => {
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const dataCategories = await fetchALlCategories();
+                if (dataCategories) {
+                    setMenuList(dataCategories);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
 
-        const dataCategories = await fetchALlCategories();
-        if (dataCategories) {
-            setMenuList(dataCategories);
-        }
-    }, [])
+        fetchCategories();
+    }, []);
 
 
     return (

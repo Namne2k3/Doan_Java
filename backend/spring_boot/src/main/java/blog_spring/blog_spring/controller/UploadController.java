@@ -47,6 +47,9 @@ public class UploadController {
         } catch (IOException e) {
             // Xử lý nếu có lỗi khi ghi file
             e.printStackTrace();
+
+            // dạng object cần tr về của ckeditor
+            // json: { uploaded: true/false, url = `path-to-your-file`}
             Map<String, Object> response = new HashMap<>();
             response.put("uploaded", false);
             response.put("url", e.getMessage());

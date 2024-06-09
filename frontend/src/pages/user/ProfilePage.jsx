@@ -8,9 +8,8 @@ const ProfilePage = () => {
 
     const navigate = useNavigate();
 
-    const { setProfileInfo } = useContext(StoreContext);
+    // const { setProfileInfo } = useContext(StoreContext);
     const [userProfile, setUserProfile] = useState({})
-
 
     const logout = () => {
         userService.logout();
@@ -18,26 +17,26 @@ const ProfilePage = () => {
     }
 
     useEffect(() => {
-
         const fetchProfileData = async () => {
             try {
 
                 const token = localStorage.getItem('token'); // Retrieve the token from localStorage
                 if (!token) {
                     navigate("/")
+                    return;
                 }
                 const response = await userService.getUserProfile(token);
-                console.log("Check res >>> ", response.data);
+                // console.log("Check res >>> ", response.data);
 
-                setProfileInfo(response.data);
-
+                // setProfileInfo(response.data);
                 setUserProfile(response.data);
+
             } catch (err) {
                 console.error('Error fetching profile information:', err);
+                navigate("/")
             }
         }
-
-        fetchProfileData();
+        fetchProfileData()
     }, [])
 
     return (

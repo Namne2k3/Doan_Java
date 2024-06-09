@@ -52,7 +52,6 @@ const getAllUser = async (token) => {
     }
 }
 
-
 const getUserProfile = async (token) => {
     try {
 

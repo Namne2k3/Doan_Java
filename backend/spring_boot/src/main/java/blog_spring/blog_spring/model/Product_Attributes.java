@@ -29,20 +29,21 @@ public class Product_Attributes {
     private Integer brightness;
 
     // Mobile specific attributes
+    private String chipset;
+    private String gpu;
+    private String battery;
     private String back_camera;
     private String front_camera;
     private String video_feature_back;
     private String video_feature_front;
     private String video_record;
-    private String chipset;
-    private String gpu;
-    private String battery;
     private String charge_tech;
+    private String SIM;
 
     // Watch specific attributes
     private String screen_tech;
     private String diameter;
     private String design;
-    private double time_change;
+    private double time_charge;
     private String battery_life;
 }

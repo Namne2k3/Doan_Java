@@ -7,6 +7,7 @@ import blog_spring.blog_spring.model.*;
 import blog_spring.blog_spring.service.BrandService;
 import blog_spring.blog_spring.service.CategoryService;
 import blog_spring.blog_spring.service.ProductService;
+import com.mongodb.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,8 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/api/v1/products")
-    public ResponseEntity<ReqResProduct> getProducts(){
-//        logger.info(System.getProperty("user.dir") + "/src/main/resources/static/images");
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<ReqResProduct> getProducts(@RequestParam @Nullable String category){
+        return ResponseEntity.ok(productService.getAllProducts(category));
     }
 
     @GetMapping("/api/v1/products/{id}")
@@ -75,12 +75,13 @@ public class ProductController {
             @RequestParam(value = "gpu", required = false) String gpu,
             @RequestParam(value = "battery", required = false) String battery,
             @RequestParam(value = "charge_tech", required = false) String chargeTech,
+            @RequestParam(value = "SIM", required = false) String SIM,
 
             // Watch
             @RequestParam(value = "screen_tech", required = false) String screenTech,
             @RequestParam(value = "diameter", required = false) String diameter,
             @RequestParam(value = "design", required = false) String design,
-            @RequestParam(value = "time_change", required = false) Double timeChange,
+            @RequestParam(value = "time_charge", required = false) Double time_charge,
             @RequestParam(value = "battery_life", required = false) String batteryLife
     )
     {
@@ -96,7 +97,7 @@ public class ProductController {
         ReqResBrand newbr = brandService.getById(brand);
 
         p.setBrand((Brand) newbr.getData());
-        p.setImage(image);
+        p.setImage("/images/" + image);
         p.setImages(images);
         p.setStock_quantity(quantity);
         p.setWatchCount(watchCount);
@@ -118,12 +119,32 @@ public class ProductController {
 
         // Mobile Phone
         if (Objects.equals(category, "665eee7ad176ea3961e606bf")) {
-
+            at.setChipset(chipset);
+            at.setCpu(cpu);
+            at.setGpu(gpu);
+            at.setBattery(battery);
+            at.setBack_camera(backCamera);
+            at.setFront_camera(frontCamera);
+            at.setVideo_feature_back(videoFeatureBack);
+            at.setVideo_feature_front(videoFeatureFront);
+            at.setVideo_record(videoRecord);
+            at.setRam(ram);
+            at.setSsd(ssd);
+            at.setScreen_tech(screenTech);
+            at.setScreen_size(screenSize);
+            at.setBrightness(brightness);
+            at.setResolution(resolution);
+            at.setWeight(weight);
         }
 
         // Watch
         if (Objects.equals(category, "66615ffbc875cc7d60827534")) {
-
+            at.setScreen_tech(screenTech);
+            at.setScreen_size(screenSize);
+            at.setResolution(resolution);
+            at.setDiameter(diameter);
+            at.setTime_charge(time_charge);
+            at.setBattery_life(batteryLife);
         }
 
         return ResponseEntity.ok(productService.addProduct(p, at));

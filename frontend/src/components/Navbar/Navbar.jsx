@@ -23,25 +23,27 @@ const Navbar = ({ setShowLogin }) => {
     }
 
     useEffect(() => {
-
         const fetchProfileData = async () => {
             try {
 
                 const token = localStorage.getItem('token'); // Retrieve the token from localStorage
                 if (!token) {
                     navigate("/")
+                    return;
                 }
                 const response = await userService.getUserProfile(token);
                 // console.log("Check res >>> ", response.data);
 
+                // setProfileInfo(response.data);
                 setUserProfile(response.data);
-            } catch (err) {
 
+            } catch (err) {
+                console.error('Error fetching profile information:', err);
+                navigate("/")
             }
         }
-
-        fetchProfileData();
-    }, [localStorage.getItem('role')])
+        fetchProfileData()
+    }, [])
 
     return (
         <div className='navbar'>

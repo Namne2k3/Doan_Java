@@ -4,6 +4,7 @@ import blog_spring.blog_spring.dto.ReqResProduct;
 import blog_spring.blog_spring.model.Product;
 import blog_spring.blog_spring.model.Product_Attributes;
 import blog_spring.blog_spring.repository.CategoryRepository;
+import blog_spring.blog_spring.repository.ProductAttributesRepository;
 import blog_spring.blog_spring.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ public class ProductService {
 
     @Autowired
     private ProductAttributeServices productAttributeServices;
+    @Autowired
+    private ProductAttributesRepository productAttributesRepository;
 
     public ReqResProduct getById(String id) {
         ReqResProduct reqRes = new ReqResProduct();
@@ -40,11 +43,16 @@ public class ProductService {
         return reqRes;
     }
 
-    public ReqResProduct getAllProducts() {
+    public ReqResProduct getAllProducts(String category) {
         ReqResProduct reqRes = new ReqResProduct();
 
         try {
             List<Product> result = productRepository.findAll();
+            if ( category != null && !category.equals("") ) {
+                result = result.stream()
+                        .filter(p -> p.getCategory().getName().equals(category))
+                        .toList();
+            }
             if (!result.isEmpty()) {
                 reqRes.setDataList(result);
                 reqRes.setStatusCode(200);
@@ -66,11 +74,16 @@ public class ProductService {
             product.setCreatedAt(new Date());
             product.setUpdatedAt(new Date());
 
-            var savedAttr = productAttributeServices.addProductAttributes(at);
+            var savedAttr = productAttributesRepository.save(at);
+
 
             // luu attrbiute tai day
+            if ( savedAttr.getId() != null ) {
+                product.setProduct_attributes(savedAttr);
+            } else {
+                throw new Exception("Error occurred while saving product attributes");
+            }
 
-            product.setProduct_attributes((Product_Attributes) savedAttr.getData());
             var savedProduct = productRepository.save(product);
             if ( savedProduct.getId() != null ) {
                 resp.setStatusCode(200);
@@ -139,7 +152,7 @@ public class ProductService {
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);
-            reqRes.setMessage("Error occurred while deleting user: " + e.getMessage());
+            reqRes.setMessage("Error occurred while deleting product: " + e.getMessage());
         }
         return reqRes;
     }
