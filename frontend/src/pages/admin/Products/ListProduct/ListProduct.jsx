@@ -9,7 +9,7 @@ const ListProduct = () => {
 
     // const [category, setCategory] = useState("Watch")
     // const [category, setCategory] = useState("Mobile Phone")
-    const [category, setCategory] = useState("Laptop")
+    const [category, setCategory] = useState("Laptopasdasd")
     const [shouldFetch, setShouldFetch] = useState(true);
     const [products, setProducts] = useState([])
 

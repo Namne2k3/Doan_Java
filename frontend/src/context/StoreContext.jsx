@@ -1,13 +1,30 @@
 import { createContext, useEffect, useState } from "react";
-import { food_list } from "../assets/images";
+// import { food_list } from "../assets/images";
 import { userService } from "../services";
+import axios from "axios";
+
+
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
-
+    const BASE_URL = "http://localhost:8080"
     const [cartItems, setCartItems] = useState({});
     const [profileInfo, setProfileInfo] = useState({})
+    const [products, setProducts] = useState([]);
+
+    const fetchProductsByCategory = async (category) => {
+        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
+        if (response.data.statusCode === 200) {
+            setProducts(prev => response.data.dataList || [])
+            // console.log("Check products >>> ", products);
+        } else if (response.data.statusCode = 404) {
+            setProducts(prev => response.data.dataList || [])
+            console.log(response.data.message)
+        } else {
+            console.log(response.data.message)
+        }
+    }
 
     // const fetchProfileData = async () => {
     //     try {
@@ -40,7 +57,7 @@ const StoreContextProvider = (props) => {
         let totalAmount = 0
         for (const item in cartItems) {
             if (cartItems[item] > 0) {
-                let itemInfo = food_list.find((product) => product._id === item)
+                let itemInfo = products.find((product) => product.id === item)
                 totalAmount += itemInfo.price * cartItems[item];
             }
         }
@@ -49,14 +66,15 @@ const StoreContextProvider = (props) => {
 
 
     const contextValue = {
-        food_list,
         cartItems,
         setCartItems,
         addToCart,
         removeFromCart,
         getTotalCartAmount,
         profileInfo,
-        setProfileInfo
+        setProfileInfo,
+        products,
+        fetchProductsByCategory
     }
 
 

@@ -4,7 +4,7 @@ import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom'
 const Cart = () => {
 
-    const { cartItems, food_list, removeFromCart, getTotalCartAmount } = useContext(StoreContext)
+    const { cartItems, products, removeFromCart, getTotalCartAmount } = useContext(StoreContext)
 
     const navigate = useNavigate();
 
@@ -22,8 +22,8 @@ const Cart = () => {
                 <br />
                 <hr />
                 {
-                    food_list.map((item, index) => {
-                        if (cartItems[item._id] > 0) {
+                    products.map((item, index) => {
+                        if (cartItems[item.id] > 0) {
                             return (
                                 <div className="">
                                     <div className="cart-items-title cart-items-item">
