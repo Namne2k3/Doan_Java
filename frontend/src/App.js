@@ -17,6 +17,7 @@ import ListProduct from "./pages/admin/Products/ListProduct/ListProduct";
 import ListOrder from "./pages/admin/Orders/ListOrder/ListOrder";
 import UpdateProduct from "./pages/admin/Products/UpdateProduct/UpdateProduct";
 import { StoreContext } from "./context/StoreContext";
+import Success from "./components/Success/Success";
 
 function App() {
 
@@ -45,19 +46,20 @@ function App() {
             <Route exact path="/order" element={<PlaceOrder />} />
             <Route path="/register" element={<RegistrationPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/success" element={<Success />} />
             {/* <Route exact path="/login" element={<LoginPage />} /> */}
 
             {/* {userService.adminOnly() && (
               <>
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin/products" element={<ListProduct />} />
-                <Route path="/admin/products/add" element={<AddProduct />} />
-                <Route path="/admin/products/update" element={<UpdateProduct />} />
-                <Route path="/admin/orders" element={<ListOrder />} />
-                <Route path="/admin/user-management" element={<UserManagementPage />} />
-                <Route path="/update-user/:userId" element={<UpdateUser />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/products" element={<ListProduct />} />
+              <Route path="/admin/products/add" element={<AddProduct />} />
+              <Route path="/admin/products/update" element={<UpdateProduct />} />
+              <Route path="/admin/orders" element={<ListOrder />} />
+              <Route path="/admin/user-management" element={<UserManagementPage />} />
+              <Route path="/update-user/:userId" element={<UpdateUser />} />
               </>
-            )} */}
+              )} */}
 
             {/* <Route path="*" element={<Navigate to="/" />} />‰ */}
           </Routes>
@@ -69,9 +71,9 @@ function App() {
                 <Route path="products" element={<ListProduct />} />
                 <Route path="products/add" element={<AddProduct />} />
                 <Route path="products/update" element={<UpdateProduct />} />
-                <Route path="orders" element={<ListOrder />} />
                 <Route path="user-management" element={<UserManagementPage />} />
                 <Route path="update-user/:userId" element={<UpdateUser />} />
+                <Route path="orders" element={<ListOrder />} />
               </Route>
             </Routes>
           }

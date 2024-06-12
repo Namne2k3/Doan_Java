@@ -22,8 +22,8 @@ public class User implements UserDetails {
     @Id
     private String id;
 
-    @DBRef
-    private List<Order> orders ;
+//    @DBRef
+//    private List<Order> orders ;
 
     @DBRef
     private List<WishList> wishLists ;

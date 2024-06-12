@@ -5,19 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import NotFound from '../../components/NotFound/NotFound';
-
+import CheckoutButton from '../../components/CheckoutButton/CheckoutButton';
+import CheckoutListButton from '../../components/CheckoutListButton/CheckoutListButton';
 const Cart = () => {
     const BASE_URL = "http://localhost:8080";
-    const { fetchAllCartByUser, carts, setCarts, profileInfo, removeFromCart } = useContext(StoreContext);
+    const { fetchAllCartByUser, carts, setCarts, profileInfo, removeFromCart, getTotalCartAmount } = useContext(StoreContext);
 
-
-
-    const getTotalCartAmount = (cartList) => {
-        return cartList.reduce((total, item) => total + item.product.price * item.quantity, 0);
-    };
 
     useEffect(() => {
         fetchAllCartByUser();
+        console.log(carts);
     }, [profileInfo]);
 
     const navigate = useNavigate();
@@ -73,6 +70,7 @@ const Cart = () => {
                     <p>Giá</p>
                     <p>Số lượng</p>
                     <p>Tổng tiền</p>
+                    <p>Thanh toán</p>
                     <p>Xóa</p>
                 </div>
                 <br />
@@ -81,7 +79,8 @@ const Cart = () => {
                     carts
                         ?
                         carts.map((item, index) => (
-                            <div key={index}>
+
+                            <div className='cart-items-item-container' key={index}>
                                 <div className="cart-items-title cart-items-item">
                                     <img src={item.product.image} alt="item_image" />
                                     <p>{item.product.name}</p>
@@ -94,6 +93,7 @@ const Cart = () => {
                                         min={1}
                                     />
                                     <p>{VNDONG(item.product.price * item.quantity)}</p>
+                                    <CheckoutListButton carts={[item]} text="Thanh toán" />
                                     <p onClick={() => removeFromCart(item.id)} className='cross'>X</p>
                                 </div>
                                 <hr />

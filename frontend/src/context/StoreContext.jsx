@@ -111,6 +111,10 @@ const StoreContextProvider = (props) => {
         }
     };
 
+    const getTotalCartAmount = (cartList) => {
+        return cartList.reduce((total, item) => total + item.product.price * item.quantity, 0);
+    };
+
     const contextValue = {
         cartItems,
         setCartItems,
@@ -123,7 +127,8 @@ const StoreContextProvider = (props) => {
         fetchProfileData,
         carts,
         setCarts,
-        removeFromCart
+        removeFromCart,
+        getTotalCartAmount
     }
 
 

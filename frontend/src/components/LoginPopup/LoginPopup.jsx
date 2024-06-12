@@ -45,15 +45,13 @@ const LoginPopup = ({ setShowLogin }) => {
         try {
             // Call the register method from UserService
 
-            const token = localStorage.getItem('token')
-
             const userData = await userService.register({
                 username: username,
                 email: email,
                 password: password,
-                address: address,
                 phone: phone,
-            }, token);
+                address: address
+            });
             if (userData.data) {
                 setShowLogin(false)
                 alert('User registered successfully');
@@ -114,11 +112,11 @@ const LoginPopup = ({ setShowLogin }) => {
                             <img src={images.cross_icon} onClick={() => setShowLogin(false)} alt="" />
                         </div>
                         <div className="login-popup-inputs">
-                            <input value={username} onChange={(e) => setUserName(e.target.value)} type="text" placeholder='Tên tài khoản' required />
-                            <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" placeholder='Số điện thoại' required />
-                            <input value={address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder='Địa chỉ' required />
-                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' required />
-                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Mật khẩu' required />
+                            <input name='username' value={username} onChange={(e) => setUserName(e.target.value)} type="text" placeholder='Tên tài khoản' required />
+                            <input name='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' required />
+                            <input name='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Mật khẩu' required />
+                            <input name='phone' value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" placeholder='Số điện thoại' required />
+                            <input name='address' value={address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder='Địa chỉ' required />
                         </div>
                         <button type='submit'>Tạo tài khoản</button>
                         <p>Đã có tài khoản? <span onClick={() => setCurrentState("Login")}>Đăng nhập ở đây</span> </p>

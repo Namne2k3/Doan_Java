@@ -18,15 +18,22 @@ const login = async (email, password) => {
         throw err;
     }
 }
+function formatDate(date) {
+    let day = date.getDate();
+    let month = date.getMonth() + 1; // Tháng được đếm từ 0-11, cần +1 để đúng với tháng 1-12
+    let year = date.getFullYear();
 
-const register = async (userData, token) => {
+    // Thêm số 0 phía trước nếu ngày hoặc tháng chỉ có 1 chữ số
+    day = day < 10 ? '0' + day : day;
+    month = month < 10 ? '0' + month : month;
+
+    return `${day}-${month}-${year}`;
+}
+const register = async (userData) => {
     try {
 
-        const res = await axios.post(`${BASE_URL}/auth/register`, userData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        console.log({ ...userData, createdAt: formatDate(new Date()), updatedAt: formatDate(new Date()), role: "USER" });
+        const res = await axios.post(`${BASE_URL}/auth/register`, { ...userData, createdAt: new Date(), updatedAt: new Date(), role: "USER" })
         const data = await res.data;
         console.log("Check data register >>> ", data);
         return data;

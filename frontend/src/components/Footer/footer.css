@@ -33,6 +33,11 @@
     margin-bottom: 10px;
 }
 
+.footer-content-left .footer-logo {
+    width: 100px;
+    height: 100px;
+}
+
 .footer-content-center h2,
 .footer-content-right h2 {
     color: white;

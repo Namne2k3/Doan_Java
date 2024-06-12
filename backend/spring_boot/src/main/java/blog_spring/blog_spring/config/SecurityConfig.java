@@ -43,6 +43,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/**").permitAll()
+                        .requestMatchers("/create-checkout-session").permitAll()
+                        .requestMatchers("/create-checkout-list-session").permitAll()
+                        .requestMatchers("/webhook").permitAll()
                         .requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/user/**").hasAnyAuthority("USER")

@@ -25,6 +25,8 @@ public class ReqResOrder<T> {
 
     private List<T> dataList;
 
+    private String email;
+
     @DBRef
     private User user;
 

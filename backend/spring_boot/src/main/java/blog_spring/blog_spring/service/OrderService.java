@@ -56,12 +56,12 @@ public class OrderService {
         }
     }
 
-    public ReqResOrder addOrder(ReqResOrder registrationRequest) {
+    public ReqResOrder addOrder(Order registrationRequest) {
         ReqResOrder resp = new ReqResOrder();
 
         try {
             Order order = new Order();
-            order.setUser(registrationRequest.getUser());
+            order.setUserId(registrationRequest.getUserId());
             order.setOrderDate(registrationRequest.getOrderDate());
             order.setTotalAmount(registrationRequest.getTotalAmount());
             order.setStatus(registrationRequest.getStatus());
@@ -84,7 +84,7 @@ public class OrderService {
         return resp;
     }
 
-    public ReqResOrder updateOrder(String id, ReqResOrder registrationRequest) {
+    public ReqResOrder updateOrder(String id, Order registrationRequest) {
         ReqResOrder resp = new ReqResOrder();
 
         try {
@@ -94,7 +94,7 @@ public class OrderService {
                 throw new Exception("Order not found");
             }
 
-            order.setUser(registrationRequest.getUser());
+            order.setUserId(registrationRequest.getUserId());
             order.setOrderDate(registrationRequest.getOrderDate());
             order.setTotalAmount(registrationRequest.getTotalAmount());
             order.setStatus(registrationRequest.getStatus());

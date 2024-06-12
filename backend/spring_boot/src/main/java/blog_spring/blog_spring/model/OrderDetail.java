@@ -13,14 +13,10 @@ public class OrderDetail {
 
     @Id
     private String id;
+    // done product
 
-    @DBRef
-    private Order order;
+    private String productId;
 
-    @DBRef
-    private Product product;
-
+    // done quantity
     private int quantity;
-
-    private Long price;
 }
