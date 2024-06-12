@@ -15,7 +15,7 @@ public class OrderDetail {
     private String id;
     // done product
 
-    private String productId;
+    private Product product;
 
     // done quantity
     private int quantity;

@@ -4,6 +4,7 @@ import blog_spring.blog_spring.model.Order;
 import blog_spring.blog_spring.model.OrderDetail;
 import blog_spring.blog_spring.repository.OrderDetailRepository;
 import blog_spring.blog_spring.repository.OrderRepository;
+import blog_spring.blog_spring.repository.ProductRepository;
 import blog_spring.blog_spring.service.OrderService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +41,8 @@ public class StripeWebhookController {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping
     public ResponseEntity<String> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
@@ -106,10 +109,13 @@ public class StripeWebhookController {
             int quantity = entry.getValue();
             // Tạo OrderDetail từ productId và quantity
             OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setProductId(productId);
-            orderDetail.setQuantity(quantity);
 
-            // Thêm OrderDetail vào danh sách
+            var findProduct = productRepository.findById(productId).get();
+            if ( findProduct.getId() != null ) {
+                orderDetail.setProduct(findProduct);
+            }
+
+            orderDetail.setQuantity(quantity);
             orderDetails.add(orderDetail);
         }
 
