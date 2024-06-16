@@ -1,24 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import "./ListProduct.css"
 import { ToastContainer, toast } from 'react-toastify'
 import NotFound from '../../../../components/NotFound/NotFound'
+import { StoreContext } from '../../../../context/StoreContext'
 const ListProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
 
-    // const [category, setCategory] = useState("Watch")
-    // const [category, setCategory] = useState("Mobile Phone")
-    const [category, setCategory] = useState("Laptop")
-    const [products, setProducts] = useState([])
+    const { cateAdminProducts, setCateAdminProducts, setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
+
+    useEffect(() => {
+        // if (adminProducts.length === 0) {
+        //     toast.promise(fetchAdminProductsByCategory(), {
+        //         success: "Loaded Successfully!",
+        //         pending: "Loading products data!",
+        //         error: "Error while loading products data!!!"
+        //     }, {
+        //         containerId: 'A'
+        //     })
+        // }
+        fetchAdminProductsByCategory()
+    }, [adminProducts])
 
     const removeProduct = async (e, id) => {
-        await new Promise(resolve => setTimeout(resolve, 1500));
         // alert(`Deleted >>> ${id}`)
         const response = await axios.delete(`${BASE_URL}/api/v1/products/${id}`)
         if (response.data.statusCode === 200) {
             // toast(response.data.message);
-            await fetchAllProductsByCategory()
+            await fetchAdminProductsByCategory()
             // setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
         } else if (response.data.statusCode === 404) {
             toast(response.data.message)
@@ -27,34 +37,10 @@ const ListProduct = () => {
         }
     }
 
-    const fetchAllProductsByCategory = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
-        if (response.data.statusCode === 200) {
-            setProducts(prev => response.data.dataList || [])
-        } else if (response.data.statusCode = 404) {
-            setProducts(prev => response.data.dataList || [])
-            console.log(response.data.message)
-        } else {
-            console.log(response.data.message)
-        }
-    }
-
-    useEffect(() => {
-        toast.promise(
-            fetchAllProductsByCategory(),
-            {
-                pending: 'Loading Data Products',
-                success: 'Loaded All Products Successfully 👌',
-                error: 'Error rejected loading product 🤯'
-            },
-            { containerId: 'A' }
-        )
-    }, [])
     return (
         <>
             <div className='list add flex-col'>
-                <p>All {category}s</p>
+                <p>All {cateAdminProducts}s</p>
                 <div className="list-table">
                     <div className="list-table-format title">
                         <b>Image</b>
@@ -64,9 +50,9 @@ const ListProduct = () => {
                         <b>Action</b>
                     </div>
                     {
-                        products.length !== 0
+                        adminProducts.length > 0
                             ?
-                            products.map((item, index) => {
+                            adminProducts.map((item, index) => {
                                 return (
                                     <a href={`/admin/products/${item.id}`} className="list-table-format" key={index}>
                                         <img src={item.image} alt="product_image" />

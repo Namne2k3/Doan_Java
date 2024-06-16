@@ -133,9 +133,6 @@ function isUser() {
 
 function adminOnly() {
 
-    // console.log("Check authenticated >>> ", isAuthenticated());
-    // console.log("Check isAdmin >>> ", isAdmin());
-
     return isAuthenticated() && isAdmin();
 }
 

@@ -16,7 +16,9 @@ public class Order {
     @Id
     private String id;
 
-    private String userId;
+    @DBRef
+    private User user;
+    
     // done orderdetails
     @DBRef
     private List<OrderDetail> details;
@@ -29,6 +31,8 @@ public class Order {
 
     // done amount
     private Long totalAmount;
+
+    private String phone;
 
     // status
     private String status;

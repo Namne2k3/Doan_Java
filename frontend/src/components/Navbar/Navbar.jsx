@@ -4,16 +4,13 @@ import { images } from '../../assets/images'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StoreContext } from '../../context/StoreContext'
-import { useEffect } from 'react'
 import { userService } from '../../services'
-
 
 const Navbar = ({ setShowLogin }) => {
 
     const [menu, setMenu] = useState("home")
-    const { getTotalCartAmount } = useContext(StoreContext)
     const [isSearching, setIsSearching] = useState(false)
-
+    const token = localStorage.getItem('token');
     const logout = () => {
         userService.logout();
         window.location.href = "/"
@@ -47,15 +44,33 @@ const Navbar = ({ setShowLogin }) => {
                     </Link>
                 </div>
                 {
-                    localStorage.getItem('token') != null
+                    token != null
                         ?
                         <>
-                            <Link to="/profile">
+                            {/* <Link to="/profile">
                                 <img src={images.profile_icon} alt="profile_icon" />
                             </Link>
                             <button onClick={logout} className='navbar-button'>
                                 Đăng xuất
-                            </button>
+                            </button> */}
+                            <div className="navbar-profile">
+                                <Link to="/profile">
+                                    <img src={images.profile_icon} alt='profile_image' />
+                                </Link>
+                                <ul className="nav-profile-dropdown">
+                                    <li>
+                                        <Link to="/myorder">
+                                            <img src={images.bag_icon} alt="bag_icon" />
+                                            <p>Đơn đặt hàng</p>
+                                        </Link>
+                                    </li>
+                                    <hr />
+                                    <li>
+                                        <img onClick={logout} src={images.logout_icon} alt="logout_icon" />
+                                        <p>Đăng xuất</p>
+                                    </li>
+                                </ul>
+                            </div>
                         </>
                         :
                         <>
@@ -65,7 +80,7 @@ const Navbar = ({ setShowLogin }) => {
                         </>
                 }
                 {
-                    profileInfo.role === "ADMIN"
+                    userService.adminOnly()
                     &&
                     <Link to="/admin">
                         <img style={{ maxWidth: "34px" }} src={images.admin_icon} alt="admin_icon" />

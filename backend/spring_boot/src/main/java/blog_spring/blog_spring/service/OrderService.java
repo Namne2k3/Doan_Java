@@ -2,17 +2,56 @@ package blog_spring.blog_spring.service;
 
 import blog_spring.blog_spring.dto.ReqResOrder;
 import blog_spring.blog_spring.model.Order;
+import blog_spring.blog_spring.model.OrderDetail;
+import blog_spring.blog_spring.model.User;
+import blog_spring.blog_spring.repository.OrderDetailRepository;
 import blog_spring.blog_spring.repository.OrderRepository;
+import blog_spring.blog_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public Order createOrder() {
+        return new Order();
+    }
+
+    public ReqResOrder getMyOrders (String userId) {
+        ReqResOrder resp = new ReqResOrder();
+        try {
+            var findUser = userRepository.findById(userId).get();
+            if ( findUser.getId() != null ) {
+                Sort sortByCreatedAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
+                var findOrderList = orderRepository.findByUserId(findUser.getId(), sortByCreatedAtDesc);
+                resp.setStatusCode(200);
+                resp.setMessage("Get my orders successfully");
+                resp.setDataList(findOrderList);
+            }
+            else {
+                throw new Exception("User not found");
+            }
+        } catch (Exception e ) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
 
     public ReqResOrder getById(String id) {
         ReqResOrder resp = new ReqResOrder();
@@ -61,13 +100,18 @@ public class OrderService {
 
         try {
             Order order = new Order();
-            order.setUserId(registrationRequest.getUserId());
-            order.setOrderDate(registrationRequest.getOrderDate());
+            order.setUser(registrationRequest.getUser());
+            order.setOrderDate(new Date());
             order.setTotalAmount(registrationRequest.getTotalAmount());
             order.setStatus(registrationRequest.getStatus());
             order.setShippingAddress(registrationRequest.getShippingAddress());
+            order.setEmail(registrationRequest.getEmail());
             order.setCreatedAt(new Date());
             order.setUpdatedAt(new Date());
+
+            var savedOrderDetails = orderDetailRepository.saveAll(registrationRequest.getDetails());
+
+            order.setDetails(savedOrderDetails);
 
             var saved = orderRepository.save(order);
 
@@ -84,35 +128,68 @@ public class OrderService {
         return resp;
     }
 
-    public ReqResOrder updateOrder(String id, Order registrationRequest) {
+//    public ReqResOrder updateOrder(String id, String status) {
+//        ReqResOrder resp = new ReqResOrder();
+//
+//        try {
+//            Order order = orderRepository.findById(id).get();
+//
+//            if ( order == null ) {
+//                throw new Exception("Order not found");
+//            }
+//
+////            order.setUser(registrationRequest.getUser());
+////            order.setOrderDate(registrationRequest.getOrderDate());
+////            order.setTotalAmount(registrationRequest.getTotalAmount());
+////            order.setStatus(registrationRequest.getStatus());
+////            order.setShippingAddress(registrationRequest.getShippingAddress());
+//            order.setStatus(status);
+//            order.setUpdatedAt(new Date());
+//            var saved = orderRepository.save(order);
+//
+//            if ( saved.getId() != null ) {
+//                resp.setStatusCode(200);
+//                resp.setMessage("Updated Order Successful");
+//                resp.setData(saved);
+//            }
+//
+//        } catch(Exception e) {
+//            resp.setStatusCode(500);
+//            resp.setError(e.getMessage());
+//        }
+//        return resp;
+//    }
+
+    public ReqResOrder updateOrder(String id, String status) {
         ReqResOrder resp = new ReqResOrder();
 
         try {
-            Order order = orderRepository.findById(id).get();
+            // Kiểm tra xem Order có tồn tại không
+            Optional<Order> optionalOrder = orderRepository.findById(id);
 
-            if ( order == null ) {
-                throw new Exception("Order not found");
+            if (!optionalOrder.isPresent()) {
+                resp.setStatusCode(404);
+                resp.setMessage("Order not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp).getBody();
             }
 
-            order.setUserId(registrationRequest.getUserId());
-            order.setOrderDate(registrationRequest.getOrderDate());
-            order.setTotalAmount(registrationRequest.getTotalAmount());
-            order.setStatus(registrationRequest.getStatus());
-            order.setShippingAddress(registrationRequest.getShippingAddress());
+            Order order = optionalOrder.get();
+            order.setStatus(status);
             order.setUpdatedAt(new Date());
-            var saved = orderRepository.save(order);
 
-            if ( saved.getId() != null ) {
-                resp.setStatusCode(200);
-                resp.setMessage("Updated Order Successful");
-                resp.setData(saved);
-            }
+            // Lưu Order đã cập nhật
+            Order savedOrder = orderRepository.save(order);
 
-        } catch(Exception e) {
+            resp.setStatusCode(200);
+            resp.setMessage("Updated Order Successfully");
+            resp.setData(savedOrder);
+
+            return ResponseEntity.ok(resp).getBody();
+        } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp).getBody();
         }
-        return resp;
     }
 
     public ReqResOrder deleteOrder(String id) {

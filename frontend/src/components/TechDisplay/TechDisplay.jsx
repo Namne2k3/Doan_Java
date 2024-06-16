@@ -50,7 +50,7 @@ const TechDisplay = ({ category }) => {
                         <NotFound />
                 }
             </div>
-            <ToastContainer hideProgressBar draggable autoClose={1500} containerId="C" />
+            <ToastContainer hideProgressBar draggable stacked autoClose={1500} containerId="C" />
         </>
     )
 }

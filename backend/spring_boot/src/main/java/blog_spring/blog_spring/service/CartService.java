@@ -23,24 +23,9 @@ public class CartService {
     @Autowired
     private UserRepository userRepository;
 
-//    public ReqResCart deleteById(String id) {
-//        ReqResCart reqRes = new ReqResCart();
-//        try {
-//            Cart cart = cartRepository.findById(id).get();
-//            if ( cart.getId() != null ) {
-//                cartRepository.deleteAllById(Collections.singleton(cart.getId()));
-//                reqRes.setStatusCode(200);
-//                reqRes.setMessage("Cart deleted successfully");
-//            } else {
-//                reqRes.setStatusCode(404);
-//                reqRes.setMessage("Cart not found for deletion");
-//            }
-//        } catch (Exception e) {
-//            reqRes.setStatusCode(500);
-//            reqRes.setMessage("Error occurred while deleting cart: " + e.getMessage());
-//        }
-//        return reqRes;
-//    }
+    public Cart createCart() {
+        return new Cart();
+    }
 
     public ReqResCart deleteById(String userId,String id) {
         ReqResCart reqRes = new ReqResCart();

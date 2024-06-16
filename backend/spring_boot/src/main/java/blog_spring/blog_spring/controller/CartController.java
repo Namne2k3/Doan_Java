@@ -19,6 +19,11 @@ public class CartController {
         return ResponseEntity.ok(cartService.addCart(id,product));
     }
 
+    @GetMapping("/api/v1/cart/createCart")
+    public ResponseEntity<Cart> createCart() {
+        return ResponseEntity.ok(cartService.createCart());
+    }
+
     @GetMapping("/api/v1/user/{id}/carts")
     public ResponseEntity<ReqResCart> getCart(@PathVariable String id) {
         return ResponseEntity.ok(cartService.getAllCart(id));

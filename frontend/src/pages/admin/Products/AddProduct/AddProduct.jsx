@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./AddProduct.css"
 
 import { assets } from '../../../../admin_assets/assets'
@@ -8,10 +8,13 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { toast, ToastContainer } from 'react-toastify';
+import { StoreContext } from '../../../../context/StoreContext';
 
 const AddProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
+
+    const { setAdminProducts } = useContext(StoreContext)
 
     const [image, setImage] = useState(false)
 
@@ -109,10 +112,10 @@ const AddProduct = () => {
         await handleUpload();
 
         const response = await axios.post(`${BASE_URL}/api/v1/products`, formData)
-        console.log("Check response >>> ", response.data);
         if (response.data.statusCode !== 200) {
             setImage(false);
             toast(response.data.message)
+            setAdminProducts(prev => [...prev, response.data.data])
         }
         else {
             setData(
@@ -225,7 +228,6 @@ const AddProduct = () => {
                         </label>
                         <input name='image' accept='image/*' onChange={(e) => {
                             setImage(e.target.files[0])
-                            console.log(e.target.files[0]);
                         }} type="file" id='image' hidden required />
                     </div>
 
@@ -280,7 +282,7 @@ const AddProduct = () => {
                                 setData({ ...data, content: document.getElementsByClassName("ck-content")[0].innerHTML });
                             }}
                             onReady={editor => {
-                                console.log('Editor is ready to use!', editor);
+                                // console.log('Editor is ready to use!', editor);
                             }}
                         />
                     </div>

@@ -5,6 +5,7 @@ import blog_spring.blog_spring.model.OrderDetail;
 import blog_spring.blog_spring.repository.OrderDetailRepository;
 import blog_spring.blog_spring.repository.OrderRepository;
 import blog_spring.blog_spring.repository.ProductRepository;
+import blog_spring.blog_spring.repository.UserRepository;
 import blog_spring.blog_spring.service.OrderService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +44,8 @@ public class StripeWebhookController {
     private OrderRepository orderRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<String> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
@@ -95,8 +98,14 @@ public class StripeWebhookController {
     }
     private Order createOrderFromSession(Session session, LineItemCollection lineItems, Map<String, String> metadata, Map<String, Integer> productIdQuantityMap) {
         Order order = new Order();
-        order.setUserId(metadata.get("userId"));
+
+        var findUser = userRepository.findById(metadata.get("userId")).get();
+        if ( findUser.getId() != null ) {
+            order.setUser(findUser);
+        }
+
         order.setEmail(metadata.get("email"));
+        order.setPhone(metadata.get("phone"));
         order.setShippingAddress(metadata.get("address"));
         order.setCreatedAt(new Date());
         order.setUpdatedAt(new Date());

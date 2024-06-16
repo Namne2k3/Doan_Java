@@ -35,6 +35,7 @@ public class CheckoutController {
         String userId = (String) profileInfo.get("id");
         String email = (String) profileInfo.get("email");
         String address = (String) profileInfo.get("address");
+        String phone = (String) profileInfo.get("phone");
 
         // Tạo danh sách các line items cho session thanh toán
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
@@ -50,7 +51,7 @@ public class CheckoutController {
                             .setQuantity((long) quantity)
                             .setPriceData(
                                     SessionCreateParams.LineItem.PriceData.builder()
-                                            .setUnitAmount((long) price)
+                                            .setUnitAmount((long) price )
                                             .setCurrency("vnd")
                                             .setProductData(
                                                     SessionCreateParams.LineItem.PriceData.ProductData.builder()
@@ -79,6 +80,7 @@ public class CheckoutController {
                 .putMetadata("userId", userId)
                 .putMetadata("email", email)
                 .putMetadata("address", address)
+                .putMetadata("phone", phone)
                 .putMetadata("productIdQuantity", productIdQuantityJson)
                 .build();
 
@@ -109,7 +111,7 @@ public class CheckoutController {
         // Tạo session tạo Stripe
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/success") // URL sau khi thanh toán thành công
+                .setSuccessUrl("http://localhost:3000/myorder") // URL sau khi thanh toán thành công
                 .setCancelUrl("http://localhost:3000/cancel")  // URL nếu thanh toán bị hủy
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()

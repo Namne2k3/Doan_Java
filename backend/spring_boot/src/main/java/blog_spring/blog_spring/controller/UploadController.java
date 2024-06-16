@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 public class UploadController {
 
-    public static String UPLOAD_DIRECTORY = "D:\\File\\Code\\Lap Trinh Ung Dung Java\\Doan_Java\\Doan\\frontend\\public\\images";
+    public static String UPLOAD_DIRECTORY = "D:\\File\\Code\\Lap Trinh Ung Dung Java\\Doan_Java\\Doan_Java\\frontend\\public\\images";
 
     @PostMapping("/api/v1/ckeditor/upload")
     public ResponseEntity<Map<String, Object>> uploadImageFromCkeditor(@RequestParam("upload") MultipartFile file) throws IOException {

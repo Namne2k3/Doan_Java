@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 // import { food_list } from "../assets/images";
 import { userService } from "../services";
 import axios from "axios";
@@ -12,35 +12,38 @@ const StoreContextProvider = (props) => {
     const [profileInfo, setProfileInfo] = useState({})
     const [products, setProducts] = useState([]);
     const [carts, setCarts] = useState([])
+    const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+    const [oneProductOrder, setOneProductOrder] = useState(null);
+    const [userOrders, setUserOrders] = useState([])
+    const [adminOrders, setAdminOrders] = useState([])
+    const [cateAdminProducts, setCateAdminProducts] = useState("Laptop")
+    const [adminProducts, setAdminProducts] = useState([])
 
-    const fetchProductsByCategory = async (category) => {
-        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
+    const fetchAdminProductsByCategory = async () => {
+        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${cateAdminProducts}`)
         if (response.data.statusCode === 200) {
-            setProducts(prev => response.data.dataList || [])
-            // console.log("Check products >>> ", products);
+            setAdminProducts(prev => response.data.dataList || [])
         } else if (response.data.statusCode = 404) {
-            setProducts(prev => response.data.dataList || [])
-            console.log(response.data.message)
+            setAdminProducts(prev => response.data.dataList || [])
         } else {
             console.log(response.data.message)
         }
     }
 
-    const fetchAllCartByUser = async () => {
-        if (profileInfo.id) {
-            const response = await axios.get(`${BASE_URL}/api/v1/user/${profileInfo.id}/carts`)
-            if (response.status === 200) {
-                // console.log(response.data.dataList);
-                setCarts(response.data.dataList);
-                // return response.data.dataList;
+    const fetchAllOrder = async () => {
+        const res = await axios.get(`${BASE_URL}/admin/orders`, {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
+        })
+        if (res.data) {
+            setAdminOrders(res.data.dataList);
         }
     }
 
     const fetchProfileData = async () => {
         try {
 
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
             if (token) {
                 const response = await userService.getUserProfile(token);
                 setProfileInfo(response.data);
@@ -51,63 +54,132 @@ const StoreContextProvider = (props) => {
             console.error('Error fetching profile information:', err);
         }
     }
+    useEffect(() => {
+        if (token) {
+            fetchProfileData()
+        }
+
+        if (userService.adminOnly()) {
+            fetchAllOrder()
+        }
+
+        fetchAllCartByUser()
+    }, [])
+
+    const fetchProductsByCategory = async (category) => {
+        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
+        if (response.data.statusCode === 200) {
+            setProducts(prev => response.data.dataList || [])
+        } else if (response.data.statusCode = 404) {
+            setProducts(prev => response.data.dataList || [])
+            console.log(response.data.message)
+        } else {
+            console.log(response.data.message)
+        }
+    }
+
+    const fetchAllCartByUser = async () => {
+        if (token) {
+            const response = await axios.get(`${BASE_URL}/api/v1/user/${profileInfo.id}/carts`)
+            if (response.status === 200) {
+                // console.log(response.data.dataList);
+                setCarts(response.data.dataList);
+                // return response.data.dataList;
+            }
+        } else {
+            const carts = JSON.parse(localStorage.getItem('carts'))
+            setCarts(carts)
+            console.log(carts);
+        }
+    }
 
     const addToCart = async (itemId) => {
-        // Optimistic UI Update: cập nhật giỏ hàng ngay lập tức
-        // setCartItems((prev) => {
-        //     const newQuantity = prev[itemId] ? prev[itemId] + 1 : 1;
-        //     return { ...prev, [itemId]: newQuantity };
-        // });
+        if (token) {
 
+            try {
 
-        try {
-            // Lấy thông tin sản phẩm từ server
-            const productResponse = await axios.get(`${BASE_URL}/api/v1/products/${itemId}`);
-            if (productResponse.data.statusCode === 404) {
-                throw new Error("Product not found");
+                const productResponse = await axios.get(`${BASE_URL}/api/v1/products/${itemId}`);
+                if (productResponse.data.statusCode === 404) {
+                    throw new Error("Product not found");
+                }
+
+                if (profileInfo != null) {
+
+                    const addToCartResponse = await axios.post(`${BASE_URL}/api/v1/user/${profileInfo.id}/addCart`, productResponse.data.data);
+                    if (addToCartResponse.data.statusCode !== 200) {
+                        throw new Error(addToCartResponse.data.message);
+                    }
+                }
+
+            } catch (error) {
+                console.error("Failed to add item to cart:", error.message);
             }
+        } else {
+            const res = await axios.get(`${BASE_URL}/api/v1/products/${itemId}`)
+            const carts = []
+            if (res.data.data) {
+                const product = res.data.data;
+                if (localStorage.getItem('carts') == null) {
 
-            if (profileInfo != null) {
-                // Gửi yêu cầu để thêm sản phẩm vào giỏ hàng của người dùng
-                const addToCartResponse = await axios.post(`${BASE_URL}/api/v1/user/${profileInfo.id}/addCart`, productResponse.data.data);
-                if (addToCartResponse.data.statusCode !== 200) {
-                    throw new Error(addToCartResponse.data.message);
+                    const resCart = await axios.get(`${BASE_URL}/api/v1/cart/createCart`)
+                    const cart = resCart.data;
+                    cart.product = product;
+                    cart.quantity = 1;
+                    carts.push(cart);
+                    localStorage.setItem('carts', JSON.stringify(carts))
+                }
+                else {
+                    const findCarts = JSON.parse(localStorage.getItem('carts'))
+                    var findCart = findCarts.find(p => p.product.id === product.id)
+                    if (findCart) {
+                        findCart.quantity += 1;
+                    } else {
+                        const resCart = await axios.get(`${BASE_URL}/api/v1/cart/createCart`)
+                        const cart = resCart.data;
+                        cart.quantity = 1;
+                        cart.product = product;
+                        findCarts.push(cart);
+
+                    }
+                    localStorage.setItem('carts', JSON.stringify(findCarts))
                 }
             }
-
-        } catch (error) {
-            console.error("Failed to add item to cart:", error.message);
-
-            // Rollback trạng thái UI nếu có lỗi
-            setCartItems((prev) => {
-                const newQuantity = prev[itemId] ? prev[itemId] - 1 : 0;
-                if (newQuantity <= 0) {
-                    const { [itemId]: _, ...rest } = prev;
-                    return rest;
-                } else {
-                    return { ...prev, [itemId]: newQuantity };
-                }
-            });
         }
     };
 
     const removeFromCart = async (id) => {
-        // Lưu trạng thái hiện tại của giỏ hàng để có thể khôi phục nếu có lỗi
+
         const previousCarts = [...carts];
+        if (token) {
+            try {
+                const response = await axios.delete(`${BASE_URL}/api/v1/user/${profileInfo.id}/carts/${id}`);
 
-        // Optimistic UI Update: Cập nhật UI ngay lập tức
-        setCarts(prevCart => prevCart.filter(item => item.id !== id));
+                if (response.data.statusCode !== 200) {
+                    throw new Error(response.data.message);
+                }
+                else {
 
-        try {
-            const response = await axios.delete(`${BASE_URL}/api/v1/user/${profileInfo.id}/carts/${id}`);
+                    setCarts(prevCart => prevCart.filter(item => item.id !== id));
+                }
+            } catch (error) {
+                console.error("Error removing item from cart:", error.message);
 
-            if (response.data.statusCode !== 200) {
-                throw new Error(response.data.message);
+                setCarts(previousCarts);
             }
-        } catch (error) {
-            console.error("Error removing item from cart:", error.message);
-            // Rollback: Khôi phục lại trạng thái ban đầu nếu có lỗi
-            setCarts(previousCarts);
+        } else {
+            try {
+                var findCarts = JSON.parse(localStorage.getItem('carts'))
+                console.log(findCarts);
+                var findCart = findCarts.find(p => p.product.id === id);
+                if (findCart) {
+                    findCarts = findCart.map(p => p.product.id !== findCart.product.id)
+                }
+                localStorage.setItem('carts', findCarts);
+            } catch (error) {
+                console.error("Error removing item from cart:", error.message);
+            } finally {
+
+            }
         }
     };
 
@@ -124,11 +196,19 @@ const StoreContextProvider = (props) => {
         products,
         fetchProductsByCategory,
         fetchAllCartByUser,
-        fetchProfileData,
         carts,
         setCarts,
         removeFromCart,
-        getTotalCartAmount
+        getTotalCartAmount,
+        oneProductOrder,
+        setOneProductOrder,
+        userOrders, setUserOrders,
+        fetchAllOrder,
+        adminOrders, setAdminOrders,
+        fetchAdminProductsByCategory,
+        setCateAdminProducts, cateAdminProducts,
+        adminProducts,
+        setAdminProducts
     }
 
 
