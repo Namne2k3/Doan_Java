@@ -1,10 +1,11 @@
-import React, { useContext } from 'react'
+
 import "./techitem.css"
 import { images } from '../../assets/images'
-import { StoreContext } from '../../context/StoreContext';
-import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from "react-router-dom"
 
 const TechItem = ({ item: { id, name, price, description, image }, cartItems, addCartItem }) => {
+
+    const navigate = useNavigate()
 
     const VNDONG = (number) => {
         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
@@ -35,6 +36,7 @@ const TechItem = ({ item: { id, name, price, description, image }, cartItems, ad
                 </div>
                 <p className="tech-item-desc">{description}</p>
                 <p className="tech-item-price">{VNDONG(price)}</p>
+                <button onClick={() => navigate(`/products/${id}`)} className="btn-details">Xem chi tiết</button>
             </div>
         </div>
 

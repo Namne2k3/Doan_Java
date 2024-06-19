@@ -54,7 +54,7 @@ const ListProduct = () => {
                             ?
                             adminProducts.map((item, index) => {
                                 return (
-                                    <a href={`/admin/products/${item.id}`} className="list-table-format" key={index}>
+                                    <a href={`/products/${item.id}`} className="list-table-format" key={index}>
                                         <img src={item.image} alt="product_image" />
                                         <p>{item.name}</p>
                                         <p>{item.category.name}</p>

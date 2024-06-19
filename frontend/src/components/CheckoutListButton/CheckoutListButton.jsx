@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
-
+import "./CheckoutListButton.css"
 const stripePromise = loadStripe('pk_test_51PInmwP62Hmtd4hNYGpoY9QKGvRboVF0io0RKtIb7uipwLkaIKTgg88vAKIUS3vp9hYALO0H76MHPdHX4QZQTIAE00drpUcrZT'); // Public key từ Stripe Dashboard
 
 const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng" }) => {
@@ -64,7 +64,7 @@ const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng" }) => {
     };
 
     return (
-        <button onClick={handleCheckout}>
+        <button className='checkout_btn' onClick={handleCheckout}>
             {text}
         </button>
     );

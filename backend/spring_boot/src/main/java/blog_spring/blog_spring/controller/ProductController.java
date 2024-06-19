@@ -45,6 +45,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getById(id));
     }
 
+    @GetMapping("/api/v1/products/populars")
+    public ResponseEntity<ReqResProduct> getPopulars(@RequestParam @Nullable String category) {
+        return ResponseEntity.ok(productService.getPopulars(category));
+    }
+
     @PostMapping(value = "/api/v1/products")
     public ResponseEntity<ReqResProduct> addProduct(
             @RequestParam("name") String name,

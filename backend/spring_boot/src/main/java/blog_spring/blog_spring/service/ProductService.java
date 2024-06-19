@@ -22,6 +22,31 @@ public class ProductService {
     @Autowired
     private ProductAttributesRepository productAttributesRepository;
 
+    public ReqResProduct getPopulars(String category) {
+        ReqResProduct reqRes = new ReqResProduct();
+
+        try {
+            List<Product> result = productRepository.findFirst4ByOrderByWatchCountDesc();
+            if ( category != null && !category.equals("") ) {
+                result = result.stream()
+                        .filter(p -> p.getCategory().getName().equals(category))
+                        .toList();
+            }
+            if (!result.isEmpty()) {
+                reqRes.setDataList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No products found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
     public ReqResProduct getById(String id) {
         ReqResProduct reqRes = new ReqResProduct();
         try {

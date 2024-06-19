@@ -20,6 +20,7 @@ import Success from "./components/Success/Success";
 import PlaceOneOrder from "./pages/placeoneorder/PlaceOneOrder";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import NotFound from "./components/NotFound/NotFound";
+import Product from "./pages/product/Product";
 function App() {
 
   const [showLogin, setShowLogin] = useState(false);
@@ -46,7 +47,7 @@ function App() {
             <Route path="/register" element={<RegistrationPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/success" element={<Success />} />
-
+            <Route path="/products/:productId" element={<Product />} />
             {
               userService.adminOnly()
               &&
