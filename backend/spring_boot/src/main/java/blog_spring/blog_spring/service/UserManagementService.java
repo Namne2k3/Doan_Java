@@ -8,11 +8,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserManagementService {
@@ -27,6 +29,23 @@ public class UserManagementService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+    public ReqRes findByEmail(String email) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            User user = usersRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not found"));
+            reqRes.setData(user);
+            reqRes.setStatusCode(200);
+
+            reqRes.setMessage("Users with id '" + user.getId() + "' found successfully");
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+        }
+        return reqRes;
+    }
 
     public ReqRes register(ReqRes registrationRequest) {
         ReqRes resp = new ReqRes();

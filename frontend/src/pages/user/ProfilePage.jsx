@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { userService } from '../../services'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -9,11 +9,15 @@ const ProfilePage = () => {
     const navigate = useNavigate();
 
     const { profileInfo } = useContext(StoreContext);
-
     const logout = () => {
         userService.logout();
         navigate("/")
     }
+
+    useEffect(() => {
+
+    }, [profileInfo])
+
     return (
         <div className="profile-page-container">
             <h2>Profile Information</h2>

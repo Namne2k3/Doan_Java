@@ -1,6 +1,7 @@
 package blog_spring.blog_spring.controller;
 
 import blog_spring.blog_spring.dto.ReqResOrder;
+import blog_spring.blog_spring.dto.ReqResOrderSearch;
 import blog_spring.blog_spring.model.Order;
 import blog_spring.blog_spring.model.OrderDetail;
 import blog_spring.blog_spring.model.User;
@@ -23,6 +24,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
+    @PostMapping("/admin/orders/search")
+    public ResponseEntity<ReqResOrderSearch> searchOrders(@RequestBody ReqResOrderSearch reqResOrderSearch) {
+        return ResponseEntity.ok(orderService.searchOrders(reqResOrderSearch));
+    }
+
     @GetMapping("/api/v1/my_orders/{userId}")
     public ResponseEntity<ReqResOrder> getMyOrders(@PathVariable String userId) {
             return ResponseEntity.ok(orderService.getMyOrders(userId));
@@ -36,24 +42,9 @@ public class OrderController {
     public ResponseEntity<Order> getOrderById() {
         return ResponseEntity.ok(orderService.createOrder());
     }
+
     @PostMapping("/api/v1/orders")
-    public ResponseEntity<ReqResOrder> addOrder(
-            @RequestBody Order order
-//            @RequestParam List<OrderDetail> details,
-//            @RequestParam String email,
-//            @RequestParam String paymentMethod,
-//            @RequestParam String shippingAddress,
-//            @RequestParam String status,
-//            @RequestParam int totalAmount
-            ) {
-//        Order order = new Order();
-//        order.setDetails(details);
-//        order.setEmail(email);
-//        order.setOrderDate(new Date());
-//        order.setPaymentMethod(paymentMethod);
-//        order.setShippingAddress(shippingAddress);
-//        order.setStatus(status);
-//        order.setTotalAmount((long) totalAmount);
+    public ResponseEntity<ReqResOrder> addOrder(@RequestBody Order order) {
         return ResponseEntity.ok(orderService.addOrder(order));
     }
 

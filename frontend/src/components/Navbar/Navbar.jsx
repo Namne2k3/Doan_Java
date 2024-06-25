@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import "./Navbar.css"
 import { images } from '../../assets/images'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { StoreContext } from '../../context/StoreContext'
 import { userService } from '../../services'
 
@@ -11,12 +11,12 @@ const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState("home")
     const [isSearching, setIsSearching] = useState(false)
     const token = localStorage.getItem('token');
+    const navigate = useNavigate()
     const logout = () => {
         userService.logout();
         window.location.href = "/"
     }
 
-    const { profileInfo } = useContext(StoreContext);
 
     return (
         <div className='navbar'>
@@ -33,7 +33,7 @@ const Navbar = ({ setShowLogin }) => {
                     </ul>
                     :
                     <div className='navbar-search'>
-                        <input type='text' placeholder='Tìm kiếm sản phẩm' />
+                        <input onChange={(e) => setTimeout(() => navigate(`/search/${e.target.value}`), 2000)} type='text' placeholder='Tìm kiếm sản phẩm' />
                     </div>
             }
             <div className="navbar-right">
@@ -54,9 +54,9 @@ const Navbar = ({ setShowLogin }) => {
                                 Đăng xuất
                             </button> */}
                             <div className="navbar-profile">
-                                <Link to="/profile">
+                                <a href="/profile">
                                     <img src={images.profile_icon} alt='profile_image' />
-                                </Link>
+                                </a>
                                 <ul className="nav-profile-dropdown">
                                     <li>
                                         <Link to="/myorder">

@@ -1,15 +1,14 @@
 package blog_spring.blog_spring.service;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ public class JWTUtils {
         byte[] keyBytes = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
         this.key = new SecretKeySpec(keyBytes,"HmacSHA256");
     }
+
 
     // dùng để tạo một JSON Web Token (JWT) cho một
     // người dùng dựa trên các thông tin chi tiết của người dùng đó

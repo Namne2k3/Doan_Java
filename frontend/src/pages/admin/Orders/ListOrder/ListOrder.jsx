@@ -6,10 +6,23 @@ import { toast, ToastContainer } from 'react-toastify'
 import { images } from '../../../../assets/images'
 import NotFound from "../../../../components/NotFound/NotFound"
 import axios from 'axios'
+import moment from 'moment'
 
 const ListOrder = () => {
     const { adminOrders, setAdminOrders, fetchAllOrder } = useContext(StoreContext);
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
+
+    const BASE_URL = "http://localhost:8080"
+
+    const [orderSearch, setOrderSearch] = useState({
+        search: "",
+        year_month: "",
+        day: "",
+        status: "pending"
+    })
+
+    const [type_date_search, setType_date_search] = useState('month')
+
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -60,15 +73,72 @@ const ListOrder = () => {
         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
     };
 
+    const handleSubmitSearchOrder = async (e) => {
+        e.preventDefault();
+
+
+        const searching = async () => {
+            const res = await axios.post(`${BASE_URL}/admin/orders/search`, orderSearch, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            if (res.data) {
+                console.log("Check res data >>> ", res.data);
+                setAdminOrders(res.data.dataList)
+            }
+        }
+
+        toast.promise(searching, {
+            error: "Having error while searching orders data !!!",
+            success: "Filtered Orders data <3",
+            pending: "Filtering Orders data ... "
+        })
+
+    }
+
     return (
         <div>
             <div className="order add">
-                <div className=''>
+                <div className='order_search_container'>
                     <h3>Tìm kiếm đơn hàng</h3>
+                    <div className='checkbox_container'>
+                        <label htmlFor="month_type">Theo tháng</label>
+                        <input id='month_type' value="month" onChange={(e) => {
+                            setType_date_search(prev => e.target.value)
+                            setOrderSearch(prev => ({ ...prev, day: "" }))
+                        }} type="radio" name='type_date_search' />
+
+                        <label htmlFor="date_type">Theo ngày</label>
+                        <input id='date_type' value="date" onChange={(e) => {
+                            setType_date_search(prev => e.target.value)
+                            setOrderSearch(prev => ({ ...prev, year_month: "" }))
+                        }} type="radio" name='type_date_search' />
+                    </div>
+                    <form className='order_filter_form'>
+                        <input onChange={(e) => setOrderSearch(prev => ({ ...prev, search: e.target.value }))} type="text" placeholder='Tìm kiếm mã đơn hàng' />
+                        {
+                            type_date_search === "date" ?
+                                <input type="date" name='date' onChange={(e) => setOrderSearch(prev => ({ ...prev, day: e.target.value }))} />
+                                :
+                                <input type="month" name='year_month' onChange={(e) => setOrderSearch(prev => ({ ...prev, year_month: e.target.value }))} />
+                        }
+                        <select
+                            onChange={(e) => setOrderSearch(prev => ({ ...prev, status: e.target.value }))}
+                            name="status"
+                            id="status"
+                        >
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="deliveried">Deliveried</option>
+                        </select>
+                        <button onClick={handleSubmitSearchOrder} type='submit'>Tìm kiếm</button>
+                    </form>
                 </div>
+
                 <h3>Các đơn đặt hàng</h3>
                 {
-                    adminOrders.length > 0
+                    adminOrders
                         ? <div className="order-list">
                             {
                                 adminOrders.map((order) => (
@@ -89,7 +159,8 @@ const ListOrder = () => {
                                             <p className="order-item-address">{order.shippingAddress}</p>
                                             <p className="order-item-phone">{order.phone}</p>
                                         </div>
-                                        <p>Items: {order.details.length}</p>
+                                        <p>Vật phẩm: {order.details.length}</p>
+                                        <p>Ngày: {moment(order.orderDate).format('DD-MM-YYYY HH:mm:ss')}</p>
                                         <p>{VNDONG(order.totalAmount)}</p>
                                         <select
                                             onChange={(e) => {
@@ -110,7 +181,7 @@ const ListOrder = () => {
                         : <NotFound />
                 }
             </div>
-            <ToastContainer draggable stacked position='top-center' autoClose={1500} />
+            <ToastContainer hideProgressBar={false} draggable stacked position='top-center' autoClose={1000} />
         </div>
     );
 }

@@ -34,20 +34,30 @@ const PlaceOneOrder = () => {
     const handleSubmitOrder = async (e) => {
         const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
         const order = resOrder.data;
-
         order.details = oneProductOrder
-        order.email = email
         order.paymentMethod = "COD"
         order.shippingAddress = address
+        order.email = email
+        order.phone = phone
+
+        if (profileInfo.id) {
+            order.shippingAddress = profileInfo.address
+            order.email = profileInfo.email
+            order.phone = profileInfo.phone
+            order.user = {
+                id: profileInfo.id,
+                email: profileInfo.email,
+                phone: profileInfo.phone,
+                username: profileInfo.username,
+            };
+        }
         order.status = "PENDING"
+
         order.totalAmount = getTotalCartAmount(oneProductOrder) + 30000
 
         console.log("Check new order >>> ", order);
-        const response = await toast.promise(axios.post(`${BASE_URL}/api/v1/orders`, order), {
-            success: "Đang gửi hóa đơn",
-            pending: "Hóa đơn đã được gửi",
-            error: "Có lỗi khi gửi đơn"
-        })
+        await axios.post(`${BASE_URL}/api/v1/orders`, order)
+        const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
         if (response.data) {
             console.log("Check response data >>> ", response.data);
             if (response.data.statusCode === 200) {
@@ -126,10 +136,10 @@ const PlaceOneOrder = () => {
                                             <input onInput={() => setPaymentMethod("stripe")} id='stripe' type="radio" name='payment_method' />
                                         </div>
 
-                                        <div className="payment_select">
+                                        {/* <div className="payment_select">
                                             <label htmlFor="momo">Momo</label>
                                             <input onInput={() => setPaymentMethod("momo")} type="radio" id='momo' name='payment_method' />
-                                        </div>
+                                        </div> */}
                                     </>
                                 }
                                 <div className="payment_select">
@@ -154,7 +164,11 @@ const PlaceOneOrder = () => {
                                         ?
                                         <button onClick={() => console.log("momo")}>Thanh toán với Momo</button>
                                         :
-                                        <button>Thanh toán khi nhận hàng</button>
+                                        <button onClick={(e) => {
+                                            // setOneProductOrder([item])
+                                            console.log("1");
+                                            handleSubmitOrder(e)
+                                        }}>Thanh toán khi nhận hàng</button>
                                 :
                                 <button onClick={() => toast.promise(
                                     handleSubmitOrder(),

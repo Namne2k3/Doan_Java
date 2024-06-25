@@ -12,6 +12,7 @@ import com.mongodb.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,8 @@ import java.util.Objects;
 @RestController
 public class ProductController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
-
     @Autowired
     private BrandService brandService;
-
-    @Autowired
-    private UserManagementService userManagementService;
 
     @Autowired
     private CategoryService categoryService;
@@ -38,6 +34,11 @@ public class ProductController {
     @GetMapping("/api/v1/products")
     public ResponseEntity<ReqResProduct> getProducts(@RequestParam @Nullable String category){
         return ResponseEntity.ok(productService.getAllProducts(category));
+    }
+
+    @GetMapping(value = "/api/v1/products", params = "search")
+    public ResponseEntity<ReqResProduct> getSearchProducts(@RequestParam @Nullable String search){
+        return ResponseEntity.ok(productService.getSearchProducts(search));
     }
 
     @GetMapping("/api/v1/products/{id}")

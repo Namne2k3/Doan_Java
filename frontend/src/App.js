@@ -9,7 +9,7 @@ import Home from './pages/home/Home';
 import Cart from './pages/cart/Cart';
 import PlaceOrder from './pages/placeorder/PlaceOrder';
 import Footer from "./components/Footer/Footer";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
 import Admin from "./pages/admin/Admin";
 import AddProduct from "./pages/admin/Products/AddProduct/AddProduct";
@@ -21,10 +21,19 @@ import PlaceOneOrder from "./pages/placeoneorder/PlaceOneOrder";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import NotFound from "./components/NotFound/NotFound";
 import Product from "./pages/product/Product";
+import OAuth2Callback from "./services/OAuth2Callback";
+import Search from "./pages/Search/Search";
+import { StoreContext } from "./context/StoreContext";
 function App() {
-
+  const { fetchProfileData } = useContext(StoreContext);
   const [showLogin, setShowLogin] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchProfileData();
+    }
+  }, []); // Chạy một lần sau khi component được mount
 
   return (
     <BrowserRouter>
@@ -47,7 +56,9 @@ function App() {
             <Route path="/register" element={<RegistrationPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/search/:search" element={<Search />} />
             <Route path="/products/:productId" element={<Product />} />
+            <Route path="/oauth2/callback" element={<OAuth2Callback />} />
             {
               userService.adminOnly()
               &&

@@ -118,7 +118,7 @@ public class CheckoutController {
                                 .setQuantity((long)quantity)
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
-                                                .setUnitAmount(Long.valueOf(price))
+                                                .setUnitAmount(Long.valueOf(price + 30000))
                                                 .setCurrency("vnd")
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()

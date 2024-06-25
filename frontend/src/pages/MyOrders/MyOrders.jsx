@@ -46,6 +46,7 @@ const MyOrders = () => {
                     userOrders.map((order, index) => {
                         return (
                             <div key={index} className="my-orders-order">
+                                <b>{order.id}</b>
                                 <img src={images.parcel_icon} alt="parcel_icon" />
                                 <p>
                                     {

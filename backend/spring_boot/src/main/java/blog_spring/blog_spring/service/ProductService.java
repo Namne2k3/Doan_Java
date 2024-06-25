@@ -6,10 +6,14 @@ import blog_spring.blog_spring.model.Product;
 import blog_spring.blog_spring.model.Product_Attributes;
 import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.repository.*;
+import com.mongodb.client.AggregateIterable;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +24,51 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
     private ProductAttributesRepository productAttributesRepository;
 
+    public ReqResProduct getSearchProducts(String search) {
+        ReqResProduct reqRes = new ReqResProduct();
+        try {
+
+            if ( search != null && !search.equals("") ) {
+
+                // amoled
+                List<Document> pipeline = Arrays.asList(
+                        new Document("$search", new Document("text", new Document("query", search)
+                                .append("path", Arrays.asList("name", "content", "description", "price", "product_attributes", "category", "brand" )))),
+                        new Document("$set", new Document("id", new Document("$toString", "$_id"))), // Đổi _id thành id và chuyển đổi ObjectId thành String
+                        new Document("$unset", "_id") // Bỏ _id khỏi tài liệu
+                );
+
+
+                AggregateIterable<Document> result = mongoTemplate.getCollection("products" ).aggregate(pipeline);
+
+                List<Document> resultsList = new ArrayList<>();
+                for (Document doc : result) {
+                    resultsList.add(doc);
+                }
+                if (!resultsList.isEmpty()) {
+                    reqRes.setDataList(resultsList);
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Successful" );
+                } else {
+                    reqRes.setStatusCode(404);
+                    reqRes.setMessage("No products found" );
+                }
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+        } finally {
+            return reqRes;
+        }
+    }
+
     public ReqResProduct getPopulars(String category) {
+
         ReqResProduct reqRes = new ReqResProduct();
 
         try {

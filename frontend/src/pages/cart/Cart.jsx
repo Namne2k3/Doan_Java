@@ -147,15 +147,15 @@ const Cart = () => {
                                         }
                                         <p>{VNDONG(item.product.price * item.quantity)}</p>
                                         {
-                                            profileInfo.id ?
-                                                <CheckoutListButton carts={[item]} text="Thanh toán" />
-                                                :
-                                                <button onClick={() => {
-                                                    setOneProductOrder([item])
-                                                    navigate('/place_product_order')
-                                                }}>
-                                                    Thanh toán
-                                                </button>
+                                            // profileInfo.id ?
+                                            // <CheckoutListButton carts={[item]} text="Thanh toán" />
+                                            // :
+                                            <button onClick={() => {
+                                                setOneProductOrder([item])
+                                                navigate('/place_product_order')
+                                            }}>
+                                                Thanh toán
+                                            </button>
                                         }
                                         {
                                             token !== null

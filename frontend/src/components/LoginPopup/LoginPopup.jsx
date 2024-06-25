@@ -3,6 +3,7 @@ import "./LoginPopup.css"
 import { images } from '../../assets/images'
 import { userService } from '../../services'
 import { useNavigate } from "react-router-dom";
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
 const LoginPopup = ({ setShowLogin }) => {
 
     const [currentState, setCurrentState] = useState("Login")
@@ -13,7 +14,6 @@ const LoginPopup = ({ setShowLogin }) => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const navigate = useNavigate();
-
 
 
     const handleSubmitLogin = async (e) => {
@@ -96,6 +96,22 @@ const LoginPopup = ({ setShowLogin }) => {
                                     : "Đăng nhập"
                             }
                         </button>
+                        <div class="google_btn_container ">
+                            <GoogleSignInButton setShowLogin={setShowLogin} />
+                        </div>
+                        {/* <div class="google_btn_container ">
+                            <Link to="/oauth2/authorization/facebook">
+                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" loading="lazy" alt="google logo" />
+                                <span>Login with Facebook</span>
+                            </Link>
+                        </div>
+                        <div class="google_btn_container ">
+                            <Link to="/oauth2/authorization/github">
+                                <img src="https://www.svgrepo.com/show/512317/github-142.svg" loading="lazy" alt="google logo" />
+                                <span>Login with Github</span>
+                            </Link>
+                        </div> */}
+
                         {
                             currentState === "Login"
                                 ?

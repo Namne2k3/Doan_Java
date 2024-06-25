@@ -2,17 +2,31 @@ package blog_spring.blog_spring.controller;
 
 import blog_spring.blog_spring.dto.ReqRes;
 import blog_spring.blog_spring.model.User;
+import blog_spring.blog_spring.service.JWTUtils;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import blog_spring.blog_spring.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserManagementController {
     @Autowired
     private UserManagementService usersManagementService;
+
+    @Autowired
+    private JWTUtils jwtUtils;
 
     @GetMapping("/api/v1/users")
     public ResponseEntity<ReqRes> getUsers(){

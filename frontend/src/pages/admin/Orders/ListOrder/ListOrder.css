@@ -33,6 +33,46 @@
     outline: none;
 }
 
+.order_search_container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.order_search_container input {
+    padding: 6px 12px;
+    border-radius: 4px;
+    max-width: 500px;
+}
+
+.order_search_container select {
+    padding: 6px 12px;
+    border-radius: 4px;
+    max-width: 500px;
+}
+
+.order_filter_form {
+    display: flex;
+    gap: 6px !important;
+}
+
+.order_filter_form button {
+    padding: 6px 12px;
+    outline: none;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.checkbox_container {
+    display: flex;
+}
+
+.checkbox_container input {
+    margin-right: 12px;
+    margin-left: 6px;
+}
+
 @media(max-width: 1000px) {
     .order-item {
         font-size: 12px;

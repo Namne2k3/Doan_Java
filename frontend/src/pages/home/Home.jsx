@@ -4,11 +4,12 @@ import Header from '../../components/Header/Header'
 import Menu from '../../components/Menu/Menu'
 import TechDisplay from '../../components/TechDisplay/TechDisplay'
 import { fetchALlCategories } from '../../services/CategoryService'
-import { ToastContainer } from 'react-toastify'
 
 const Home = () => {
 
     const [category, setCategory] = useState("")
+
+
     const [menuList, setMenuList] = useState([])
 
     useEffect(() => {

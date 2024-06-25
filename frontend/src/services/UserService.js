@@ -86,6 +86,16 @@ const getUserById = async (userId, token) => {
     }
 }
 
+const authenticateWithOAuth2 = async (token) => {
+    try {
+        console.log(token);
+        const response = await axios.post('/api/v1/auth/oauth2/login', { token });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const deleteUser = async (userId, token) => {
     try {
         const response = await axios.delete(`${BASE_URL}/admin/delete/${userId}`, {
@@ -148,5 +158,6 @@ export {
     isAuthenticated,
     isAdmin,
     isUser,
-    adminOnly
+    adminOnly,
+    authenticateWithOAuth2
 }

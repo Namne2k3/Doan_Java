@@ -30,6 +30,18 @@ const StoreContextProvider = (props) => {
         }
     }
 
+    const fetchProductBySearching = async (search) => {
+        const response = await axios.get(`${BASE_URL}/api/v1/products?search=${search}`)
+        if (response.data.statusCode === 200) {
+            setProducts(prev => response.data.dataList || [])
+        } else if (response.data.statusCode = 404) {
+            setProducts(prev => response.data.dataList || [])
+            console.log(response.data.message)
+        } else {
+            console.log(response.data.message)
+        }
+    }
+
     const fetchAllOrder = async () => {
         const res = await axios.get(`${BASE_URL}/admin/orders`, {
             headers: {
@@ -46,7 +58,7 @@ const StoreContextProvider = (props) => {
 
             if (token) {
                 const response = await userService.getUserProfile(token);
-                setProfileInfo(response.data);
+                await setProfileInfo(prev => ({ ...prev, ...response.data }));
 
             }
 
@@ -55,9 +67,6 @@ const StoreContextProvider = (props) => {
         }
     }
     useEffect(() => {
-        if (token) {
-            fetchProfileData()
-        }
 
         if (userService.adminOnly()) {
             fetchAllOrder()
@@ -89,7 +98,6 @@ const StoreContextProvider = (props) => {
         } else {
             const carts = JSON.parse(localStorage.getItem('carts'))
             setCarts(carts)
-            console.log(carts);
         }
     }
 
@@ -208,7 +216,9 @@ const StoreContextProvider = (props) => {
         fetchAdminProductsByCategory,
         setCateAdminProducts, cateAdminProducts,
         adminProducts,
-        setAdminProducts
+        setAdminProducts,
+        fetchProductBySearching,
+        fetchProfileData
     }
 
 
