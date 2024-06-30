@@ -17,12 +17,12 @@ const AddProduct = () => {
     const { setAdminProducts } = useContext(StoreContext)
 
     const [image, setImage] = useState(false)
-
-    const [brands, setBrands] = useState([]);
-
     const [images, setImages] = useState([]);
 
+    const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
+
+
 
     const [data, setData] = useState({
         name: "",

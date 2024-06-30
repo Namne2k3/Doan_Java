@@ -61,18 +61,56 @@ public class BrandService {
         }
     }
 
-    public ReqResBrand addCategory(ReqResBrand registrationRequest) {
+    public ReqResBrand addBrand(ReqResBrand registrationRequest) {
         ReqResBrand resp = new ReqResBrand();
 
         try {
+
+            var isExisted = brandRepository.findByName(registrationRequest.getName());
+
+            if ( isExisted != null ) {
+                resp.setStatusCode(400);
+                resp.setMessage("Thương hiệu đã tồn tại");
+                return resp;
+            }
+
             Brand brand = new Brand();
-            brand.setName(registrationRequest.getName());
+            brand.setName(registrationRequest.getName().trim());
             brand.setDescription(registrationRequest.getDescription());
             var saved = brandRepository.save(brand);
 
             if ( saved.getId() != null ) {
                 resp.setStatusCode(200);
                 resp.setMessage("Saved Brand Successful");
+                resp.setData(saved);
+            }
+
+        } catch(Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public ReqResBrand updateBrandSetHide(String id, String isHide) {
+        ReqResBrand resp = new ReqResBrand();
+
+        try {
+            Brand brand = brandRepository.findById(id).get();
+            if ( brand.getId() != null ) {
+                if ( isHide != null && isHide.equals("true") ) {
+                    brand.setHide(true);
+                }
+
+                if ( isHide != null && isHide.equals("false") ) {
+                    brand.setHide(false);
+                }
+            }
+            var saved = brandRepository.save(brand);
+
+            if ( saved.getId() != null ) {
+                resp.setStatusCode(200);
+                resp.setMessage("Cập nhật brand thành công");
                 resp.setData(saved);
             }
 

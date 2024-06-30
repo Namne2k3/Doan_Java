@@ -27,6 +27,8 @@ public class ReqResBrand<T> {
 
     private String description;
 
+    private String isHide;
+
     @DBRef
     private List<Product> products;
 }

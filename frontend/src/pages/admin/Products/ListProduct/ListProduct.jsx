@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import "./ListProduct.css"
 import { ToastContainer, toast } from 'react-toastify'
 import NotFound from '../../../../components/NotFound/NotFound'
@@ -7,7 +8,8 @@ import { StoreContext } from '../../../../context/StoreContext'
 const ListProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
-
+    const navigate = useNavigate()
+    const token = localStorage.getItem('token')
     const { cateAdminProducts, setCateAdminProducts, setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
 
     useEffect(() => {
@@ -21,11 +23,16 @@ const ListProduct = () => {
         //     })
         // }
         fetchAdminProductsByCategory()
-    }, [adminProducts])
 
-    const removeProduct = async (e, id) => {
+    }, [])
+
+    const hidingProduct = async (e, id, isHide) => {
         // alert(`Deleted >>> ${id}`)
-        const response = await axios.delete(`${BASE_URL}/api/v1/products/${id}`)
+        const response = await axios.put(`${BASE_URL}/admin/products/setHide/${id}?isHide=${isHide}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         if (response.data.statusCode === 200) {
             // toast(response.data.message);
             await fetchAdminProductsByCategory()
@@ -53,29 +60,57 @@ const ListProduct = () => {
                         adminProducts.length > 0
                             ?
                             adminProducts.map((item, index) => {
+
                                 return (
-                                    <a href={`/products/${item.id}`} className="list-table-format" key={index}>
-                                        <img src={item.image} alt="product_image" />
+                                    <div className="list-table-format" key={index}>
+                                        <img src={`/images/${item.image}`} alt="product_image" />
                                         <p>{item.name}</p>
                                         <p>{item.category.name}</p>
                                         <p>{item.price}</p>
 
-                                        <p className='cursor'
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                if (window.confirm("Delete this product?")) {
-                                                    toast.promise(
-                                                        removeProduct(e, item.id),
-                                                        {
-                                                            pending: 'Remove Product is pending',
-                                                            success: 'Removed Product Successfully 👌',
-                                                            error: 'Error rejected Remove product 🤯'
-                                                        },
-                                                        { containerId: 'B' }
-                                                    )
-                                                }
-                                            }} onContextMenu={(e) => e.preventDefault()}>X</p>
-                                    </a>
+                                        {
+                                            item.hide === false ?
+                                                <button className='cursor'
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        if (window.confirm("Bạn chắc chắn muốn ẩn sản phẩm này?")) {
+                                                            toast.promise(
+                                                                hidingProduct(e, item.id, true),
+                                                                {
+                                                                    pending: 'Đang xử lý',
+                                                                    success: 'Đã xử lý thành công 👌',
+                                                                    error: 'Có lỗi khi xử lý 🤯'
+                                                                },
+                                                                { containerId: 'B' }
+                                                            )
+                                                        }
+                                                    }}>Ẩn</button>
+                                                :
+                                                <button className='cursor'
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        if (window.confirm("Delete this product?")) {
+                                                            toast.promise(
+                                                                hidingProduct(e, item.id, false),
+                                                                {
+                                                                    pending: 'Đang xử lý',
+                                                                    success: 'Đã xử lý thành công 👌',
+                                                                    error: 'Có lỗi khi xử lý 🤯'
+                                                                },
+                                                                { containerId: 'B' }
+                                                            )
+                                                        }
+                                                    }}>Hủy ẩn</button>
+                                        }
+
+                                        <button onClick={() => navigate(`/products/${item.id}`)}>
+                                            Chi tiết
+                                        </button>
+
+                                        <button className='cursor' onClick={() => navigate(`/admin/products/edit/${item.id}`)}>
+                                            Chỉnh sửa
+                                        </button>
+                                    </div>
                                 )
                             })
                             :

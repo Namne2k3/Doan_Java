@@ -3,6 +3,7 @@ import "./LoginPopup.css"
 import { images } from '../../assets/images'
 import { userService } from '../../services'
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
 const LoginPopup = ({ setShowLogin }) => {
 
@@ -15,6 +16,19 @@ const LoginPopup = ({ setShowLogin }) => {
     const [error, setError] = useState('')
     const navigate = useNavigate();
 
+    const handleClickLogin = async (e) => {
+        try {
+            // Gọi toast.promise và xử lý kết quả
+            await toast.promise(handleSubmitLogin(e), {
+                success: "Đăng nhập thành công!",
+                error: "Đăng nhập không thành công!"
+            });
+        } catch (error) {
+            // Xử lý lỗi từ handleChangeProfile
+            console.error("Lỗi khi đăng nhập:", error);
+            // Có thể hiển thị toast error riêng ở đây nếu muốn
+        }
+    }
 
     const handleSubmitLogin = async (e) => {
         e.preventDefault();
@@ -28,15 +42,19 @@ const LoginPopup = ({ setShowLogin }) => {
                 setShowLogin(false)
                 window.location.href = "/"
             } else {
+                if (userData.statusCode === 500) {
+                    throw new Error("Đăng nhập không thành công")
+                }
                 setError(userData.message)
             }
 
         } catch (error) {
-            console.log(error)
-            setError(error.message)
-            setTimeout(() => {
-                setError('');
-            }, 5000);
+            throw error;
+            // console.log(error)
+            // setError(error.message)
+            // setTimeout(() => {
+            //     setError('');
+            // }, 5000);
         }
     }
 
@@ -71,7 +89,7 @@ const LoginPopup = ({ setShowLogin }) => {
             {
                 currentState === "Login"
                     ?
-                    <form onSubmit={handleSubmitLogin} className="login-popup-container">
+                    <form onSubmit={handleClickLogin} className="login-popup-container">
                         <div className="login-popup-title">
                             <h2>{currentState === "Login" ? "Đăng nhập" : "Đăng ký"}</h2>
                             <img src={images.cross_icon} onClick={() => setShowLogin(false)} alt="" />
@@ -140,6 +158,7 @@ const LoginPopup = ({ setShowLogin }) => {
                     </form>
 
             }
+            <ToastContainer />
         </div>
     )
 }

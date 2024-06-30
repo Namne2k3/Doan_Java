@@ -6,7 +6,6 @@ import axios from "axios";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
-
     const BASE_URL = "http://localhost:8080"
     const [cartItems, setCartItems] = useState({});
     const [profileInfo, setProfileInfo] = useState({})
@@ -20,7 +19,11 @@ const StoreContextProvider = (props) => {
     const [adminProducts, setAdminProducts] = useState([])
 
     const fetchAdminProductsByCategory = async () => {
-        const response = await axios.get(`${BASE_URL}/api/v1/products?category=${cateAdminProducts}`)
+        const response = await axios.get(`${BASE_URL}/admin/v1/products`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         if (response.data.statusCode === 200) {
             setAdminProducts(prev => response.data.dataList || [])
         } else if (response.data.statusCode = 404) {
@@ -31,6 +34,7 @@ const StoreContextProvider = (props) => {
     }
 
     const fetchProductBySearching = async (search) => {
+        console.log("Searching ... ");
         const response = await axios.get(`${BASE_URL}/api/v1/products?search=${search}`)
         if (response.data.statusCode === 200) {
             setProducts(prev => response.data.dataList || [])
@@ -43,13 +47,20 @@ const StoreContextProvider = (props) => {
     }
 
     const fetchAllOrder = async () => {
-        const res = await axios.get(`${BASE_URL}/admin/orders`, {
-            headers: {
-                Authorization: `Bearer ${token}`
+        try {
+            if (token) {
+                const res = await axios.get(`${BASE_URL}/admin/orders`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                if (res.data) {
+                    setAdminOrders(res.data.dataList);
+                }
             }
-        })
-        if (res.data) {
-            setAdminOrders(res.data.dataList);
+
+        } catch (e) {
+            console.log(e.message);
         }
     }
 
@@ -58,7 +69,7 @@ const StoreContextProvider = (props) => {
 
             if (token) {
                 const response = await userService.getUserProfile(token);
-                await setProfileInfo(prev => ({ ...prev, ...response.data }));
+                setProfileInfo(prev => ({ ...prev, ...response.data }));
 
             }
 
@@ -68,7 +79,7 @@ const StoreContextProvider = (props) => {
     }
     useEffect(() => {
 
-        if (userService.adminOnly()) {
+        if (userService.adminOnly() === true) {
             fetchAllOrder()
         }
 

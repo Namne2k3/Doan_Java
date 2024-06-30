@@ -23,13 +23,22 @@ public class BrandController {
     }
 
     @PostMapping("/api/v1/brands")
-    public ResponseEntity<ReqResBrand> addBrand(@RequestBody ReqResBrand reqResBrand) {
-        return ResponseEntity.ok(brandService.addCategory(reqResBrand));
+    public ResponseEntity<ReqResBrand> addBrand(@RequestParam String name, @RequestParam String description) {
+
+        ReqResBrand reqResBrand = new ReqResBrand();
+        reqResBrand.setName(name);
+        reqResBrand.setDescription(description);
+        return ResponseEntity.ok(brandService.addBrand(reqResBrand));
     }
 
-    @PutMapping("/api/v1/brands/{id}")
+    @PutMapping("/admin/brands/{id}")
     public ResponseEntity<ReqResBrand> updateBrand(@PathVariable String id, @RequestBody ReqResBrand reqResBrand) {
         return ResponseEntity.ok(brandService.updateBrand(id,reqResBrand));
+    }
+
+    @PutMapping("/admin/brands/setHide/{id}")
+    public ResponseEntity<ReqResBrand> updateBrandSetHide(@PathVariable String id, @RequestParam("isHide") String isHide) {
+        return ResponseEntity.ok(brandService.updateBrandSetHide(id,isHide));
     }
 
     @DeleteMapping("/api/v1/brands/{id}")

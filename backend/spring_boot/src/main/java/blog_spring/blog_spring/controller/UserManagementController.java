@@ -1,24 +1,16 @@
 package blog_spring.blog_spring.controller;
 
 import blog_spring.blog_spring.dto.ReqRes;
+import blog_spring.blog_spring.dto.VerifyPasswordRequest;
 import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.service.JWTUtils;
-import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import blog_spring.blog_spring.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserManagementController {
@@ -36,6 +28,17 @@ public class UserManagementController {
     @PostMapping("/auth/register")
     public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg){
         return ResponseEntity.ok(usersManagementService.register(reg));
+    }
+
+    @PutMapping("/auth/update")
+    public ResponseEntity<ReqRes> updateUser(@RequestBody User user){
+        return ResponseEntity.ok(usersManagementService.updateUser(user.getId(), user));
+    }
+
+    @PostMapping("/auth/verifyPasswordToken")
+    public ResponseEntity<ReqRes> verifyPasswordToken(@RequestParam("token") String token,
+                                                       @RequestParam("password") String password) {
+        return ResponseEntity.ok(usersManagementService.checkPasswordAndToken(token, password));
     }
 
     @PostMapping("/auth/login")
@@ -59,10 +62,10 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.getUsersById(userId));
     }
 
-    @PutMapping("/admin/update/{userId}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable String userId, @RequestBody User reqres){
-        return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
-    }
+//    @PutMapping("/admin/update/{userId}")
+//    public ResponseEntity<ReqRes> updateUser(@PathVariable String userId, @RequestBody User reqres){
+//        return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
+//    }
 
     @GetMapping("/adminuser/get-profile")
     public ResponseEntity<ReqRes> getMyProfile(){

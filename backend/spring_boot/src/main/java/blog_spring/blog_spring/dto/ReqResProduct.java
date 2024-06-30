@@ -31,7 +31,7 @@ public class ReqResProduct<T> {
     private int stock_quantity;
 
     @DBRef
-    private Product_Attributes attributes;
+    private Product_Attributes product_attributes;
 
     @DBRef
     private Watch_Attributes watch_attributes;
@@ -54,6 +54,8 @@ public class ReqResProduct<T> {
     private List<String> images;
 
     private String image;
+
+    private boolean isHide;
 
     private T data;
     private List<T> dataList;

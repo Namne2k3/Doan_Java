@@ -11,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserManagementService {
@@ -30,6 +27,26 @@ public class UserManagementService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public ReqRes checkPasswordAndToken(String token, String password) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            boolean isPass = jwtUtils.verifyPasswordAndToken(password, token);
+            if ( isPass == true ) {
+
+                reqRes.setIsVerified(isPass);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Verified password successfully");
+            } else {
+                throw new Exception("Sai mật khẩu");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(400);
+            reqRes.setMessage(e.getMessage());
+        }
+        return reqRes;
+
+    }
 
     public ReqRes findByEmail(String email) {
         ReqRes reqRes = new ReqRes();
@@ -102,7 +119,7 @@ public class UserManagementService {
         return resp;
     }
 
-    public ReqRes login(ReqRes loginRequest) {
+    public ReqRes   login(ReqRes loginRequest) {
         ReqRes resp = new ReqRes();
 
         try {
@@ -231,9 +248,11 @@ public class UserManagementService {
             Optional<User> userOptional = usersRepo.findById(String.valueOf(userId));
             if (userOptional.isPresent()) {
                 User existingUser = userOptional.get();
-                existingUser.setEmail(updatedUser.getEmail());
                 existingUser.setUsername(updatedUser.getUsername());
-                existingUser.setRole(updatedUser.getRole());
+                existingUser.setEmail(updatedUser.getEmail());
+                existingUser.setPhone(updatedUser.getPhone());
+                existingUser.setAddress(updatedUser.getAddress());
+                existingUser.setUpdatedAt(new Date());
 
                 // Check if password is present in the request
                 if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
@@ -244,10 +263,10 @@ public class UserManagementService {
                 User savedUser = usersRepo.save(existingUser);
                 reqRes.setData(savedUser);
                 reqRes.setStatusCode(200);
-                reqRes.setMessage("User updated successfully");
+                reqRes.setMessage("Dữ liệu đã được cập nhật");
             } else {
                 reqRes.setStatusCode(404);
-                reqRes.setMessage("User not found for update");
+                reqRes.setMessage("Không tim thấy tài khoản");
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);

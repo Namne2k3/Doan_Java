@@ -36,6 +36,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(category));
     }
 
+    @GetMapping("/admin/v1/products")
+    public ResponseEntity<ReqResProduct> getAdminProducts(@RequestParam @Nullable String category){
+        return ResponseEntity.ok(productService.getAllAdminProducts(category));
+    }
+
     @GetMapping(value = "/api/v1/products", params = "search")
     public ResponseEntity<ReqResProduct> getSearchProducts(@RequestParam @Nullable String search){
         return ResponseEntity.ok(productService.getSearchProducts(search));
@@ -160,10 +165,15 @@ public class ProductController {
         return ResponseEntity.ok(productService.addProduct(p, at));
     }
 
-//    @PutMapping("/api/v1/products/{id}")
-//    public ResponseEntity<ReqResProduct> updateProduct(@PathVariable String id, @RequestBody ReqResProduct reqResProduct){
-//        return ResponseEntity.ok(productService.updateProduct(id,reqResProduct));
-//    }
+    @PutMapping("/admin/products/{id}")
+    public ResponseEntity<ReqResProduct> updateProduct(@PathVariable String id, @RequestBody ReqResProduct reqResProduct){
+        return ResponseEntity.ok(productService.updateProduct(id,reqResProduct));
+    }
+
+    @PutMapping("/admin/products/setHide/{id}")
+    public ResponseEntity<ReqResProduct> updateProductIsHide(@PathVariable String id, @RequestParam("isHide") String isHide ){
+        return ResponseEntity.ok(productService.updateProductIsHide(id,isHide));
+    }
 
     @DeleteMapping("/api/v1/products/{id}")
     public ResponseEntity<ReqResProduct> deleteProduct(@PathVariable String id){

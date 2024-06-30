@@ -24,12 +24,25 @@ import Product from "./pages/product/Product";
 import OAuth2Callback from "./services/OAuth2Callback";
 import Search from "./pages/Search/Search";
 import { StoreContext } from "./context/StoreContext";
+import AdminBrands from "./pages/admin/Brands/AdminBrands";
+import UpdateBrand from "./pages/admin/Brands/UpdateBrand";
 function App() {
+
   const { fetchProfileData } = useContext(StoreContext);
   const [showLogin, setShowLogin] = useState(false);
-
+  const [isAdmin, setIsAdmin] = useState(false); // 
+  const token = localStorage.getItem('token');
   useEffect(() => {
-    const token = localStorage.getItem('token');
+
+    const checkAdmin = async () => {
+      if (token) { // Chỉ kiểm tra nếu có token
+        const isAdmin = await userService.adminOnly();
+        setIsAdmin(isAdmin);
+      }
+    };
+
+    checkAdmin();
+
     if (token) {
       fetchProfileData();
     }
@@ -60,12 +73,14 @@ function App() {
             <Route path="/products/:productId" element={<Product />} />
             <Route path="/oauth2/callback" element={<OAuth2Callback />} />
             {
-              userService.adminOnly()
+              isAdmin
               &&
               <Route path="/admin" element={<Admin />}>
+                <Route path="brands" element={<AdminBrands />} />
+                <Route path="brands/edit/:id" element={<UpdateBrand />} />
                 <Route path="products" element={<ListProduct />} />
                 <Route path="products/add" element={<AddProduct />} />
-                <Route path="products/update" element={<UpdateProduct />} />
+                <Route path="products/edit/:id" element={<UpdateProduct />} />
                 <Route path="user-management" element={<UserManagementPage />} />
                 <Route path="update-user/:userId" element={<UpdateUser />} />
                 <Route path="orders" element={<ListOrder />} />

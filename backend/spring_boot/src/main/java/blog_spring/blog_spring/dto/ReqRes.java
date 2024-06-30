@@ -21,6 +21,8 @@ public class ReqRes<T> {
 
     private String refreshToken;
 
+    private Boolean isVerified;
+
     private String expirationTime;
 
     private String username;

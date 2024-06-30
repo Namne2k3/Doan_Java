@@ -15,6 +15,10 @@ import java.util.List;
 @Data
 public class Product {
 
+    public Product() {
+        isHide = false;
+    }
+
     @Id
     private String id;
 
@@ -48,4 +52,6 @@ public class Product {
     private String image;
 
     private List<String> images;
+
+    private boolean isHide;
 }

@@ -1,8 +1,11 @@
 package blog_spring.blog_spring.service;
 
+import blog_spring.blog_spring.model.User;
+import blog_spring.blog_spring.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -16,6 +19,7 @@ import java.util.function.Function;
 
 @Component
 public class JWTUtils {
+    private final UserRepository userRepository;
     private SecretKey key;
 
     private static final Long EXPIRATION_TIME = 86400000L; // 24 hours
@@ -23,10 +27,11 @@ public class JWTUtils {
 
     // Constructor này khi khởi tạo sẽ tự động khởi tạo một key bí mật
     // Giúp cho việc mã hóa trở nên bảo mật
-    private JWTUtils() {
+    private JWTUtils(UserRepository userRepository) {
         String secretString = "843567893696976453275974432697R634976R738467TR678T34865R6834R8763T478378637664538745673865783678548735687R3";
         byte[] keyBytes = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
         this.key = new SecretKeySpec(keyBytes,"HmacSHA256");
+        this.userRepository = userRepository;
     }
 
 
@@ -92,6 +97,30 @@ public class JWTUtils {
                         // Lấy payload của token, đây là phần chứa các claims.
                         .getPayload()
         );
+    }
+
+    public boolean verifyPasswordAndToken(String currentPassword, String token) {
+        try {
+            // 1. Giải mã token để lấy username
+            String username = extractUsername(token);
+
+            // 2. Lấy thông tin người dùng từ database dựa vào username
+            User user = userRepository.findByUsername(username).get(); // Thay thế bằng phương thức của bạn
+
+            if (user.getId() == null) {
+                return false; // User không tồn tại
+            }
+
+            // 3. Giải mã password đã mã hóa (giả sử bạn đã mã hóa password trong database)
+            String encodedPassword = user.getPassword(); // Lấy password đã mã hóa từ user
+
+            // 4. So sánh mật khẩu mới với mật khẩu đã giải mã
+            return new BCryptPasswordEncoder().matches(currentPassword, encodedPassword);
+        } catch (Exception e) {
+            // Xử lý exception (ví dụ: token không hợp lệ)
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public String extractUsername(String token) {

@@ -16,7 +16,7 @@ const TechItem = ({ item: { id, name, price, description, image }, cartItems, ad
     return (
         <div className='tech-item'>
             <div className="tech-item-img-container">
-                <img src={image} className='tech-item-image' alt="tech_item_image" />
+                <img src={`/images/${image}`} className='tech-item-image' alt="tech_item_image" />
                 {
                     !cartItems[id]
                         ?

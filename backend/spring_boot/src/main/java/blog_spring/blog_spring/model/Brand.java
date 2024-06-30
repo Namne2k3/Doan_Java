@@ -11,10 +11,16 @@ import java.util.List;
 @Document(collection = "brands")
 public class Brand {
 
+    public Brand() {
+        isHide = false;
+    }
+
     @Id
     private String id;
 
     private String name;
 
     private String description;
+
+    private boolean isHide;
 }

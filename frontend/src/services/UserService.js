@@ -125,25 +125,52 @@ function logout() {
     localStorage.removeItem('role')
 }
 
-function isAuthenticated() {
+async function isAuthenticated() {
     const token = localStorage.getItem('token')
-    return !!token;
+    if (!token) {
+        return false;
+    }
+    const res = await axios.get(`${BASE_URL}/adminuser/get-profile`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return !!res.data.data.id;
 }
 
-function isAdmin() {
-    const role = localStorage.getItem('role')
-    return role === 'ADMIN'
+async function isAdmin() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+        return false;
+    }
+    const res = await axios.get(`${BASE_URL}/adminuser/get-profile`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return res.data.data.role === 'ADMIN'
 }
 
 
-function isUser() {
-    const role = localStorage.getItem('role')
-    return role === 'USER'
+async function isUser() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+        return false;
+    }
+    const res = await axios.get(`${BASE_URL}/adminuser/get-profile`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return res.data.data.role === 'USER'
 }
 
-function adminOnly() {
+async function adminOnly() {
 
-    return isAuthenticated() && isAdmin();
+    return await isAuthenticated() && await isAdmin();
 }
 
 export {

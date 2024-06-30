@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useEffect } from 'react'
 import "./Navbar.css"
 import { images } from '../../assets/images'
 import { useState } from 'react'
@@ -10,12 +10,24 @@ const Navbar = ({ setShowLogin }) => {
 
     const [menu, setMenu] = useState("home")
     const [isSearching, setIsSearching] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false); // 
     const token = localStorage.getItem('token');
     const navigate = useNavigate()
     const logout = () => {
         userService.logout();
         window.location.href = "/"
     }
+
+    useEffect(() => {
+        const checkAdmin = async () => {
+            if (token) { // Chỉ kiểm tra nếu có token
+                const isAdmin = await userService.adminOnly();
+                setIsAdmin(isAdmin);
+            }
+        };
+
+        checkAdmin();
+    }, [token]); // Kiểm tra lại khi token thay đổi
 
 
     return (
@@ -54,9 +66,9 @@ const Navbar = ({ setShowLogin }) => {
                                 Đăng xuất
                             </button> */}
                             <div className="navbar-profile">
-                                <a href="/profile">
+                                <Link to="/profile">
                                     <img src={images.profile_icon} alt='profile_image' />
-                                </a>
+                                </Link>
                                 <ul className="nav-profile-dropdown">
                                     <li>
                                         <Link to="/myorder">
@@ -80,7 +92,7 @@ const Navbar = ({ setShowLogin }) => {
                         </>
                 }
                 {
-                    userService.adminOnly()
+                    isAdmin
                     &&
                     <Link to="/admin">
                         <img style={{ maxWidth: "34px" }} src={images.admin_icon} alt="admin_icon" />

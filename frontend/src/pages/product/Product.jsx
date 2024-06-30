@@ -68,10 +68,10 @@ const Product = () => {
                             <div className="border rounded-4 mb-3 d-flex justify-content-center">
                                 <a data-fslightbox="mygalley" className="rounded-4" target="_blank" data-type="image" href={`${data.image}`} rel="noreferrer">
                                     <img alt='product_image' style={{ maxWidth: '100%', maxHeight: '100vh', margin: 'auto' }}
-                                        className="rounded-4 fit" src={data.image} />
+                                        className="rounded-4 fit" src={`/images/${data.image}`} />
                                 </a>
                             </div>
-                            <div className="d-flex justify-content-center mb-3">
+                            <div className="d-flex justify-content-center mb-3 flex-wrap gap-4">
                                 {
                                     data.images.map((image, index) => (
                                         <a key={index} data-fslightbox="mygalley" className="border mx-1 rounded-2 item-thumb" target="_blank" data-type="image" href={`/images/${image}`} rel="noreferrer">
@@ -345,7 +345,7 @@ const Product = () => {
                                                 return (
                                                     <div key={index} className="d-flex mb-3">
                                                         <a href="#" className="me-3">
-                                                            <img src={item.image} style={{ minWidth: '96px', height: '96px' }} className="img-md img-thumbnail" />
+                                                            <img src={`/images/${item.image}`} style={{ minWidth: '96px', height: '96px' }} className="img-md img-thumbnail" />
                                                         </a>
                                                         <div className="info">
                                                             <a href="#" className="nav-link mb-1">
