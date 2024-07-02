@@ -4,6 +4,7 @@ import { images } from '../../assets/images'
 import { userService } from '../../services'
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
 const LoginPopup = ({ setShowLogin }) => {
 
@@ -137,6 +138,14 @@ const LoginPopup = ({ setShowLogin }) => {
                                 :
                                 <p>Đã có tài khoản? <span onClick={() => setCurrentState("Login")}>Đăng nhập ở đây</span> </p>
                         }
+                        <p>
+                            <span onClick={() => {
+                                setShowLogin(false)
+                                navigate('/recovery')
+                            }}>
+                                Quên mật khẩu?
+                            </span>
+                        </p>
 
                     </form>
                     :

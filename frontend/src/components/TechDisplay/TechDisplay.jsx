@@ -5,7 +5,7 @@ import TechItem from '../TechItem/TechItem';
 import NotFound from '../NotFound/NotFound';
 import { ToastContainer, toast } from 'react-toastify';
 
-const TechDisplay = ({ title = "Top món đồ công nghệ", search = null }) => {
+const TechDisplay = ({ title = "Sản phẩm", search = null }) => {
 
     const { fetchProductBySearching, products } = useContext(StoreContext);
 

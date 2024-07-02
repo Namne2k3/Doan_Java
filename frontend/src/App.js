@@ -26,6 +26,9 @@ import Search from "./pages/Search/Search";
 import { StoreContext } from "./context/StoreContext";
 import AdminBrands from "./pages/admin/Brands/AdminBrands";
 import UpdateBrand from "./pages/admin/Brands/UpdateBrand";
+import RecoveryPassword from "./pages/RecoveryPassword/RecoveryPassword";
+import EmailSent from "./pages/EmailSent/EmailSent";
+import SubmitRecoveryPassword from "./pages/SubmitRecoveryPassword/SubmitRecoveryPassword";
 function App() {
 
   const { fetchProfileData } = useContext(StoreContext);
@@ -72,6 +75,9 @@ function App() {
             <Route path="/search/:search" element={<Search />} />
             <Route path="/products/:productId" element={<Product />} />
             <Route path="/oauth2/callback" element={<OAuth2Callback />} />
+            <Route path="/recovery" element={<RecoveryPassword setShowLogin={setShowLogin} />} />
+            <Route path="/submit_recovery_password/:token" element={<SubmitRecoveryPassword />} />
+            <Route path="/email_sent" element={<EmailSent setShowLogin={setShowLogin} />} />
             {
               isAdmin
               &&

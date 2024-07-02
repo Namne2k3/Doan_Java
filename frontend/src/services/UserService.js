@@ -130,13 +130,19 @@ async function isAuthenticated() {
     if (!token) {
         return false;
     }
-    const res = await axios.get(`${BASE_URL}/adminuser/get-profile`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    try {
+        const res = await axios.get(`${BASE_URL}/adminuser/get-profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return !!res.data.data.id;
 
-    return !!res.data.data.id;
+    } catch (e) {
+        localStorage.removeItem('token')
+        console.log(e.message);
+    }
+
 }
 
 async function isAdmin() {

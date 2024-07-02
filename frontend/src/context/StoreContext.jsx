@@ -17,6 +17,7 @@ const StoreContextProvider = (props) => {
     const [adminOrders, setAdminOrders] = useState([])
     const [cateAdminProducts, setCateAdminProducts] = useState("Laptop")
     const [adminProducts, setAdminProducts] = useState([])
+    const [emailSent, setEmailSent] = useState("")
 
     const fetchAdminProductsByCategory = async () => {
         const response = await axios.get(`${BASE_URL}/admin/v1/products`, {
@@ -87,7 +88,7 @@ const StoreContextProvider = (props) => {
     }, [])
 
     const fetchProductsByCategory = async (category) => {
-        console.log("fetchProductsByCategory");
+
         const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
         if (response.data.statusCode === 200) {
             setProducts(prev => response.data.dataList || [])
@@ -243,7 +244,8 @@ const StoreContextProvider = (props) => {
         adminProducts,
         setAdminProducts,
         fetchProductBySearching,
-        fetchProfileData
+        fetchProfileData,
+        emailSent, setEmailSent
     }
 
 
