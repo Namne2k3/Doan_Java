@@ -113,6 +113,16 @@ public class ProductService {
                     reqRes.setStatusCode(404);
                     reqRes.setMessage("No products found");
                 }
+            } else {
+                List<Product> resultsList = productRepository.findAll();
+                if (!resultsList.isEmpty()) {
+                    reqRes.setDataList(resultsList);
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Successful");
+                } else {
+                    reqRes.setStatusCode(404);
+                    reqRes.setMessage("No products found");
+                }
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);
@@ -168,6 +178,32 @@ public class ProductService {
         return reqRes;
     }
 
+    public ReqResProduct getAllProductsBrand(String brand) {
+        ReqResProduct reqRes = new ReqResProduct();
+
+        try {
+            List<Product> result = productRepository.findAll();
+            if ( brand != null && !brand.equals("") ) {
+                result = result.stream()
+                        .filter(p -> p.getBrand().getId().equals(brand))
+                        .toList();
+            }
+            if (!result.isEmpty()) {
+                reqRes.setDataList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No products found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
     public ReqResProduct getAllAdminProducts(String category) {
         ReqResProduct reqRes = new ReqResProduct();
 
@@ -199,7 +235,7 @@ public class ProductService {
 
         try {
             List<Product> result = productRepository.findAll().stream().filter(p -> !p.isHide() && !p.getBrand().isHide()).toList();
-            if ( category != null && !category.equals("") ) {
+            if ( category != null && !category.equals("") && !category.equals("undefined") ) {
                 result = result.stream()
                         .filter(p -> p.getCategory().getName().equals(category))
                         .toList();

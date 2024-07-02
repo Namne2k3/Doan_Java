@@ -19,11 +19,14 @@ import java.util.List;
 @Data
 public class User implements UserDetails {
 
+    public User() {
+        image = "profile.jpg";
+    }
+
     @Id
     private String id;
 
-//    @DBRef
-//    private List<Order> orders ;
+    private String image;
 
     @DBRef
     private List<WishList> wishLists ;

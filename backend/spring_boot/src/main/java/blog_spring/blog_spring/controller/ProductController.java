@@ -36,10 +36,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(category));
     }
 
+    @GetMapping(value = "/api/v1/products", params = "brand")
+    public ResponseEntity<ReqResProduct> getProductsBrand(@RequestParam @Nullable String brand){
+        return ResponseEntity.ok(productService.getAllProductsBrand(brand));
+    }
+
     @GetMapping("/admin/v1/products")
     public ResponseEntity<ReqResProduct> getAdminProducts(@RequestParam @Nullable String category){
         return ResponseEntity.ok(productService.getAllAdminProducts(category));
     }
+
 
     @GetMapping(value = "/api/v1/products", params = "search")
     public ResponseEntity<ReqResProduct> getSearchProducts(@RequestParam @Nullable String search){

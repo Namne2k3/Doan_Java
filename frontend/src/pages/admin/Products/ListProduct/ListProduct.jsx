@@ -1,15 +1,17 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import "./ListProduct.css"
 import { ToastContainer, toast } from 'react-toastify'
 import NotFound from '../../../../components/NotFound/NotFound'
 import { StoreContext } from '../../../../context/StoreContext'
+import { fetchALlCategories } from '../../../../services/CategoryService'
 const ListProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
     const navigate = useNavigate()
     const token = localStorage.getItem('token')
+    const [categories, setCategories] = useState([])
     const { cateAdminProducts, setCateAdminProducts, setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
 
     useEffect(() => {
@@ -22,7 +24,21 @@ const ListProduct = () => {
         //         containerId: 'A'
         //     })
         // }
+
+        const fetchCategories = async () => {
+            try {
+                const dataCategories = await fetchALlCategories();
+                if (dataCategories) {
+                    setCategories(dataCategories);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
         fetchAdminProductsByCategory()
+        fetchCategories()
+
 
     }, [])
 
@@ -44,10 +60,59 @@ const ListProduct = () => {
         }
     }
 
+    const handleChangeCategory = async (e) => {
+
+        const cateName = e.target.value
+
+        try {
+            const res = await axios.get(`http://localhost:8080/api/v1/products?category=${cateName}`)
+            if (res.data.statusCode === 200) {
+
+                setAdminProducts(res.data.dataList)
+
+            } else {
+                throw new Error(res.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
+        }
+    }
+
+    const handleSearchProduct = async (e) => {
+        let search = e.target.value
+        try {
+
+            const res = await axios.get(`http://localhost:8080/api/v1/products?search=${search}`)
+            if (res.data.statusCode === 200) {
+
+                setAdminProducts(res.data.dataList)
+
+            } else {
+                throw new Error(res.data.message)
+            }
+
+        } catch (e) {
+            toast.error(e.message)
+        }
+    }
+
     return (
         <>
             <div className='list add flex-col'>
-                <p>All {cateAdminProducts}s</p>
+                <form className='product_filter_form'>
+                    <label htmlFor="name">Tìm kiếm</label>
+                    <input onInput={handleSearchProduct} id='name' className='p-1' name='name' type="text" placeholder='Tên sản phẩm' />
+
+                    <select className='p-2' onChange={handleChangeCategory} required name="category">
+                        <option selected>-- Chọn danh mục --</option>
+                        {
+                            categories?.map((cate, index) =>
+                                <option value={cate.name} key={`cate_${index}`}>{cate.name}</option>
+                            )
+                        }
+
+                    </select>
+                </form>
                 <div className="list-table">
                     <div className="list-table-format title">
                         <b>Image</b>
@@ -57,9 +122,9 @@ const ListProduct = () => {
                         <b>Action</b>
                     </div>
                     {
-                        adminProducts.length > 0
+                        adminProducts?.length > 0
                             ?
-                            adminProducts.map((item, index) => {
+                            adminProducts?.map((item, index) => {
 
                                 return (
                                     <div className="list-table-format" key={index}>
@@ -117,7 +182,7 @@ const ListProduct = () => {
                             <NotFound />
                     }
                 </div>
-            </div>
+            </div >
             <ToastContainer position="top-center" containerId="A" stacked draggable hideProgressBar />
             <ToastContainer containerId="B" stacked draggable hideProgressBar />
         </>

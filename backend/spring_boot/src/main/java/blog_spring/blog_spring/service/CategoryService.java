@@ -1,26 +1,18 @@
 package blog_spring.blog_spring.service;
 
-import blog_spring.blog_spring.dto.ReqResBrand;
 import blog_spring.blog_spring.dto.ReqResCate;
-import blog_spring.blog_spring.model.Brand;
 import blog_spring.blog_spring.model.Category;
 import blog_spring.blog_spring.repository.CategoryRepository;
-import blog_spring.blog_spring.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private ProductRepository productRepository;
 
     public ReqResCate updateCategory(String id, Category category) {
         ReqResCate reqRes = new ReqResCate();

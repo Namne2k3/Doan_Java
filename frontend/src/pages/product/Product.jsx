@@ -6,15 +6,27 @@ import "./Product.css"
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
+import { assets } from '../../admin_assets/assets';
+import { toast, ToastContainer } from 'react-toastify';
 const Product = () => {
 
     const params = useParams();
     const { productId } = params;
 
     const [data, setData] = useState({});
+    const [images, setImages] = useState([])
+    const [comments, setComments] = useState([])
     const [popular, setPopular] = useState([])
 
-    const { addToCart } = useContext(StoreContext);
+    const { addToCart, profileInfo } = useContext(StoreContext);
+
+    const [comment, setComment] = useState({
+        text: "",
+        rate: 0,
+        productId: productId,
+        user: {},
+        images: null
+    })
 
     const [cart, setCart] = useState({
         id: "",
@@ -36,9 +48,13 @@ const Product = () => {
     const getPopularProducts = async (category) => {
         const res = await axios.get(`http://localhost:8080/api/v1/products/populars?category=${category}`)
         if (res.data) {
-            console.log(res.data.dataList);
+            // console.log(res.data.dataList);
             setPopular(res.data.dataList)
         }
+    }
+
+    const setRate = async (value) => {
+        setComment(prev => ({ ...prev, rate: value }))
     }
 
     const VNDONG = (number) => {
@@ -53,13 +69,80 @@ const Product = () => {
         }
     }
 
+    const handleUpload = async () => {
+        if (images.length === 0) {
+            return;
+        }
+
+        const formData = new FormData();
+        images.forEach((img) => {
+            formData.append(`images`, img); // Sử dụng cùng tên 'images' cho các file nhiều ảnh
+        });
+
+        try {
+            const response = await axios.post(`http://localhost:8080/api/v1/upload`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+
+
+            if (response.status !== 200) {
+                toast("Error uploading files. Please try again.");
+            }
+
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            toast("Error uploading file. Please try again.");
+        }
+    }
+
+    const fetchAllCommentsByProductId = async (e) => {
+        try {
+            const res = await axios.get(`http://localhost:8080/api/v1/products/${data?.id}/comments`)
+            if (res.data.statusCode === 200) {
+                setComments(res.data.dataList)
+
+            } else {
+                throw new Error(res.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
+        }
+    }
+
+    const handleSubmitComment = async (e) => {
+        e.preventDefault();
+        comment.images = Array(...images).map(item => item.name)
+        comment.user = {
+            id: profileInfo.id
+        }
+        // console.log(comment);
+
+        try {
+            const res = await axios.post(`http://localhost:8080/api/v1/comments`, comment)
+            if (res.data.statusCode === 200) {
+                await handleUpload()
+                // fetchAllCommentsByProductId()
+                toast.success(res.data.message)
+            } else {
+                throw new Error(res.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
+        }
+
+    }
+
     useEffect(() => {
-        console.log(data);
+        // console.log(data);
         getProductData()
-    }, [])
+        fetchAllCommentsByProductId()
+    }, [data.id])
 
     return (
-        data.id &&
+        data?.id &&
         <>
             <section className="py-5">
                 <div className="container">
@@ -364,7 +447,166 @@ const Product = () => {
                         </div>
                     </div>
                 </div>
+                <div className="comment-section bg-light">
+                    <div className="comment-container">
+                        <div className="comment-user">
+                            <img src={`/images/${profileInfo.image}`} alt="profile_image" />
+                        </div>
+                        <div className="comment-input">
+                            <form onSubmit={handleSubmitComment} className='comment-input-form' >
+                                <input value={comment.text} onChange={(e) => setComment(prev => ({ ...prev, text: e.target.value }))} type="text" name='text' placeholder='Nội dung đánh giá sản phẩm' />
+                                <button type="submit">Gửi đánh giá</button>
+                            </form>
+                            <div className="rating-section">
+                                <span>Đánh giá</span>
+                                {
+                                    comment?.rate >= 1 ?
+                                        <i onClick={() => setRate(1)} className="fa-solid fa-star rate_icon"></i>
+                                        :
+                                        <i onClick={() => setRate(1)} className="fa-regular fa-star rate_icon"></i>
+
+                                }
+                                {
+                                    comment?.rate >= 2 ?
+                                        <i onClick={() => setRate(2)} className="fa-solid fa-star rate_icon"></i>
+                                        :
+                                        <i onClick={() => setRate(2)} className="fa-regular fa-star rate_icon"></i>
+
+                                }
+                                {
+                                    comment?.rate >= 3 ?
+                                        <i onClick={() => setRate(3)} className="fa-solid fa-star rate_icon"></i>
+                                        :
+                                        <i onClick={() => setRate(3)} className="fa-regular fa-star rate_icon"></i>
+
+                                }
+                                {
+                                    comment?.rate >= 4 ?
+                                        <i onClick={() => setRate(4)} className="fa-solid fa-star rate_icon"></i>
+                                        :
+                                        <i onClick={() => setRate(4)} className="fa-regular fa-star rate_icon"></i>
+
+                                }
+                                {
+                                    comment?.rate >= 5 ?
+                                        <i onClick={() => setRate(5)} className="fa-solid fa-star rate_icon"></i>
+                                        :
+                                        <i onClick={() => setRate(5)} className="fa-regular fa-star rate_icon"></i>
+
+                                }
+                            </div>
+
+                            <div className='images-section'>
+                                <div className="add-img-upload flex-col">
+                                    <label htmlFor="images">
+                                        {
+                                            Array(...images).length !== 0
+                                                ?
+                                                <div className="images-container">
+                                                    {
+                                                        Array(...images).map((item, index) =>
+                                                            <div key={`img_${index}`} className="img-container">
+                                                                <img src={URL.createObjectURL(item)} alt="upload_area_img" />
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                                :
+                                                <img src={assets.upload_area} alt="upload_area_img" />
+                                        }
+
+                                    </label>
+                                    <input multiple name='images' accept='image/*' onChange={(e) => {
+                                        if (e.target.files.length <= 5) {
+
+                                            setImages(Array(...e.target.files))
+                                        } else {
+                                            toast.error("Đạt giới hạn gửi ảnh đánh giá. Giới hạn 5 ảnh!")
+                                        }
+                                    }} type="file" id='images' hidden />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
+
+            <div className="list-comment-section bg-light">
+                <h3>Đánh giá sản phẩm</h3>
+                <div className='list-comment-container'>
+                    {
+                        comments?.length > 0 ?
+                            comments?.map((cmt, index) => {
+
+                                return (
+                                    <div key={index}>
+                                        <div className='comment-detail-user'>
+                                            <img src={`/images/${cmt.user.image}`} alt="user_image" />
+                                            <b>{cmt.user.username}</b>
+                                            <div className="rating-section">
+
+                                                {
+                                                    cmt?.rate >= 1 ?
+                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                        :
+                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                }
+                                                {
+                                                    cmt?.rate >= 2 ?
+                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                        :
+                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                }
+                                                {
+                                                    cmt?.rate >= 3 ?
+                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                        :
+                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                }
+                                                {
+                                                    cmt?.rate >= 4 ?
+                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                        :
+                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                }
+                                                {
+                                                    cmt?.rate >= 5 ?
+                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                        :
+                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <p>{cmt.text}</p>
+
+                                        <div className='comment-detail-images'>
+                                            {
+                                                cmt?.images.map((item, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <img src={`/images/${item}`} alt='feedback_image' />
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+
+                                    </div>
+
+                                )
+                            })
+                            :
+                            <h4>Chưa có đánh giá cho sản phẩm này</h4>
+                    }
+                </div>
+            </div>
+            <ToastContainer draggable stacked autoClose={2000} />
         </>
     )
 }

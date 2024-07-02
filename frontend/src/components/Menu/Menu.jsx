@@ -1,8 +1,7 @@
 import React from 'react'
 import "./menu.css"
-import { menu_list } from '../../assets/images'
 
-const Menu = ({ category, setCategory, menuList }) => {
+const Menu = ({ category, menuList, brandList, handleSetBrand, handleSetCategory }) => {
     return (
         <div className='explore-menu' id='explore-menu'>
             <h1>Khám phá danh mục</h1>
@@ -11,11 +10,22 @@ const Menu = ({ category, setCategory, menuList }) => {
             </p>
             <div className="explore-menu-list">
                 {
-                    menuList.map((item, index) => {
+                    menuList?.map((item, index) => {
                         return (
-                            <div onClick={() => setCategory(prev => prev === item.name ? "" : item.name)} key={index} className='explore-menu-list-item'>
-                                <img className={category === item.name ? "active" : ""} src={item.image} alt='menu_image' />
+                            <div onClick={() => handleSetCategory(item.name)} key={index} className='explore-menu-list-item'>
+                                <img src={item.image} alt='menu_image' />
                                 <p>{item.name}</p>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+            <div className="explore-menu-list">
+                {
+                    brandList?.map((item, index) => {
+                        return (
+                            <div key={index} className='explore-menu-list-item'>
+                                <button onClick={handleSetBrand} value={item.id} className='p-2 rounded'>{item.name}</button>
                             </div>
                         )
                     })

@@ -87,7 +87,20 @@ const StoreContextProvider = (props) => {
     }, [])
 
     const fetchProductsByCategory = async (category) => {
+        console.log("fetchProductsByCategory");
         const response = await axios.get(`${BASE_URL}/api/v1/products?category=${category}`)
+        if (response.data.statusCode === 200) {
+            setProducts(prev => response.data.dataList || [])
+        } else if (response.data.statusCode = 404) {
+            setProducts(prev => response.data.dataList || [])
+            console.log(response.data.message)
+        } else {
+            console.log(response.data.message)
+        }
+    }
+
+    const fetchProductsByBrand = async (brand) => {
+        const response = await axios.get(`${BASE_URL}/api/v1/products?brand=${brand}`)
         if (response.data.statusCode === 200) {
             setProducts(prev => response.data.dataList || [])
         } else if (response.data.statusCode = 404) {
@@ -208,6 +221,7 @@ const StoreContextProvider = (props) => {
 
     const contextValue = {
         cartItems,
+        fetchProductsByBrand,
         setCartItems,
         addToCart,
         profileInfo,

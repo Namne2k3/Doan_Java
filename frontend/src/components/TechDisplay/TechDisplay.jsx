@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import "./techdisplay.css"
 import { StoreContext } from '../../context/StoreContext'
 import TechItem from '../TechItem/TechItem';
 import NotFound from '../NotFound/NotFound';
 import { ToastContainer, toast } from 'react-toastify';
 
-const TechDisplay = ({ category, title = "Top món đồ công nghệ", search = null }) => {
+const TechDisplay = ({ title = "Top món đồ công nghệ", search = null }) => {
 
-    const { fetchProductBySearching, fetchProductsByCategory, products } = useContext(StoreContext);
+    const { fetchProductBySearching, products } = useContext(StoreContext);
 
     const addCartItem = async (id, name) => {
         toast.promise(
@@ -29,21 +29,19 @@ const TechDisplay = ({ category, title = "Top món đồ công nghệ", search =
         search &&
             fetchProductBySearching(search)
 
-        category != null &&
-            fetchProductsByCategory(category)
 
-    }, [category, search])
+    }, [search])
 
     return (
         <>
             <div className='tech-display' id='tech-display'>
                 <h2>{title}</h2>
                 {
-                    products.length !== 0
+                    products?.length !== 0
                         ?
                         <div className="tech-display-list">
                             {
-                                products.map((item, index) => {
+                                products?.map((item, index) => {
 
                                     return (
                                         <TechItem addCartItem={addCartItem} cartItems={cartItems} item={item} key={index} />
