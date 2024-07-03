@@ -108,7 +108,7 @@ const Product = () => {
                 throw new Error(res.data.message)
             }
         } catch (e) {
-            toast.error(e.message)
+            // toast.error(e.message)
         }
     }
 
@@ -447,88 +447,92 @@ const Product = () => {
                         </div>
                     </div>
                 </div>
-                <div className="comment-section bg-light">
-                    <div className="comment-container">
-                        <div className="comment-user">
-                            <img src={`/images/${profileInfo.image}`} alt="profile_image" />
-                        </div>
-                        <div className="comment-input">
-                            <form onSubmit={handleSubmitComment} className='comment-input-form' >
-                                <input value={comment.text} onChange={(e) => setComment(prev => ({ ...prev, text: e.target.value }))} type="text" name='text' placeholder='Nội dung đánh giá sản phẩm' />
-                                <button type="submit">Gửi đánh giá</button>
-                            </form>
-                            <div className="rating-section">
-                                <span>Đánh giá</span>
-                                {
-                                    comment?.rate >= 1 ?
-                                        <i onClick={() => setRate(1)} className="fa-solid fa-star rate_icon"></i>
-                                        :
-                                        <i onClick={() => setRate(1)} className="fa-regular fa-star rate_icon"></i>
-
-                                }
-                                {
-                                    comment?.rate >= 2 ?
-                                        <i onClick={() => setRate(2)} className="fa-solid fa-star rate_icon"></i>
-                                        :
-                                        <i onClick={() => setRate(2)} className="fa-regular fa-star rate_icon"></i>
-
-                                }
-                                {
-                                    comment?.rate >= 3 ?
-                                        <i onClick={() => setRate(3)} className="fa-solid fa-star rate_icon"></i>
-                                        :
-                                        <i onClick={() => setRate(3)} className="fa-regular fa-star rate_icon"></i>
-
-                                }
-                                {
-                                    comment?.rate >= 4 ?
-                                        <i onClick={() => setRate(4)} className="fa-solid fa-star rate_icon"></i>
-                                        :
-                                        <i onClick={() => setRate(4)} className="fa-regular fa-star rate_icon"></i>
-
-                                }
-                                {
-                                    comment?.rate >= 5 ?
-                                        <i onClick={() => setRate(5)} className="fa-solid fa-star rate_icon"></i>
-                                        :
-                                        <i onClick={() => setRate(5)} className="fa-regular fa-star rate_icon"></i>
-
-                                }
+                {
+                    profileInfo?.id &&
+                    <div className="comment-section bg-light">
+                        <div className="comment-container">
+                            <div className="comment-user">
+                                <img src={`/images/${profileInfo.image}`} alt="profile_image" />
                             </div>
+                            <div className="comment-input">
+                                <form onSubmit={handleSubmitComment} className='comment-input-form' >
+                                    <input value={comment.text} onChange={(e) => setComment(prev => ({ ...prev, text: e.target.value }))} type="text" name='text' placeholder='Nội dung đánh giá sản phẩm' />
+                                    <button type="submit">Gửi đánh giá</button>
+                                </form>
+                                <div className="rating-section">
+                                    <span>Đánh giá</span>
+                                    {
+                                        comment?.rate >= 1 ?
+                                            <i onClick={() => setRate(1)} className="fa-solid fa-star rate_icon"></i>
+                                            :
+                                            <i onClick={() => setRate(1)} className="fa-regular fa-star rate_icon"></i>
 
-                            <div className='images-section'>
-                                <div className="add-img-upload flex-col">
-                                    <label htmlFor="images">
-                                        {
-                                            Array(...images).length !== 0
-                                                ?
-                                                <div className="images-container">
-                                                    {
-                                                        Array(...images).map((item, index) =>
-                                                            <div key={`img_${index}`} className="img-container">
-                                                                <img src={URL.createObjectURL(item)} alt="upload_area_img" />
-                                                            </div>
-                                                        )
-                                                    }
-                                                </div>
-                                                :
-                                                <img src={assets.upload_area} alt="upload_area_img" />
-                                        }
+                                    }
+                                    {
+                                        comment?.rate >= 2 ?
+                                            <i onClick={() => setRate(2)} className="fa-solid fa-star rate_icon"></i>
+                                            :
+                                            <i onClick={() => setRate(2)} className="fa-regular fa-star rate_icon"></i>
 
-                                    </label>
-                                    <input multiple name='images' accept='image/*' onChange={(e) => {
-                                        if (e.target.files.length <= 5) {
+                                    }
+                                    {
+                                        comment?.rate >= 3 ?
+                                            <i onClick={() => setRate(3)} className="fa-solid fa-star rate_icon"></i>
+                                            :
+                                            <i onClick={() => setRate(3)} className="fa-regular fa-star rate_icon"></i>
 
-                                            setImages(Array(...e.target.files))
-                                        } else {
-                                            toast.error("Đạt giới hạn gửi ảnh đánh giá. Giới hạn 5 ảnh!")
-                                        }
-                                    }} type="file" id='images' hidden />
+                                    }
+                                    {
+                                        comment?.rate >= 4 ?
+                                            <i onClick={() => setRate(4)} className="fa-solid fa-star rate_icon"></i>
+                                            :
+                                            <i onClick={() => setRate(4)} className="fa-regular fa-star rate_icon"></i>
+
+                                    }
+                                    {
+                                        comment?.rate >= 5 ?
+                                            <i onClick={() => setRate(5)} className="fa-solid fa-star rate_icon"></i>
+                                            :
+                                            <i onClick={() => setRate(5)} className="fa-regular fa-star rate_icon"></i>
+
+                                    }
+                                </div>
+
+                                <div className='images-section'>
+                                    <div className="add-img-upload flex-col">
+                                        <label htmlFor="images">
+                                            {
+                                                Array(...images).length !== 0
+                                                    ?
+                                                    <div className="images-container">
+                                                        {
+                                                            Array(...images).map((item, index) =>
+                                                                <div key={`img_${index}`} className="img-container">
+                                                                    <img src={URL.createObjectURL(item)} alt="upload_area_img" />
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </div>
+                                                    :
+                                                    <img src={assets.upload_area} alt="upload_area_img" />
+                                            }
+
+                                        </label>
+                                        <input multiple name='images' accept='image/*' onChange={(e) => {
+                                            if (e.target.files.length <= 5) {
+
+                                                setImages(Array(...e.target.files))
+                                            } else {
+                                                toast.error("Đạt giới hạn gửi ảnh đánh giá. Giới hạn 5 ảnh!")
+                                            }
+                                        }} type="file" id='images' hidden />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                }
             </section>
 
             <div className="list-comment-section bg-light">

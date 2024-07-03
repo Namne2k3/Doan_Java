@@ -51,11 +51,6 @@ const LoginPopup = ({ setShowLogin }) => {
 
         } catch (error) {
             throw error;
-            // console.log(error)
-            // setError(error.message)
-            // setTimeout(() => {
-            //     setError('');
-            // }, 5000);
         }
     }
 

@@ -53,6 +53,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrder(orderId,status));
     }
 
+    @PutMapping("/api/v1/orders/{orderId}")
+    public ResponseEntity<ReqResOrder> updateOrderStatus(@PathVariable String orderId, @RequestParam("status") String status) {
+        return ResponseEntity.ok(orderService.updateOrder(orderId,status));
+    }
+
     @DeleteMapping("/api/v1/orders/{id}")
     public ResponseEntity<ReqResOrder> deleteOrder(@PathVariable String id) {
         return ResponseEntity.ok(orderService.deleteOrder(id));

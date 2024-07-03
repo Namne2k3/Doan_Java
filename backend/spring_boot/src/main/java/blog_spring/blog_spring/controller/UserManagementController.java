@@ -17,9 +17,6 @@ public class UserManagementController {
     @Autowired
     private UserManagementService usersManagementService;
 
-    @Autowired
-    private JWTUtils jwtUtils;
-
     @GetMapping("/api/v1/users")
     public ResponseEntity<ReqRes> getUsers(){
         return ResponseEntity.ok(usersManagementService.getAllUsers());

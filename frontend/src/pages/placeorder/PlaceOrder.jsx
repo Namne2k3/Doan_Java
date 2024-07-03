@@ -33,24 +33,25 @@ const PlaceOrder = () => {
     const handleSubmitOrder = async (e) => {
         const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
         const order = resOrder.data;
-        if (profileInfo.id) {
-            order.shippingAddress = profileInfo.address
-            order.email = profileInfo.email
-            order.phone = profileInfo.phone
+        if (profileInfo?.id) {
+            console.log("Check profile >>> ", profileInfo);
+            order.shippingAddress = profileInfo?.address
+            order.email = profileInfo?.email
+            order.phone = profileInfo?.phone
             order.user = {
-                id: profileInfo.id,
-                email: profileInfo.email,
-                phone: profileInfo.phone,
-                username: profileInfo.username,
+                id: profileInfo?.id,
+                email: profileInfo?.email,
+                phone: profileInfo?.phone,
+                username: profileInfo?.username,
             };
+        } else {
+            order.shippingAddress = address
+            order.email = email
+            order.phone = phone
         }
-        order.details = carts
-        order.paymentMethod = "COD"
-        order.shippingAddress = address
-        order.email = email
-        order.phone = phone
-        order.status = "PENDING"
         order.totalAmount = getTotalCartAmount(carts) + 30000
+        order.paymentMethod = "COD"
+        order.details = carts
 
         console.log("Check new order >>> ", order);
 

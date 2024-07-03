@@ -3,8 +3,6 @@ package blog_spring.blog_spring.service;
 import blog_spring.blog_spring.dto.ReqResOrder;
 import blog_spring.blog_spring.dto.ReqResOrderSearch;
 import blog_spring.blog_spring.model.Order;
-import blog_spring.blog_spring.model.OrderDetail;
-import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.repository.OrderDetailRepository;
 import blog_spring.blog_spring.repository.OrderRepository;
 import blog_spring.blog_spring.repository.UserRepository;
@@ -18,7 +16,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -195,9 +192,10 @@ public class OrderService {
             }
             order.setOrderDate(new Date());
             order.setTotalAmount(registrationRequest.getTotalAmount());
-            order.setStatus(registrationRequest.getStatus());
+            order.setStatus("pending");
             order.setShippingAddress(registrationRequest.getShippingAddress());
             order.setEmail(registrationRequest.getEmail());
+            order.setPaymentMethod(registrationRequest.getPaymentMethod());
             order.setCreatedAt(new Date());
             order.setUpdatedAt(new Date());
             order.setPhone(registrationRequest.getPhone());
@@ -263,7 +261,7 @@ public class OrderService {
 
             if (!optionalOrder.isPresent()) {
                 resp.setStatusCode(404);
-                resp.setMessage("Order not found");
+                resp.setMessage("Hóa đơn không tồn tại");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp).getBody();
             }
 
@@ -275,7 +273,7 @@ public class OrderService {
             Order savedOrder = orderRepository.save(order);
 
             resp.setStatusCode(200);
-            resp.setMessage("Updated Order Successfully");
+            resp.setMessage("Cập nhật hóa đơn hoàn tất");
             resp.setData(savedOrder);
 
             return ResponseEntity.ok(resp).getBody();

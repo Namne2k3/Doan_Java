@@ -33,9 +33,8 @@ const ProfilePage = () => {
             try {
 
                 if (token) {
-                    console.log("fetching data ... ");
                     const response = await userService.getUserProfile(token);
-                    await setInfoData(response.data);
+                    setInfoData(response.data);
 
                 }
 

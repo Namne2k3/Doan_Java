@@ -133,7 +133,7 @@ const Cart = () => {
                             return (
                                 <div className='cart-items-item-container' key={index}>
                                     <div className="cart-items-title cart-items-item">
-                                        <img src={item.product.image} alt="item_image" />
+                                        <img src={`/images/${item.product.image}`} alt="item_image" />
                                         <p>{item.product.name}</p>
                                         <p>{VNDONG(item.product.price)}</p>
                                         {

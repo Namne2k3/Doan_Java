@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { images } from '../../../../assets/images'
 import NotFound from "../../../../components/NotFound/NotFound"
 import axios from 'axios'
+import { exportToPDF } from '../../../../services/Export'
 import moment from 'moment'
 
 const ListOrder = () => {
@@ -89,11 +90,12 @@ const ListOrder = () => {
             }
         }
 
-        toast.promise(searching, {
-            error: "Having error while searching orders data !!!",
-            success: "Filtered Orders data <3",
-            pending: "Filtering Orders data ... "
-        })
+        // toast.promise(searching, {
+        //     error: "Having error while searching orders data !!!",
+        //     success: "Filtered Orders data <3",
+        //     pending: "Filtering Orders data ... "
+        // })
+        searching()
 
     }
 
@@ -128,9 +130,11 @@ const ListOrder = () => {
                             name="status"
                             id="status"
                         >
-                            <option value="pending">Pending</option>
-                            <option value="paid">Paid</option>
-                            <option value="deliveried">Deliveried</option>
+                            <option value="paid">Đã thanh toán</option>
+                            <option value="processed">Đã xử lý</option>
+                            <option value="pending">Đang xử lý</option>
+                            <option value="delivered">Đã giao</option>
+                            <option value="canceled">Đã hủy</option>
                         </select>
                         <button onClick={handleSubmitSearchOrder} type='submit'>Tìm kiếm</button>
                     </form>
@@ -144,24 +148,26 @@ const ListOrder = () => {
                                 adminOrders.map((order) => (
                                     <div className="order-item" key={order.id}>
                                         <img src={images.parcel_icon} alt="parcel_icon" />
+                                        <p className=''>Mã đơn hàng: {order.id}</p>
+                                        <p className="order-item-tech">
+                                            {
+                                                order.details.map((item, index) => {
+                                                    if (index === order.details.length - 1) {
+                                                        return item.product.name + " x " + item.quantity;
+                                                    }
+                                                    return item.product.name + " x " + item.quantity + ", ";
+                                                })
+                                            }
+                                        </p>
                                         <div className="">
-                                            <p className="order-item-tech">
-                                                {
-                                                    order.details.map((item, index) => {
-                                                        if (index === order.details.length - 1) {
-                                                            return item.product.name + " x " + item.quantity;
-                                                        }
-                                                        return item.product.name + " x " + item.quantity + ", ";
-                                                    })
-                                                }
-                                            </p>
-                                            <p className="order-item-name">{order.email}</p>
-                                            <p className="order-item-address">{order.shippingAddress}</p>
-                                            <p className="order-item-phone">{order.phone}</p>
+                                            <p className="order-item-tech">Email: {order.email}</p>
+                                            <p className="order-item-tech">Địa chỉ: {order.shippingAddress}</p>
+                                            <p className="order-item-tech">SĐT: {order.phone}</p>
                                         </div>
                                         <p>Vật phẩm: {order.details.length}</p>
                                         <p>Ngày: {moment(order.orderDate).format('DD-MM-YYYY HH:mm:ss')}</p>
                                         <p>{VNDONG(order.totalAmount)}</p>
+                                        <p>Phương thức thanh toán: {order.paymentMethod}</p>
                                         <select
                                             onChange={(e) => {
                                                 setUpdatingOrderId(order.id); // Đặt ID của đơn hàng đang được cập nhật
@@ -170,10 +176,13 @@ const ListOrder = () => {
                                             value={order.status}
                                             disabled={updatingOrderId === order.id} // Vô hiệu hóa trong khi cập nhật
                                         >
-                                            <option value="paid">Paid</option>
-                                            <option value="pending">Pending</option>
-                                            <option value="deliveried">Deliveried</option>
+                                            <option value="paid">Đã thanh toán</option>
+                                            <option value="processed">Đã xử lý</option>
+                                            <option value="pending">Đang xử lý</option>
+                                            <option value="delivered">Đã giao</option>
+                                            <option value="canceled">Đã hủy</option>
                                         </select>
+                                        <button onClick={() => exportToPDF([order])}>Xuất hóa đơn PDF</button>
                                     </div>
                                 ))
                             }
@@ -187,137 +196,3 @@ const ListOrder = () => {
 }
 
 export default ListOrder;
-
-// import React, { useContext, useEffect } from 'react'
-// import { StoreContext } from '../../../../context/StoreContext'
-// import "./ListOrder.css"
-// import { toast, ToastContainer } from 'react-toastify'
-// import { images } from '../../../../assets/images'
-// import NotFound from "../../../../components/NotFound/NotFound"
-// import axios from 'axios'
-// const ListOrder = () => {
-
-//     const { adminOrders, fetchAllOrder } = useContext(StoreContext);
-//     const token = localStorage.getItem('token')
-//     useEffect(() => {
-//         // toast.promise(
-//         //     fetchAllOrder(),
-//         //     {
-//         //         pending: "Loading orders ...",
-//         //         success: "Loaded Successfully!",
-//         //         error: "Error while loading orders data!!!"
-//         //     }
-//         // )
-//         fetchAllOrder()
-//     }, [adminOrders])
-
-//     // const updateOrderStatus = async (orderId, status) => {
-//     //     const params = new URLSearchParams();
-//     //     params.append('status', status);
-//     //     const res = await axios.put(`http://localhost:8080/admin/orders/${orderId}`, params, {
-//     //         headers: {
-//     //             Authorization: `Bearer ${token}`
-//     //         }
-//     //     })
-//     //     if (res.data.statusCode === 200) {
-//     //         console.log("Check res data >>> ", res.data.data);
-//     //         fetchAllOrder()
-//     //     }
-//     // }
-//     const updateOrderStatus = async (orderId, status) => {
-//         const params = new URLSearchParams();
-//         params.append('status', status);
-
-//         try {
-//             const res = await axios.put(
-//                 `http://localhost:8080/admin/orders/${orderId}`,
-//                 params,
-//                 {
-//                     headers: {
-//                         Authorization: `Bearer ${token}`,
-//                         'Content-Type': 'application/x-www-form-urlencoded' // Đặt Content-Type
-//                     }
-//                 }
-//             );
-
-//             if (res.status === 200 && res.data.statusCode === 200) {
-//                 console.log("Check res data >>> ", res.data.data);
-//                 fetchAllOrder(); // Gọi lại phương thức để cập nhật danh sách đơn hàng
-//             } else {
-//                 console.error("Failed to update order status:", res.data);
-//             }
-//         } catch (error) {
-//             console.error("Error updating order status:", error);
-//         }
-//     }
-
-
-//     const VNDONG = (number) => {
-//         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
-//     };
-
-//     return (
-//         <div>
-//             <div className="order add">
-//                 <div className=''>
-//                     <h3>Tìm kiếm đơn hàng</h3>
-//                 </div>
-//                 <h3>Các đơn đặt hàng</h3>
-//                 {
-//                     adminOrders
-//                         ?
-//                         <div className="order-list">
-//                             {
-//                                 adminOrders.map((order, index) => (
-//                                     <div className="order-item" key={index}>
-//                                         <img src={images.parcel_icon} alt="parcel_icon" />
-//                                         <div className="">
-//                                             <p className="order-item-tech">
-//                                                 {
-//                                                     order.details.map((item, index) => {
-
-//                                                         if (index === order.details.length - 1) {
-//                                                             return item.product.name + " x " + item.quantity
-//                                                         }
-//                                                         return item.product.name + " x " + item.quantity + ", "
-//                                                     })
-//                                                 }
-//                                             </p>
-//                                             <p className="order-item-name">
-//                                                 {order.email}
-//                                             </p>
-//                                             <p className="order-item-address">
-//                                                 <p>{order.shippingAddress}</p>
-//                                             </p>
-//                                             <p className="order-item-phone">
-//                                                 {order.phone}
-//                                             </p>
-//                                         </div>
-//                                         <p>Items: {order.details.length}</p>
-//                                         <p>{VNDONG(order.totalAmount)}</p>
-//                                         <select onChange={(e) => {
-//                                             toast.promise(updateOrderStatus(order.id, e.target.value),
-//                                                 {
-//                                                     success: "Updated order",
-//                                                     pending: "Updating order ...",
-//                                                     error: "Error while updating order"
-//                                                 })
-//                                         }} value={order.status}>
-//                                             <option value="paid">Paid</option>
-//                                             <option value="pending">Pending</option>
-//                                             <option value="deliveried">Deliveried</option>
-//                                         </select>
-//                                     </div>
-//                                 ))
-//                             }
-//                         </div>
-//                         :
-//                         <NotFound />
-//                 }
-//             </div>
-//             <ToastContainer draggable stacked position='top-center' autoClose={1500} />
-//         </div >
-//     )
-// }
-
-// export default ListOrder

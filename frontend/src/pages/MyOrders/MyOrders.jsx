@@ -25,6 +25,19 @@ const MyOrders = () => {
         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
     };
 
+    const handleCancelOrder = async (id) => {
+        try {
+            const res = await axios.put(`http://localhost:8080/api/v1/orders/${id}?status=canceled`)
+            if (res.data.statusCode === 200) {
+                await fetchOrders()
+            } else {
+                throw new Error(res.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
+        }
+    }
+
     useEffect(() => {
         if (profileInfo.id) {
             if (userOrders.length === 0)
@@ -46,8 +59,8 @@ const MyOrders = () => {
                     userOrders.map((order, index) => {
                         return (
                             <div key={index} className="my-orders-order">
-                                <b>{order.id}</b>
                                 <img src={images.parcel_icon} alt="parcel_icon" />
+                                <b>Mã đơn hàng: {order.id}</b>
                                 <p>
                                     {
                                         order.details.map((item, index) => {
@@ -59,10 +72,35 @@ const MyOrders = () => {
                                         })
                                     }
                                 </p>
-                                <p>{VNDONG(order.totalAmount)}</p>
-                                <p>Items: {order.details.length}</p>
-                                <p><span>&#x25cf;</span> <b> {order.status}</b></p>
-                                <button onClick={() => fetchOrders()}>Track Order</button>
+                                <p>Tổng tiền: {VNDONG(order.totalAmount)}</p>
+                                <p>Vật phẩm: {order.details.length}</p>
+                                <p>
+                                    <span>&#x25cf;</span>
+                                    <b>
+                                        {
+                                            order.status === "pending" && "Đang xử lý"
+                                        }
+                                        {
+                                            order.status === "processed" && "Đã xử lý"
+                                        }
+                                        {
+                                            order.status === "paid" && "Đã thanh toán"
+                                        }
+                                        {
+                                            order.status === "delivered" && "Đã giao"
+                                        }
+                                        {
+                                            order.status === "canceled" && "Đã hủy"
+                                        }
+                                    </b>
+                                </p>
+                                <button onClick={() => fetchOrders()}>Làm mới</button>
+                                {
+                                    order.status === "processed" || order.status === "canceled" ?
+                                        <button style={{ opacity: "0.7" }} disabled >Hủy</button>
+                                        :
+                                        <button onClick={() => handleCancelOrder(order.id)} >Hủy</button>
+                                }
                             </div>
                         )
                     })

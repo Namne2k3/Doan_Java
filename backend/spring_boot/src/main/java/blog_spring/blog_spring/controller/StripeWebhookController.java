@@ -134,7 +134,7 @@ public class StripeWebhookController {
         order.setDetails(savedOrderDetails);
         order.setOrderDate(new Date());
         order.setTotalAmount((long) session.getAmountTotal());
-        order.setStatus(session.getPaymentStatus());
+        order.setStatus("paid");
 
         var savedOrder = orderRepository.save(order);
         return savedOrder;
