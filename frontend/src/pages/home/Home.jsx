@@ -6,6 +6,7 @@ import TechDisplay from '../../components/TechDisplay/TechDisplay'
 import { fetchALlCategories } from '../../services/CategoryService'
 import axios from 'axios'
 import { StoreContext } from '../../context/StoreContext'
+import { Helmet } from 'react-helmet-async';
 
 const Home = () => {
 
@@ -62,11 +63,18 @@ const Home = () => {
     }
 
     return (
-        <div>
-            <Header />
-            <Menu handleSetCategory={handleSetCategory} handleSetBrand={handleSetBrand} brandList={brandList} menuList={menuList} setCategory={setCategory} />
-            <TechDisplay />
-        </div>
+        <>
+            <Helmet>
+                <title>Trang chủ TechShop</title>
+                <meta name='description' content='Các sản phẩm nổi bật' />
+                <link rel="canonical" href="http://localhost:3000" />
+            </Helmet>
+            <>
+                <Header />
+                <Menu handleSetCategory={handleSetCategory} handleSetBrand={handleSetBrand} brandList={brandList} menuList={menuList} setCategory={setCategory} />
+                <TechDisplay />
+            </>
+        </>
     )
 }
 

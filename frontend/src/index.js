@@ -1,17 +1,19 @@
-import React, { StrictMode } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import StoreContextProvider from './context/StoreContext';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <StoreContextProvider>
-    {/* <StrictMode> */}
-    <App />
-    {/* </StrictMode> */}
-  </StoreContextProvider>
-
+  <HelmetProvider>
+    <StoreContextProvider>
+      <App />
+    </StoreContextProvider>
+  </HelmetProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
