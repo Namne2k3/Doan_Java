@@ -42,13 +42,36 @@ public class EmailController {
 
     @PostMapping("/recovery_password")
     public ReqRes recoveryPassword_post(@Validated @RequestParam String email) {
-        ReqRes reqRes =new ReqRes();
+        ReqRes reqRes = new ReqRes();
         try {
             var user = (User)userManagementService.findByEmail(email).getData();
 
             if ( user != null ) {
                 var token = jwtUtils.generateToken(user);
                 emailService.sendSimpleEmail(email,"Đặt lại mật khẩu","http://localhost:3000/submit_recovery_password/" + token );
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Email được gửi!");
+            }
+            else {
+                throw new Exception("Email chưa được đăng ký tài khoản!");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(404);
+            reqRes.setMessage(e.getMessage());
+        }
+        return reqRes;
+    }
+
+    @PostMapping("/verify")
+    public ReqRes verifyEmail(@Validated @RequestParam String email) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            var user = (User) userManagementService.findByEmail(email).getData();
+
+            if ( user != null ) {
+                var token = jwtUtils.generateToken(user);
+                emailService.sendSimpleEmail(email,"Nhấp vào đây để xác thực email","http://localhost:3000/verifyEmail/" + token );
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Email được gửi!");
             }

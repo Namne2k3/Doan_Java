@@ -29,6 +29,10 @@ import UpdateBrand from "./pages/admin/Brands/UpdateBrand";
 import RecoveryPassword from "./pages/RecoveryPassword/RecoveryPassword";
 import EmailSent from "./pages/EmailSent/EmailSent";
 import SubmitRecoveryPassword from "./pages/SubmitRecoveryPassword/SubmitRecoveryPassword";
+import VerifyEmail from "./pages/VerifyEmail/VerifyEmail";
+import AdminUsers from "./pages/admin/Users/AdminUsers";
+import SupportAdmin from "./pages/SupportAdmin/SupportAdmin";
+import SupportEngine from './components/SupportEngine/SupportEngine'
 function App() {
 
   const { fetchProfileData } = useContext(StoreContext);
@@ -78,6 +82,7 @@ function App() {
             <Route path="/recovery" element={<RecoveryPassword setShowLogin={setShowLogin} />} />
             <Route path="/submit_recovery_password/:token" element={<SubmitRecoveryPassword />} />
             <Route path="/email_sent" element={<EmailSent setShowLogin={setShowLogin} />} />
+            <Route path="/verifyEmail/:token" element={<VerifyEmail />} />
             {
               isAdmin
               &&
@@ -90,6 +95,8 @@ function App() {
                 <Route path="user-management" element={<UserManagementPage />} />
                 <Route path="update-user/:userId" element={<UpdateUser />} />
                 <Route path="orders" element={<ListOrder />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="support" element={<SupportAdmin />} />
               </Route>
             }
 
@@ -97,6 +104,7 @@ function App() {
           </Routes>
         </div>
         <Footer />
+        <SupportEngine />
       </>
     </BrowserRouter>
   );

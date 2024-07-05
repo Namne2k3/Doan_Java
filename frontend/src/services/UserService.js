@@ -32,11 +32,9 @@ function formatDate(date) {
 const register = async (userData) => {
     try {
 
-        console.log({ ...userData, createdAt: formatDate(new Date()), updatedAt: formatDate(new Date()), role: "USER" });
+        // console.log({ ...userData, createdAt: formatDate(new Date()), updatedAt: formatDate(new Date()), role: "USER" });
         const res = await axios.post(`${BASE_URL}/auth/register`, { ...userData, createdAt: new Date(), updatedAt: new Date(), role: "USER" })
-        const data = await res.data;
-        console.log("Check data register >>> ", data);
-        return data;
+        return res.data;
 
     } catch (error) {
         throw error;

@@ -27,6 +27,79 @@ public class UserManagementService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public ReqRes updateLockUsser(String userId, String isLock) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            var user = usersRepo.findById(userId).get();
+            if ( user.getId() != null ) {
+
+                if ( isLock.equals("true") ) {
+                    user.setEnabled(false);
+                } else {
+                    user.setEnabled(true);
+                }
+                var savedUser = usersRepo.save(user);
+
+                reqRes.setData(savedUser);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Cập nhật hoàn tất");
+            } else {
+                throw new Exception("Tài khoản không tồn tại");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage(e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes changeRole(String userId, String role) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            var user = usersRepo.findById(userId).get();
+            if ( user.getId() != null ) {
+
+                user.setRole(role);
+                var savedUser = usersRepo.save(user);
+
+                reqRes.setData(savedUser);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Cập nhật quyền hoàn tất");
+            } else {
+                throw new Exception("Tài khoản không tồn tại");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage(e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqRes verifyEmailUser(String userId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            var user = usersRepo.findById(userId).get();
+            if ( user.getId() != null ) {
+
+                user.setIsEmailVerified(true);
+                var savedUser = usersRepo.save(user);
+
+               reqRes.setData(savedUser);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Xác thực email hoàn tất");
+            } else {
+                throw new Exception("Tài khoản không tồn tại");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(400);
+            reqRes.setMessage(e.getMessage());
+        }
+        return reqRes;
+    }
+
     public ReqRes checkPasswordAndToken(String token, String password) {
         ReqRes reqRes = new ReqRes();
         try {
@@ -69,6 +142,11 @@ public class UserManagementService {
 
         try {
 
+            var existedEmail = usersRepo.findByEmail(registrationRequest.getEmail()).orElse(null);
+            if (existedEmail != null) {
+                throw new Exception("Email đã tồn tại. Không thể tạo tài khoản");
+            }
+
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
             user.setRole("USER");
@@ -81,8 +159,8 @@ public class UserManagementService {
 
             if ( savedUser.getId() != null ) {
                 resp.setData(savedUser);
-                resp.setMessage("Saved User Successfully!");
-                resp.setStatusCode(200);
+            } else {
+                throw new Exception("Không thể tạo tài khoản");
             }
 
             authenticationManager
@@ -108,18 +186,18 @@ public class UserManagementService {
             resp.setRole(userFinded.getRole());
             resp.setRefreshToken(refreshToken);
             resp.setExpirationTime("24Hrs");
-            resp.setMessage("Registered Successfully!");
+            resp.setMessage("Đăng ký tài khoản thành công");
 
         } catch(Exception e) {
 
             resp.setStatusCode(500);
-            resp.setError(e.getMessage());
+            resp.setMessage(e.getMessage());
 
         }
         return resp;
     }
 
-    public ReqRes   login(ReqRes loginRequest) {
+    public ReqRes login(ReqRes loginRequest) {
         ReqRes resp = new ReqRes();
 
         try {
@@ -141,6 +219,15 @@ public class UserManagementService {
                     );
 
             var user = usersRepo.findByEmail(loginRequest.getEmail()).orElseThrow();
+
+            if (!user.getIsEmailVerified()) {
+                throw new Exception("Email chưa được xác thực. Vui lòng xác thực email!");
+            }
+
+            if ( !user.getEnabled() ) {
+                throw new Exception("Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau");
+            }
+
             var jwt = jwtUtils.generateToken(user);
             var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
@@ -149,7 +236,7 @@ public class UserManagementService {
             resp.setRole(user.getRole());
             resp.setRefreshToken(refreshToken);
             resp.setExpirationTime("24Hrs");
-            resp.setMessage("Successfully Logged In!");
+            resp.setMessage("Đăng nhâp thành công");
 
         } catch (Exception e) {
             resp.setStatusCode(500);
@@ -184,11 +271,20 @@ public class UserManagementService {
         return resp;
     }
 
-    public ReqRes getAllUsers() {
+    public ReqRes getAllUsers(String search) {
         ReqRes reqRes = new ReqRes();
 
         try {
             List<User> result = usersRepo.findAll();
+
+            if ( search != null && !search.equals("undefined")) {
+                result = result.stream().filter(
+                        p -> p.getUsername().toLowerCase().contains(search) ||
+                                p.getEmail().toLowerCase().contains(search) ||
+                                p.getPhone().toLowerCase().contains(search)
+                ).toList();
+            }
+
             if (!result.isEmpty()) {
                 reqRes.setDataList(result);
                 reqRes.setStatusCode(200);
@@ -230,14 +326,14 @@ public class UserManagementService {
             if (userOptional.isPresent()) {
                 usersRepo.deleteById(String.valueOf(userId));
                 reqRes.setStatusCode(200);
-                reqRes.setMessage("User deleted successfully");
+                reqRes.setMessage("Đã xóa tài khoản");
             } else {
                 reqRes.setStatusCode(404);
-                reqRes.setMessage("User not found for deletion");
+                reqRes.setMessage("Không tim thấy tài khoản");
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);
-            reqRes.setMessage("Error occurred while deleting user: " + e.getMessage());
+            reqRes.setMessage("Có lỗi xảy ra khi xóa tài khoản: " + e.getMessage());
         }
         return reqRes;
     }
@@ -252,6 +348,8 @@ public class UserManagementService {
                 existingUser.setEmail(updatedUser.getEmail());
                 existingUser.setPhone(updatedUser.getPhone());
                 existingUser.setAddress(updatedUser.getAddress());
+                existingUser.setIsEmailVerified(updatedUser.getIsEmailVerified());
+                existingUser.setEnabled(updatedUser.getEnabled());
                 existingUser.setUpdatedAt(new Date());
 
                 // Check if password is present in the request

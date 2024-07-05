@@ -4,7 +4,7 @@ import { images } from '../../assets/images'
 import { userService } from '../../services'
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { sendEmailVerify } from '../../services/EmailService';
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
 const LoginPopup = ({ setShowLogin }) => {
 
@@ -17,26 +17,12 @@ const LoginPopup = ({ setShowLogin }) => {
     const [error, setError] = useState('')
     const navigate = useNavigate();
 
-    const handleClickLogin = async (e) => {
-        try {
-            // Gọi toast.promise và xử lý kết quả
-            await toast.promise(handleSubmitLogin(e), {
-                success: "Đăng nhập thành công!",
-                error: "Đăng nhập không thành công!"
-            });
-        } catch (error) {
-            // Xử lý lỗi từ handleChangeProfile
-            console.error("Lỗi khi đăng nhập:", error);
-            // Có thể hiển thị toast error riêng ở đây nếu muốn
-        }
-    }
-
     const handleSubmitLogin = async (e) => {
         e.preventDefault();
 
         try {
             const userData = await userService.login(email, password)
-            console.log(userData)
+
             if (userData.token) {
                 localStorage.setItem('token', userData.token)
                 localStorage.setItem('role', userData.role)
@@ -44,13 +30,17 @@ const LoginPopup = ({ setShowLogin }) => {
                 window.location.href = "/"
             } else {
                 if (userData.statusCode === 500) {
-                    throw new Error("Đăng nhập không thành công")
+                    throw new Error(userData.message)
                 }
                 setError(userData.message)
             }
+            setEmail(prev => "")
+            setPassword(prev => "")
 
         } catch (error) {
-            throw error;
+            setEmail(prev => "")
+            setPassword(prev => "")
+            toast.error(error.message)
         }
     }
 
@@ -59,24 +49,33 @@ const LoginPopup = ({ setShowLogin }) => {
         try {
             // Call the register method from UserService
 
-            const userData = await userService.register({
+            const res = await userService.register({
                 username: username,
                 email: email,
                 password: password,
                 phone: phone,
                 address: address
             });
-            if (userData.data) {
+
+            if (res.statusCode === 200) {
+
+                toast.promise(sendEmailVerify(email), {
+                    pending: "Đang tiến hành gửi email xác thực",
+                    error: "Có lỗi khi gửi email",
+                    success: "Email đã được gửi vui lòng xác thực"
+                })
+
+                alert(`${res.message}. Vui lòng xác thực email`)
                 setShowLogin(false)
-                alert('User registered successfully');
-                localStorage.setItem('token', userData.token)
-                localStorage.setItem('role', userData.role)
+                // localStorage.setItem('token', userData.token)
+                // localStorage.setItem('role', userData.role)
                 navigate("/")
+            } else {
+                throw new Error(res.message)
             }
 
-        } catch (error) {
-            console.error('Error registering user:', error);
-            alert('An error occurred while registering user');
+        } catch (e) {
+            toast.error('Error registering user:', e.message);
         }
     };
 
@@ -85,7 +84,7 @@ const LoginPopup = ({ setShowLogin }) => {
             {
                 currentState === "Login"
                     ?
-                    <form onSubmit={handleClickLogin} className="login-popup-container">
+                    <form onSubmit={handleSubmitLogin} className="login-popup-container">
                         <div className="login-popup-title">
                             <h2>{currentState === "Login" ? "Đăng nhập" : "Đăng ký"}</h2>
                             <img src={images.cross_icon} onClick={() => setShowLogin(false)} alt="" />
@@ -162,7 +161,7 @@ const LoginPopup = ({ setShowLogin }) => {
                     </form>
 
             }
-            <ToastContainer />
+            <ToastContainer draggable stacked autoClose={2000} hideProgressBar />
         </div>
     )
 }

@@ -17,19 +17,37 @@ public class UserManagementController {
     @Autowired
     private UserManagementService usersManagementService;
 
-    @GetMapping("/api/v1/users")
-    public ResponseEntity<ReqRes> getUsers(){
-        return ResponseEntity.ok(usersManagementService.getAllUsers());
-    }
+//    @GetMapping("/api/v1/users")
+//    public ResponseEntity<ReqRes> getUsers(){
+//        return ResponseEntity.ok(usersManagementService.getAllUsers(null));
+//    }
 
     @PostMapping("/auth/register")
     public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg){
         return ResponseEntity.ok(usersManagementService.register(reg));
     }
 
+    @PutMapping("/auth/verifyEmail/{userId}")
+    public ResponseEntity<ReqRes> verifyEmailUser(@PathVariable String userId){
+        return ResponseEntity.ok(usersManagementService.verifyEmailUser(userId));
+    }
+
+    @PutMapping("/auth/update/{id}/changeRole")
+    public ResponseEntity<ReqRes> changeRole(@PathVariable String id, @RequestParam("role") String role){
+        return ResponseEntity.ok(usersManagementService.changeRole(id,role));
+    }
+
     @PutMapping("/auth/update")
-    public ResponseEntity<ReqRes> updateUser(@RequestBody User user){
-        return ResponseEntity.ok(usersManagementService.updateUser(user.getId(), user));
+    public ResponseEntity<ReqRes> updateUser(@RequestBody User user, @RequestParam("userId") String userId){
+        if (user.getId().equals(userId)) {
+            return ResponseEntity.ok(usersManagementService.updateUser(user.getId(), user));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping(value = "/admin/users/update/{id}", params = "lock")
+    public ResponseEntity<ReqRes> updateLockUser(@PathVariable String id, @RequestParam("lock") String isLock){
+        return ResponseEntity.ok(usersManagementService.updateLockUsser(id,isLock));
     }
 
     @PostMapping("/auth/verifyPasswordToken")
@@ -50,8 +68,12 @@ public class UserManagementController {
 
     @GetMapping("/admin/get-all-users")
     public ResponseEntity<ReqRes> getAllUsers(){
-        return ResponseEntity.ok(usersManagementService.getAllUsers());
+        return ResponseEntity.ok(usersManagementService.getAllUsers(null));
+    }
 
+    @GetMapping(value = "/admin/users/search", params = "search")
+    public ResponseEntity<ReqRes> searchUsers(@RequestParam("search") String search){
+        return ResponseEntity.ok(usersManagementService.getAllUsers(search));
     }
 
     @GetMapping("/admin/get-users/{userId}")
@@ -72,7 +94,7 @@ public class UserManagementController {
         return  ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
-    @DeleteMapping("/admin/delete/{userId}")
+    @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<ReqRes> deleteUSer(@PathVariable String userId){
         return ResponseEntity.ok(usersManagementService.deleteUser(userId));
     }

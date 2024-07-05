@@ -38,6 +38,10 @@ public class User implements UserDetails {
 
     private String email;
 
+    private Boolean enabled = true;
+
+    private Boolean isEmailVerified = false;
+
     private String password;
 
     private String phone;

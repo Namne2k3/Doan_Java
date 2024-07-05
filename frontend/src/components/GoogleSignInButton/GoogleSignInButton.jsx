@@ -17,9 +17,10 @@ const GoogleSignInButton = ({ setShowLogin }) => {
         })
             .then((response) => response.json())
             .then(async (data) => {
-                // Lưu trữ thông tin người dùng (ví dụ: JWT) và chuyển hướng người dùng
-                console.log('Login success:', data);
+
+                // console.log('Đăng nhập thành công:', data);
                 localStorage.setItem('token', data.token)
+                localStorage.setItem('role', "USER")
                 await fetchProfileData()
                 setShowLogin(false)
                 navigate('/')

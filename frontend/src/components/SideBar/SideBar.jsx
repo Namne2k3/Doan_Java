@@ -7,6 +7,10 @@ const SideBar = () => {
     return (
         <div className='sidebar'>
             <div className="sidebar-options">
+                <NavLink to={"/admin/users"} className="sidebar-option">
+                    <img src={assets.order_icon} alt='users_management_icon' />
+                    <p>Quản lý người dùng</p>
+                </NavLink>
                 <NavLink to="/admin/brands" className="sidebar-option">
                     <img src={assets.order_icon} alt="add_icon" />
                     <p>Quản lý thương hiệu</p>
@@ -22,6 +26,10 @@ const SideBar = () => {
                 <NavLink to="/admin/orders" className="sidebar-option">
                     <img src={assets.order_icon} alt="add_icon" />
                     <p>Đơn hàng</p>
+                </NavLink>
+                <NavLink to="/admin/support" className="sidebar-option">
+                    <img src={assets.order_icon} alt="add_icon" />
+                    <p>Hỗ trợ khách hàng</p>
                 </NavLink>
             </div>
         </div>

@@ -20,7 +20,7 @@ const RecoveryPassword = ({ setShowLogin }) => {
             formData.append('email', email);
             const res = await axios.post(`http://localhost:8080/api/v1/emails/recovery_password`, formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data', // Thiết lập header Content-Type
+                    'Content-Type': 'multipart/form-data',
                 },
             }
             )

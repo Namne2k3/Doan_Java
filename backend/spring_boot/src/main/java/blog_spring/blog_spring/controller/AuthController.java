@@ -88,6 +88,7 @@ public class AuthController {
                     user.setPassword("");
                     user.setPhone("");
                     user.setAddress("");
+                    user.setIsEmailVerified(true);
 
                     var savedUser = userRepository.save(user);
 

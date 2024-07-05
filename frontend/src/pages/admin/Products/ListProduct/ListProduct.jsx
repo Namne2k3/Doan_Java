@@ -100,8 +100,8 @@ const ListProduct = () => {
         <>
             <div className='list add flex-col'>
                 <form className='product_filter_form'>
-                    <label htmlFor="name">Tìm kiếm</label>
-                    <input onInput={handleSearchProduct} id='name' className='p-1' name='name' type="text" placeholder='Tên sản phẩm' />
+                    {/* <label htmlFor="name">Tìm kiếm</label> */}
+                    <input onInput={handleSearchProduct} id='name' className='p-1' name='name' type="text" placeholder='Tìm tên sản phẩm' />
 
                     <select className='p-2' onChange={handleChangeCategory} required name="category">
                         <option selected>-- Chọn danh mục --</option>
@@ -115,11 +115,11 @@ const ListProduct = () => {
                 </form>
                 <div className="list-table">
                     <div className="list-table-format title">
-                        <b>Image</b>
-                        <b>Name</b>
-                        <b>Category</b>
-                        <b>Price</b>
-                        <b>Action</b>
+                        <b>Hình ảnh</b>
+                        <b>Tên sản phẩm</b>
+                        <b>Danh mục</b>
+                        <b>Giá</b>
+                        <b></b>
                     </div>
                     {
                         adminProducts?.length > 0

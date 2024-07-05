@@ -23,6 +23,10 @@ public class ReqRes<T> {
 
     private Boolean isVerified;
 
+    private Boolean enabled = true;
+
+    private Boolean isEmailVerified = false;
+
     private String expirationTime;
 
     private String username;

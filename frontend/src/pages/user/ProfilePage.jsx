@@ -66,7 +66,7 @@ const ProfilePage = () => {
             }
 
 
-            const response = await axios.put('http://localhost:8080/auth/update', {
+            const response = await axios.put(`http://localhost:8080/auth/update?userId=${profileInfo.id}`, {
                 id: infoData.id,
                 username: infoData.username,
                 email: infoData.email,

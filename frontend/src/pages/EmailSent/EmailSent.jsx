@@ -4,7 +4,7 @@ import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom';
 const EmailSent = ({ setShowLogin }) => {
 
-    const { emailSent } = useContext(StoreContext);
+    const { title = "Mã xác minh đã được gửi đến địa chỉ email", emailSent } = useContext(StoreContext);
     const navigate = useNavigate()
 
     return (
@@ -20,7 +20,7 @@ const EmailSent = ({ setShowLogin }) => {
                 <div className="email_sent_form_body">
                     <div className='email_sent_form_info'>
                         <i className="fa-regular fa-envelope"></i>
-                        <p>Mã xác minh đã được gửi đến địa chỉ email</p>
+                        <p>{title}</p>
                         <p style={{ color: "blue" }}>{emailSent}.</p>
                         <p>Vui lòng xác minh.</p>
                     </div>
