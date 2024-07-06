@@ -2,28 +2,24 @@ import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import "./ListProduct.css"
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 import { ToastContainer, toast } from 'react-toastify'
 import NotFound from '../../../../components/NotFound/NotFound'
 import { StoreContext } from '../../../../context/StoreContext'
 import { fetchALlCategories } from '../../../../services/CategoryService'
+import ProductInformation from '../../../../components/ProductInformation/ProductInformation';
+import { NavLink } from 'react-router-dom';
+import { assets } from '../../../../admin_assets/assets';
 const ListProduct = () => {
 
     const BASE_URL = "http://localhost:8080"
     const navigate = useNavigate()
     const token = localStorage.getItem('token')
     const [categories, setCategories] = useState([])
-    const { cateAdminProducts, setCateAdminProducts, setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
+    const { setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
 
     useEffect(() => {
-        // if (adminProducts.length === 0) {
-        //     toast.promise(fetchAdminProductsByCategory(), {
-        //         success: "Loaded Successfully!",
-        //         pending: "Loading products data!",
-        //         error: "Error while loading products data!!!"
-        //     }, {
-        //         containerId: 'A'
-        //     })
-        // }
 
         const fetchCategories = async () => {
             try {
@@ -99,6 +95,9 @@ const ListProduct = () => {
     return (
         <>
             <div className='list add flex-col'>
+                <button onClick={() => navigate("/admin/products/add")} className="sidebar-option rounded d-inline">
+                    <img src={assets.add_icon} alt="add_icon" />
+                </button>
                 <form className='product_filter_form'>
                     {/* <label htmlFor="name">Tìm kiếm</label> */}
                     <input onInput={handleSearchProduct} id='name' className='p-1' name='name' type="text" placeholder='Tìm tên sản phẩm' />
@@ -117,6 +116,8 @@ const ListProduct = () => {
                     <div className="list-table-format title">
                         <b>Hình ảnh</b>
                         <b>Tên sản phẩm</b>
+                        <b>Số lượng kho</b>
+                        <b>Đã bán</b>
                         <b>Danh mục</b>
                         <b>Giá</b>
                         <b></b>
@@ -131,6 +132,8 @@ const ListProduct = () => {
                                         <img src={`/images/${item.image}`} alt="product_image" />
                                         <p>{item.name}</p>
                                         <p>{item.category.name}</p>
+                                        <p>{item.stock_quantity}</p>
+                                        <p>{item.sold}</p>
                                         <p>{item.price}</p>
 
                                         {
@@ -167,10 +170,22 @@ const ListProduct = () => {
                                                         }
                                                     }}>Hủy ẩn</button>
                                         }
-
-                                        <button onClick={() => navigate(`/products/${item.id}`)}>
+                                        <Popup
+                                            trigger={
+                                                <button onClick={() => navigate(`/products/${item.id}`)}>
+                                                    Chi tiết
+                                                </button>
+                                            }
+                                            modal
+                                            nested
+                                        >
+                                            {
+                                                close => <ProductInformation product={item} close={close} />
+                                            }
+                                        </Popup>
+                                        {/* <button onClick={() => navigate(`/products/${item.id}`)}>
                                             Chi tiết
-                                        </button>
+                                        </button> */}
 
                                         <button className='cursor' onClick={() => navigate(`/admin/products/edit/${item.id}`)}>
                                             Chỉnh sửa

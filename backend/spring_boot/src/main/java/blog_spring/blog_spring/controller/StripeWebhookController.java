@@ -113,16 +113,19 @@ public class StripeWebhookController {
 
         List<OrderDetail> orderDetails = new ArrayList<>();
 
-        // Lặp qua từng cặp key-value trong productIdQuantityMap
         for (Map.Entry<String, Integer> entry : productIdQuantityMap.entrySet()) {
             String productId = entry.getKey();
             int quantity = entry.getValue();
-            // Tạo OrderDetail từ productId và quantity
+
             OrderDetail orderDetail = new OrderDetail();
 
             var findProduct = productRepository.findById(productId).get();
             if ( findProduct.getId() != null ) {
-                orderDetail.setProduct(findProduct);
+
+                findProduct.setStock_quantity(findProduct.getStock_quantity() - quantity);
+                findProduct.setSold(findProduct.getSold() + quantity);
+                var savedFindProduct = productRepository.save(findProduct);
+                orderDetail.setProduct(savedFindProduct);
             }
 
             orderDetail.setQuantity(quantity);
@@ -139,43 +142,5 @@ public class StripeWebhookController {
         var savedOrder = orderRepository.save(order);
         return savedOrder;
     }
-
-
-//    private Order createOrderFromSession(Session session, Map<String, String> metadata) {
-//        // Xử lý logic tạo Order từ session và metadata
-//
-//        OrderDetail orderDetail = new OrderDetail();
-//        orderDetail.setProductId(metadata.get("productId"));
-//        orderDetail.setQuantity(Integer.parseInt(metadata.get("quantity")));
-//        orderDetail.setPrice(Long.parseLong(metadata.get("price")));
-//
-//        var saved = orderDetailRepository.save(orderDetail);
-//        if (saved.getId() != null) {
-//
-//            Order order = new Order();
-//            order.setId(session.getId());
-//            order.setUserId(metadata.get("userId"));
-//            if (order.getDetails() == null) {
-//                order.setDetails(new ArrayList<>());
-//            }
-//
-//            order.getDetails().add(orderDetail);
-//            order.setEmail(metadata.get("email"));
-//            order.setOrderDate(new Date());
-//            order.setTotalAmount((long) session.getAmountTotal());
-//            order.setStatus(session.getStatus());
-//            order.setShippingAddress(metadata.get("address"));
-//            order.setPaymentMethod(session.getPaymentMethodTypes().toString());
-//            order.setCreatedAt(new Date());
-//            order.setUpdatedAt(new Date());
-//
-//            // Lưu đơn hàng vào cơ sở dữ liệu
-//            var savedOrder = orderRepository.save(order);
-//            if (savedOrder.getId() != null) {
-//                return savedOrder;
-//            }
-//        }
-//        return null;
-//    }
 }
 

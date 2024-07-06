@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import "./AdminBrands.css"
 import axios from 'axios'
 import NotFound from '../../../components/NotFound/NotFound'
-import { Link } from 'react-router-dom'
 
 const AdminBrands = () => {
 
@@ -55,9 +54,9 @@ const AdminBrands = () => {
                         <b>Actions</b>
                     </div>
                     {
-                        brands.length > 0
+                        brands?.length > 0
                             ?
-                            brands.map((item, index) => {
+                            brands?.map((item, index) => {
                                 return (
                                     <div className="list-table-brand-format" key={index}>
                                         <b>{item.name}</b>

@@ -17,6 +17,8 @@ public class Product {
 
     public Product() {
         isHide = false;
+        sold = 0;
+        watchCount = 0;
     }
 
     @Id
@@ -39,6 +41,8 @@ public class Product {
     private Category category;
 
     private long watchCount;
+
+    private long sold;
 
     @DBRef
     private Brand brand;

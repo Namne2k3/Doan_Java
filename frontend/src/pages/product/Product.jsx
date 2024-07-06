@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import CheckoutListButton from '../../components/CheckoutListButton/CheckoutListButton';
 import "./Product.css"
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import { assets } from '../../admin_assets/assets';
@@ -12,13 +12,13 @@ const Product = () => {
 
     const params = useParams();
     const { productId } = params;
-
+    const navigate = useNavigate()
     const [data, setData] = useState({});
     const [images, setImages] = useState([])
     const [comments, setComments] = useState([])
     const [popular, setPopular] = useState([])
 
-    const { addToCart, profileInfo } = useContext(StoreContext);
+    const { addToCart, profileInfo, setOneProductOrder } = useContext(StoreContext);
 
     const [comment, setComment] = useState({
         text: "",
@@ -37,11 +37,18 @@ const Product = () => {
     })
 
     const getProductData = async () => {
-        const res = await axios.get(`http://localhost:8080/api/v1/products/${productId}`)
-        if (res.data) {
-            setData(res.data.data)
-            setCart(prev => ({ ...prev, product: res.data.data }));
-            getPopularProducts(res.data.data.category.name)
+        try {
+            const res = await axios.get(`http://localhost:8080/api/v1/products/${productId}?watchCount=1`)
+            if (res.data.statusCode === 200) {
+                setData(res.data.data)
+                setCart(prev => ({ ...prev, product: res.data.data }));
+                getPopularProducts(res.data.data.category.name)
+            } else {
+                throw new Error(res.data.message)
+            }
+
+        } catch (e) {
+            toast.error(e.message)
         }
     }
 
@@ -138,8 +145,10 @@ const Product = () => {
     useEffect(() => {
         // console.log(data);
         getProductData()
-        fetchAllCommentsByProductId()
-    }, [data.id])
+
+        data?.id &&
+            fetchAllCommentsByProductId()
+    }, [data?.id])
 
     return (
         data?.id &&
@@ -210,7 +219,13 @@ const Product = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex gap-2">
-                                    <CheckoutListButton carts={[cart]} text='Mua ngay' />
+                                    {/* <CheckoutListButton carts={[cart]} text='Mua ngay' /> */}
+                                    <button className='p-2 rounded' onClick={() => {
+                                        setOneProductOrder([cart])
+                                        navigate('/place_product_order')
+                                    }}>
+                                        Thanh toán
+                                    </button>
                                     <button onClick={() => addToCart(productId)} href="#" className="btn btn-success shadow-0"> <i className="me-1 fa fa-shopping-basket"></i> Thêm giỏ hàng </button>
                                     {/* <a href="#" className="btn btn-light border border-secondary py-2 icon-hover px-3"> <i className="me-1 fa fa-heart fa-lg"></i> Lưu </a> */}
                                 </div>
@@ -540,70 +555,71 @@ const Product = () => {
                 <div className='list-comment-container'>
                     {
                         comments?.length > 0 ?
-                            comments?.map((cmt, index) => {
+                            comments.map((cmt, index) => {
+                                console.log(cmt);
+                                if (cmt.verify === true)
+                                    return (
+                                        <div key={index}>
+                                            <div className='comment-detail-user'>
+                                                <img src={`/images/${cmt.user.image}`} alt="user_image" />
+                                                <b>{cmt.user.username}</b>
+                                                <div className="rating-section">
 
-                                return (
-                                    <div key={index}>
-                                        <div className='comment-detail-user'>
-                                            <img src={`/images/${cmt.user.image}`} alt="user_image" />
-                                            <b>{cmt.user.username}</b>
-                                            <div className="rating-section">
+                                                    {
+                                                        cmt?.rate >= 1 ?
+                                                            <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                            :
+                                                            <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
 
+                                                    }
+                                                    {
+                                                        cmt?.rate >= 2 ?
+                                                            <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                            :
+                                                            <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                    }
+                                                    {
+                                                        cmt?.rate >= 3 ?
+                                                            <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                            :
+                                                            <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                    }
+                                                    {
+                                                        cmt?.rate >= 4 ?
+                                                            <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                            :
+                                                            <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                    }
+                                                    {
+                                                        cmt?.rate >= 5 ?
+                                                            <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
+                                                            :
+                                                            <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
+
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <p>{cmt.text}</p>
+
+                                            <div className='comment-detail-images'>
                                                 {
-                                                    cmt?.rate >= 1 ?
-                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
-                                                        :
-                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
-
-                                                }
-                                                {
-                                                    cmt?.rate >= 2 ?
-                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
-                                                        :
-                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
-
-                                                }
-                                                {
-                                                    cmt?.rate >= 3 ?
-                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
-                                                        :
-                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
-
-                                                }
-                                                {
-                                                    cmt?.rate >= 4 ?
-                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
-                                                        :
-                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
-
-                                                }
-                                                {
-                                                    cmt?.rate >= 5 ?
-                                                        <i style={{ color: "#FFD43B" }} className="fa-solid fa-star rate_icon"></i>
-                                                        :
-                                                        <i style={{ color: "#FFD43B" }} className="fa-regular fa-star rate_icon"></i>
-
+                                                    cmt?.images.map((item, index) => {
+                                                        return (
+                                                            <div key={index}>
+                                                                <img src={`/images/${item}`} alt='feedback_image' />
+                                                            </div>
+                                                        )
+                                                    })
                                                 }
                                             </div>
+
                                         </div>
 
-                                        <p>{cmt.text}</p>
-
-                                        <div className='comment-detail-images'>
-                                            {
-                                                cmt?.images.map((item, index) => {
-                                                    return (
-                                                        <div key={index}>
-                                                            <img src={`/images/${item}`} alt='feedback_image' />
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </div>
-
-                                    </div>
-
-                                )
+                                    )
                             })
                             :
                             <h4>Chưa có đánh giá cho sản phẩm này</h4>

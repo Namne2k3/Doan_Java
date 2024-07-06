@@ -30,43 +30,32 @@ public class ProductService {
     @Autowired
     private BrandRepository brandRepository;
 
-//    public ReqResProduct getSearchProducts(String search) {
-//        ReqResProduct reqRes = new ReqResProduct();
-//        try {
-//
-//            if ( search != null && !search.equals("") ) {
-//
-//                // amoled
-//                List<Document> pipeline = Arrays.asList(
-//                        new Document("text", new Document("text", new Document("query", search)
-//                                .append("path", Arrays.asList("name", "content", "description", "price", "product_attributes", "category", "brand" )))),
-//                        new Document("$set", new Document("id", new Document("$toString", "$_id"))), // Đổi _id thành id và chuyển đổi ObjectId thành String
-//                        new Document("$unset", "_id") // Bỏ _id khỏi tài liệu
-//                );
-//
-//
-//                AggregateIterable<Document> result = mongoTemplate.getCollection("products" ).aggregate(pipeline);
-//
-//                List<Document> resultsList = new ArrayList<>();
-//                for (Document doc : result) {
-//                    resultsList.add(doc);
-//                }
-//                if (!resultsList.isEmpty()) {
-//                    reqRes.setDataList(resultsList);
-//                    reqRes.setStatusCode(200);
-//                    reqRes.setMessage("Successful" );
-//                } else {
-//                    reqRes.setStatusCode(404);
-//                    reqRes.setMessage("No products found" );
-//                }
-//            }
-//        } catch (Exception e) {
-//            reqRes.setStatusCode(500);
-//            reqRes.setMessage("Error occurred: " + e.getMessage());
-//        } finally {
-//            return reqRes;
-//        }
-//    }
+    public ReqResProduct getMost(String most) {
+        ReqResProduct reqRes = new ReqResProduct();
+        try {
+            Product product = null;
+            if ( most.equals("watchCount") ) {
+                product = productRepository.findTopByOrderByWatchCountDesc();
+            }
+
+            if ( most.equals("sold") ) {
+                product = productRepository.findTopByOrderBySoldDesc();
+            }
+            if ( product.getId() != null ) {
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Get Product successfully");
+                reqRes.setData(product);
+
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Product not found");
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while get product: " + e.getMessage());
+        }
+        return reqRes;
+    }
 
     public ReqResProduct getSearchProducts(String search) {
         ReqResProduct reqRes = new ReqResProduct();
@@ -159,14 +148,22 @@ public class ProductService {
             return reqRes;
         }
     }
-    public ReqResProduct getById(String id) {
+    public ReqResProduct getById(String id, String watchCount) {
         ReqResProduct reqRes = new ReqResProduct();
         try {
             Product product = productRepository.findById(id).get();
-            if ( product != null ) {
-                reqRes.setStatusCode(200);
-                reqRes.setMessage("Get Product successfully");
-                reqRes.setData(product);
+            if ( product.getId() != null ) {
+                if ( watchCount != null && !watchCount.isEmpty()) {
+                    product.setWatchCount(product.getWatchCount() + Integer.parseInt(watchCount));
+                    var savedProduct = productRepository.save(product);
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Get Product successfully");
+                    reqRes.setData(savedProduct);
+                } else {
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Get Product successfully");
+                    reqRes.setData(product);
+                }
             } else {
                 reqRes.setStatusCode(404);
                 reqRes.setMessage("Product not found");

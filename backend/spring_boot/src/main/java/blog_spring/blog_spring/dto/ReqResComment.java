@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.checkerframework.common.value.qual.IntRange;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -34,4 +36,7 @@ public class ReqResComment<T> {
     private String text;
 
     private List<String> images;
+
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Date createdAt;
 }

@@ -31,6 +31,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @GetMapping(value = "/api/v1/products", params = "most")
+    public ResponseEntity<ReqResProduct> getMost(@RequestParam("most") String most)
+    {
+        return ResponseEntity.ok(productService.getMost(most));
+    }
+
     @GetMapping("/api/v1/products")
     public ResponseEntity<ReqResProduct> getProducts(@RequestParam @Nullable String category){
         return ResponseEntity.ok(productService.getAllProducts(category));
@@ -53,8 +59,8 @@ public class ProductController {
     }
 
     @GetMapping("/api/v1/products/{id}")
-    public ResponseEntity<ReqResProduct> getProduct(@PathVariable String id){
-        return ResponseEntity.ok(productService.getById(id));
+    public ResponseEntity<ReqResProduct> getProduct(@PathVariable String id, @RequestParam("watchCount") @Nullable String watchCount){
+        return ResponseEntity.ok(productService.getById(id,watchCount));
     }
 
     @GetMapping("/api/v1/products/populars")

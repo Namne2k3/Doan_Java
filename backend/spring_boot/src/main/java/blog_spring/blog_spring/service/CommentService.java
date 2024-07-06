@@ -15,6 +15,82 @@ public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
+    public ReqResComment updateVerifyComment(String id, String verify) {
+        ReqResComment reqRes = new ReqResComment();
+        try {
+            var comment = commentRepository.findById(id).get();
+            if ( comment.getId() != null ) {
+                if ( verify.equals("true") ) {
+                    comment.setVerify(true);
+                } else {
+                    comment.setVerify(false);
+                }
+                var savedComment = commentRepository.save(comment);
+                reqRes.setData(savedComment);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Đã kiểm duyệt phản hồi");
+            } else {
+                throw new Error("Phản hồi không tồn tại");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Có lỗi: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqResComment getVerifyComments (String verify) {
+        ReqResComment reqRes = new ReqResComment();
+        try {
+            var listComment = commentRepository.findAll();
+            if (verify.isEmpty()) {
+                reqRes.setDataList(listComment);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Thành công");
+            } else {
+                if ( verify.equals("true") ) {
+                    listComment = listComment.stream().filter(p -> p.isVerify()).toList();
+                } else {
+                    listComment = listComment.stream().filter(p -> !p.isVerify()).toList();
+                }
+                if (!listComment.isEmpty()) {
+                    reqRes.setDataList(listComment);
+                    reqRes.setStatusCode(200);
+                    reqRes.setMessage("Thành công");
+                } else {
+                    reqRes.setStatusCode(404);
+                    reqRes.setMessage("Chưa có bất kì đánh giá nào");
+                }
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Có lỗi: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
+    public ReqResComment getComments() {
+        ReqResComment reqRes = new ReqResComment();
+        try {
+            var listComment = commentRepository.findAll();
+            if (!listComment.isEmpty()) {
+                reqRes.setDataList(listComment);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Thành công");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("Chưa có bất kì đánh giá nào");
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Có lỗi: " + e.getMessage());
+        }
+        return reqRes;
+    }
+
     public ReqResComment getCommentsByProductId(String productId) {
         ReqResComment reqRes = new ReqResComment();
 

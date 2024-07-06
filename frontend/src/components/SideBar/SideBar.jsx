@@ -9,16 +9,16 @@ const SideBar = () => {
             <div className="sidebar-options">
                 <NavLink to={"/admin/users"} className="sidebar-option">
                     <img src={assets.order_icon} alt='users_management_icon' />
-                    <p>Quản lý người dùng</p>
+                    <p>Người dùng</p>
                 </NavLink>
                 <NavLink to="/admin/brands" className="sidebar-option">
                     <img src={assets.order_icon} alt="add_icon" />
-                    <p>Quản lý thương hiệu</p>
+                    <p>Thương hiệu</p>
                 </NavLink>
-                <NavLink to="/admin/products/add" className="sidebar-option">
+                {/* <NavLink to="/admin/products/add" className="sidebar-option">
                     <img src={assets.add_icon} alt="add_icon" />
                     <p>Thêm sản phẩm</p>
-                </NavLink>
+                </NavLink> */}
                 <NavLink to="/admin/products" className="sidebar-option">
                     <img src={assets.order_icon} alt="add_icon" />
                     <p>Sản phẩm</p>
@@ -30,6 +30,14 @@ const SideBar = () => {
                 <NavLink to="/admin/support" className="sidebar-option">
                     <img src={assets.order_icon} alt="add_icon" />
                     <p>Hỗ trợ khách hàng</p>
+                </NavLink>
+                <NavLink to="/admin/statistics" className="sidebar-option">
+                    <img src={assets.order_icon} alt="add_icon" />
+                    <p>Thống kê</p>
+                </NavLink>
+                <NavLink to="/admin/feedbacks" className="sidebar-option">
+                    <img src={assets.order_icon} alt="add_icon" />
+                    <p>Phản hồi</p>
                 </NavLink>
             </div>
         </div>

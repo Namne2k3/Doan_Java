@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import "./cart.css";
 import { StoreContext } from '../../context/StoreContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import NotFound from '../../components/NotFound/NotFound';
-import CheckoutListButton from '../../components/CheckoutListButton/CheckoutListButton';
 import { toast, ToastContainer } from 'react-toastify';
 
 const Cart = () => {

@@ -26,6 +26,8 @@ public class ReqResProduct<T> {
 
     private String description;
 
+    private long sold;
+
     private double price;
 
     private int stock_quantity;

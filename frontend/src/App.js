@@ -33,6 +33,9 @@ import VerifyEmail from "./pages/VerifyEmail/VerifyEmail";
 import AdminUsers from "./pages/admin/Users/AdminUsers";
 import SupportAdmin from "./pages/SupportAdmin/SupportAdmin";
 import SupportEngine from './components/SupportEngine/SupportEngine'
+import Statistics from "./pages/admin/Statistics/Statistics";
+import AddBrand from "./pages/admin/Brands/AddBrand";
+import Feedbacks from "./pages/admin/Feedbacks/Feedbacks";
 function App() {
 
   const { fetchProfileData } = useContext(StoreContext);
@@ -89,6 +92,7 @@ function App() {
               <Route path="/admin" element={<Admin />}>
                 <Route path="brands" element={<AdminBrands />} />
                 <Route path="brands/edit/:id" element={<UpdateBrand />} />
+                <Route path="brands/add" element={<AddBrand />} />
                 <Route path="products" element={<ListProduct />} />
                 <Route path="products/add" element={<AddProduct />} />
                 <Route path="products/edit/:id" element={<UpdateProduct />} />
@@ -96,7 +100,9 @@ function App() {
                 <Route path="update-user/:userId" element={<UpdateUser />} />
                 <Route path="orders" element={<ListOrder />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="statistics" element={<Statistics />} />
                 <Route path="support" element={<SupportAdmin />} />
+                <Route path="feedbacks" element={<Feedbacks />} />
               </Route>
             }
 

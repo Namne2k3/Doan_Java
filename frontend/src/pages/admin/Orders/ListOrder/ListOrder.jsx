@@ -142,10 +142,11 @@ const ListOrder = () => {
 
                 <h3>Các đơn đặt hàng</h3>
                 {
-                    adminOrders
-                        ? <div className="order-list">
+                    adminOrders?.length > 0
+                        ?
+                        <div className="order-list">
                             {
-                                adminOrders.map((order) => (
+                                adminOrders?.map((order) => (
                                     <div className="order-item" key={order.id}>
                                         <img src={images.parcel_icon} alt="parcel_icon" />
                                         <p className=''>Mã đơn hàng: {order.id}</p>

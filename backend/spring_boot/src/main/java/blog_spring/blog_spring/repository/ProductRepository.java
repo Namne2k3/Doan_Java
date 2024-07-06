@@ -11,4 +11,8 @@ import java.util.List;
 public interface ProductRepository extends MongoRepository<Product, String> {
 
     List<Product> findFirst4ByOrderByWatchCountDesc();
+
+    Product findTopByOrderBySoldDesc();
+
+    Product findTopByOrderByWatchCountDesc();
 }

@@ -12,4 +12,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
 
     @Query("{'productId': ?0}")
     List<Comment> findAllByProductId(String productId);
+
+    @Query("{'isVerify': ?0}")
+    List<Comment> findCommentsByVerify(String verify);
 }

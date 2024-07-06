@@ -217,6 +217,7 @@ const StoreContextProvider = (props) => {
     };
 
     const getTotalCartAmount = (cartList) => {
+        console.log(cartList);
         return cartList.reduce((total, item) => total + item.product.price * item.quantity, 0);
     };
 
