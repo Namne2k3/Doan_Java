@@ -202,7 +202,7 @@ const StoreContextProvider = (props) => {
         } else {
             try {
                 var findCarts = JSON.parse(localStorage.getItem('carts'))
-                console.log(findCarts);
+
                 var findCart = findCarts.find(p => p.product.id === id);
                 if (findCart) {
                     findCarts = findCart.map(p => p.product.id !== findCart.product.id)
@@ -216,9 +216,16 @@ const StoreContextProvider = (props) => {
         }
     };
 
-    const getTotalCartAmount = (cartList) => {
-        console.log(cartList);
-        return cartList.reduce((total, item) => total + item.product.price * item.quantity, 0);
+    const getTotalCartAmount = (cartList, voucher) => {
+        const totalWithoutVoucher = cartList.reduce((total, item) => {
+            return total + item.product.price * item.quantity;
+        }, 0);
+
+        if (voucher) {
+            return totalWithoutVoucher * (100 - Number(voucher)) / 100;
+        }
+
+        return totalWithoutVoucher;
     };
 
     const contextValue = {

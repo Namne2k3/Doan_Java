@@ -8,12 +8,13 @@ import { toast, ToastContainer } from 'react-toastify'
 
 const PlaceOneOrder = () => {
 
-    const { getTotalCartAmount, fetchAllCartByUser, profileInfo, oneProductOrder } = useContext(StoreContext)
+    const { getTotalCartAmount, fetchAllCartByUser, profileInfo, oneProductOrder, fetchProfileData } = useContext(StoreContext)
     const [paymentMethod, setPaymentMethod] = useState("stripe")
     const token = localStorage.getItem('token')
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [address, setAddress] = useState("")
+    const [voucher, setVoucher] = useState(null)
     const navigate = useNavigate()
     const [phone, setPhone] = useState("")
     const BASE_URL = "http://localhost:8080"
@@ -25,7 +26,7 @@ const PlaceOneOrder = () => {
     }
     useEffect(() => {
         fetchAllCartByUser()
-    }, [profileInfo]);
+    }, [profileInfo, voucher, profileInfo?.amount]);
 
     const VNDONG = (number) => {
         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
@@ -44,6 +45,7 @@ const PlaceOneOrder = () => {
             order.shippingAddress = profileInfo.address
             order.email = profileInfo.email
             order.phone = profileInfo.phone
+            order.voucher = voucher
             order.user = {
                 id: profileInfo.id,
                 email: profileInfo.email,
@@ -53,13 +55,18 @@ const PlaceOneOrder = () => {
         }
         order.status = "PENDING"
 
-        order.totalAmount = getTotalCartAmount(oneProductOrder) + 30000
+        if (voucher !== null) {
+            order.totalAmount = getTotalCartAmount(oneProductOrder, voucher) + 30000
+
+        } else {
+            order.totalAmount = getTotalCartAmount(oneProductOrder) + 30000
+        }
 
         console.log("Check new order >>> ", order);
         await axios.post(`${BASE_URL}/api/v1/orders`, order)
         const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
         if (response.data) {
-            console.log("Check response data >>> ", response.data);
+            fetchProfileData()
             if (response.data.statusCode === 200) {
                 navigate('/success')
             }
@@ -117,8 +124,10 @@ const PlaceOneOrder = () => {
 
                                 {
                                     oneProductOrder ?
-                                        <b>{getTotalCartAmount(oneProductOrder) === 0 ? 0 : VNDONG(getTotalCartAmount(oneProductOrder) + 30000)}</b>
-
+                                        voucher !== null ?
+                                            <b>{getTotalCartAmount(oneProductOrder) === 0 ? 0 : VNDONG(getTotalCartAmount(oneProductOrder, voucher) + 30000)}</b>
+                                            :
+                                            <b>{getTotalCartAmount(oneProductOrder) === 0 ? 0 : VNDONG(getTotalCartAmount(oneProductOrder) + 30000)}</b>
                                         :
                                         "0 VND"
                                 }
@@ -158,7 +167,7 @@ const PlaceOneOrder = () => {
                             profileInfo.id ?
                                 paymentMethod === "stripe"
                                     ?
-                                    <CheckoutListButton carts={oneProductOrder} text='Thanh toán quốc tế' />
+                                    <CheckoutListButton voucher={voucher} carts={oneProductOrder} text='Thanh toán quốc tế' />
                                     :
                                     paymentMethod === "momo"
                                         ?
@@ -185,6 +194,39 @@ const PlaceOneOrder = () => {
                     </div>
                 </div>
             }
+            <div className="voucher_section">
+                {
+                    profileInfo?.id &&
+                    <>
+                        <h2>Áp dụng phiếu giảm giá</h2>
+                        <div className='voucher_check_container'>
+                            {
+                                profileInfo?.amount >= 10000000 &&
+                                <div className="voucher_item">
+                                    <input onChange={(e) => setVoucher(prev => e.target.value)} name='voucher' value={10} type="radio" id='voucher_10' />
+                                    <label htmlFor="voucher_10">Giảm <b>10%</b></label>
+                                </div>
+                            }
+                            {
+                                profileInfo?.amount >= 20000000 &&
+                                <div className="voucher_item">
+
+                                    <input onChange={(e) => setVoucher(prev => e.target.value)} name='voucher' value={15} type="radio" id='voucher_15' />
+                                    <label htmlFor="voucher_15">Giảm <b>15%</b></label>
+                                </div>
+                            }
+                            {
+                                profileInfo?.amount >= 50000000 &&
+                                <div className="voucher_item">
+
+                                    <input onChange={(e) => setVoucher(prev => e.target.value)} value={25} name='voucher' type="radio" id='voucher_25' />
+                                    <label htmlFor="voucher_25">Giảm <b>25%</b></label>
+                                </div>
+                            }
+                        </div>
+                    </>
+                }
+            </div>
             <ToastContainer />
         </div>
     )

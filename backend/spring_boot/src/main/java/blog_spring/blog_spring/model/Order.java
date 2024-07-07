@@ -1,5 +1,6 @@
 package blog_spring.blog_spring.model;
 
+import com.mongodb.lang.Nullable;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -12,7 +13,6 @@ import java.util.List;
 @Data
 @Document(collection = "orders")
 public class Order {
-
     // done id
     @Id
     private String id;
@@ -26,6 +26,9 @@ public class Order {
 
     // done email
     private String email;
+
+    @Nullable
+    private String voucher;
 
     // done created
     private Date orderDate;

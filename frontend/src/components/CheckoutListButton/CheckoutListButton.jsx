@@ -6,7 +6,7 @@ import { StoreContext } from '../../context/StoreContext';
 import "./CheckoutListButton.css"
 const stripePromise = loadStripe('pk_test_51PInmwP62Hmtd4hNYGpoY9QKGvRboVF0io0RKtIb7uipwLkaIKTgg88vAKIUS3vp9hYALO0H76MHPdHX4QZQTIAE00drpUcrZT'); // Public key từ Stripe Dashboard
 
-const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng" }) => {
+const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng", voucher }) => {
 
     // const { carts } = useContext(StoreContext)
     const BASE_URL = "http://localhost:8080"
@@ -20,7 +20,7 @@ const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng" }) => {
         try {
             // Tạo session với server
 
-            const response = await axios.post(`${BASE_URL}/create-checkout-list-session`, {
+            const response = await axios.post(`${BASE_URL}/create-checkout-list-session?voucher=${voucher}`, {
                 profileInfo,
                 cartItems
             });

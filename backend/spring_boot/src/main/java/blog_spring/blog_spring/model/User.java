@@ -21,6 +21,7 @@ public class User implements UserDetails {
 
     public User() {
         image = "profile.jpg";
+        amount = 0;
     }
 
     @Id
@@ -47,6 +48,8 @@ public class User implements UserDetails {
     private String phone;
 
     private String address;
+
+    private long amount;
 
     private Date createdAt;
 

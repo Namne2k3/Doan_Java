@@ -31,6 +31,8 @@ public class ReqRes<T> {
 
     private String username;
 
+    private long amount;
+
     private String role;
 
     private String email;

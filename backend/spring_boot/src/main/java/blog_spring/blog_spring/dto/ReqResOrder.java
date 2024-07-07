@@ -27,6 +27,8 @@ public class ReqResOrder<T> {
 
     private String email;
 
+    private String voucher;
+
     @DBRef
     private User user;
 

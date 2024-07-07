@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -99,13 +96,30 @@ public class StripeWebhookController {
     }
     private Order createOrderFromSession(Session session, LineItemCollection lineItems, Map<String, String> metadata, Map<String, Integer> productIdQuantityMap) {
         Order order = new Order();
-
+        var voucher = metadata.get("voucher");
         var findUser = userRepository.findById(metadata.get("userId")).get();
         if ( findUser.getId() != null ) {
             order.setUser(findUser);
         }
 
         order.setEmail(metadata.get("email"));
+
+        if (voucher != null) {
+            order.setVoucher(voucher);
+            if ( voucher.equals("10")) {
+                findUser.setAmount(findUser.getAmount() - 10000000);
+            }
+            if ( voucher.equals("15")) {
+                findUser.setAmount(findUser.getAmount() - 20000000);
+            }
+            if ( voucher.equals("25")) {
+                findUser.setAmount(findUser.getAmount() - 50000000);
+            }
+            userRepository.save(findUser);
+        } else {
+            findUser.setAmount(findUser.getAmount() + session.getAmountSubtotal());
+            userRepository.save(findUser);
+        }
         order.setPhone(metadata.get("phone"));
         order.setShippingAddress(metadata.get("address"));
         order.setCreatedAt(new Date());
@@ -137,6 +151,7 @@ public class StripeWebhookController {
         order.setDetails(savedOrderDetails);
         order.setOrderDate(new Date());
         order.setTotalAmount((long) session.getAmountTotal());
+
         order.setStatus("paid");
 
         var savedOrder = orderRepository.save(order);

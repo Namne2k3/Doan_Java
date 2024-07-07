@@ -32,6 +32,8 @@ public class OrderService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     public Order createOrder() {
         return new Order();
     }
@@ -185,9 +187,9 @@ public class OrderService {
 
         try {
             Order order = new Order();
-            if ( registrationRequest.getUser() != null ) {
-                var id = registrationRequest.getUser().getId();
-                var findUser = userRepository.findById(id).get();
+            var id = registrationRequest.getUser().getId();
+            var findUser = userRepository.findById(id).get();
+            if ( findUser.getId() != null ) {
                 order.setUser(findUser);
             }
             order.setOrderDate(new Date());
@@ -196,6 +198,7 @@ public class OrderService {
             order.setShippingAddress(registrationRequest.getShippingAddress());
             order.setEmail(registrationRequest.getEmail());
             order.setPaymentMethod(registrationRequest.getPaymentMethod());
+            order.setVoucher(registrationRequest.getVoucher());
             order.setCreatedAt(new Date());
             order.setUpdatedAt(new Date());
             order.setPhone(registrationRequest.getPhone());
@@ -205,7 +208,24 @@ public class OrderService {
 
             order.setDetails(savedOrderDetails);
 
+            if ( order.getVoucher().equals("10") ) {
+                findUser.setAmount(findUser.getAmount() - 10000000);
+            }
+
+            if ( order.getVoucher().equals("15") ) {
+                findUser.setAmount(findUser.getAmount() - 20000000);
+            }
+
+            if ( order.getVoucher().equals("25") ) {
+                findUser.setAmount(findUser.getAmount() - 50000000);
+            }
+
+
             var saved = orderRepository.save(order);
+            if ( order.getVoucher().isEmpty() ) {
+                findUser.setAmount(findUser.getAmount()+ saved.getTotalAmount());
+            }
+            userRepository.save(findUser);
 
             if ( saved.getId() != null ) {
                 resp.setStatusCode(200);
