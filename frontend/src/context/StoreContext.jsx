@@ -36,15 +36,20 @@ const StoreContextProvider = (props) => {
 
     const fetchProductBySearching = async (search) => {
         console.log("Searching ... ");
-        const response = await axios.get(`${BASE_URL}/api/v1/products?search=${search}`)
-        if (response.data.statusCode === 200) {
-            setProducts(prev => response.data.dataList || [])
-        } else if (response.data.statusCode = 404) {
-            setProducts(prev => response.data.dataList || [])
-            console.log(response.data.message)
-        } else {
-            console.log(response.data.message)
+        try {
+            const response = await axios.get(`${BASE_URL}/api/v1/products?search=${search}`)
+            if (response.data.statusCode === 200) {
+                setProducts(prev => response.data.dataList || [])
+            } else if (response.data.statusCode = 404) {
+                setProducts(prev => response.data.dataList || [])
+                console.log(response.data.message)
+            } else {
+                console.log(response.data.message)
+            }
+        } catch (e) {
+            console.log(e);
         }
+
     }
 
     const fetchAllOrder = async () => {

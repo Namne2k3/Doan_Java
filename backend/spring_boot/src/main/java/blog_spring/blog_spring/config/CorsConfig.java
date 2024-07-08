@@ -31,7 +31,7 @@ public class CorsConfig {
                         // bất kỳ nguồn gốc nào cũng có thể gửi yêu cầu.
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                "https://4415krnq-3000.asse.devtunnels.ms/",
+                                "https://4415krnq-3000.asse.devtunnels.ms",
                                 "https://justtechshop.netlify.app"
                         )
                         .allowCredentials(true);
