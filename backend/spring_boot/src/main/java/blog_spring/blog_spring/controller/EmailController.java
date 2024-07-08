@@ -6,14 +6,9 @@ import blog_spring.blog_spring.service.EmailService;
 import blog_spring.blog_spring.service.JWTUtils;
 import blog_spring.blog_spring.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/emails")
@@ -48,7 +43,7 @@ public class EmailController {
 
             if ( user != null ) {
                 var token = jwtUtils.generateToken(user);
-                emailService.sendSimpleEmail(email,"Đặt lại mật khẩu","http://localhost:3000/submit_recovery_password/" + token );
+                emailService.sendSimpleEmail(email,"Đặt lại mật khẩu","https://justtechshop.netlify.app/submit_recovery_password/" + token );
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Email được gửi!");
             }
@@ -71,7 +66,7 @@ public class EmailController {
 
             if ( user != null ) {
                 var token = jwtUtils.generateToken(user);
-                emailService.sendSimpleEmail(email,"Nhấp vào đây để xác thực email","http://localhost:3000/verifyEmail/" + token );
+                emailService.sendSimpleEmail(email,"Nhấp vào đây để xác thực email","https://justtechshop.netlify.app/verifyEmail/" + token );
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Email được gửi!");
             }

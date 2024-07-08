@@ -29,7 +29,11 @@ public class CorsConfig {
                         // Cho phép tất cả các nguồn gốc (domains) được phép truy cập vào tài nguyên
                         // của ứng dụng. Dấu "*" có nghĩa là không giới hạn nguồn gốc nào cả,
                         // bất kỳ nguồn gốc nào cũng có thể gửi yêu cầu.
-                        .allowedOrigins("https://techshop-by-namne.netlify.app/","http://localhost:3000","https://main--techshop-by-namne.netlify.app")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://4415krnq-3000.asse.devtunnels.ms/",
+                                "https://justtechshop.netlify.app"
+                        )
                         .allowCredentials(true);
             }
         };

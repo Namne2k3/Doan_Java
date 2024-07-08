@@ -65,6 +65,7 @@ public class SecurityConfig {
                     .cors(Customizer.withDefaults())
                     .authorizeHttpRequests(request -> request
                             .requestMatchers("/api/v1/**").permitAll()
+                            .requestMatchers("/sitemap.xml").permitAll()
                             .requestMatchers("/oauth2/authorization/**").permitAll()
                             .requestMatchers("/create-checkout-session").permitAll()
                             .requestMatchers("/create-checkout-list-session").permitAll()

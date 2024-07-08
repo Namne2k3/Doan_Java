@@ -8,6 +8,7 @@ import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import { assets } from '../../admin_assets/assets';
 import { toast, ToastContainer } from 'react-toastify';
+import { Helmet } from 'react-helmet-async';
 const Product = () => {
 
     const params = useParams();
@@ -153,6 +154,11 @@ const Product = () => {
     return (
         data?.id &&
         <>
+            <Helmet>
+                <title>{data?.name}</title>
+                <meta name='description' content={data?.description} />
+                <link rel="canonical" href={`https://justtechshop.netlify.app/products/${data?.id}`} />
+            </Helmet>
             <section className="py-5">
                 <div className="container">
                     <div className="row gx-5">

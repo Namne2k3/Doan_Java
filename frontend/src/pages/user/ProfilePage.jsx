@@ -108,9 +108,9 @@ const ProfilePage = () => {
     return (
         <>
             <Helmet>
-                <title>Thông tin cá nhân</title>
+                <title>Thông tin cá nhân - {profileInfo?.username}</title>
                 <meta name='description' content='Thông tin cá nhân' />
-                <link rel="canonical" href="http://localhost:3000/profile" />
+                <link rel="canonical" href="https://justtechshop.netlify.app/profile" />
             </Helmet>
             <div className="container light-style flex-grow-1 container-p-y">
                 <h4 className="font-weight-bold py-3 mb-4">

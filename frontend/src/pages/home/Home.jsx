@@ -66,8 +66,8 @@ const Home = () => {
         <>
             <Helmet>
                 <title>Trang chủ TechShop</title>
-                <meta name='description' content='Các sản phẩm nổi bật' />
-                <link rel="canonical" href="http://localhost:3000" />
+                <meta name='description' content='Các sản phẩm điện tử' />
+                <link rel="canonical" href="https://justtechshop.netlify.app" />
             </Helmet>
             <>
                 <Header />

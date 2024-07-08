@@ -83,8 +83,8 @@ public class CheckoutController {
         // Tạo session Stripe
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/success")
-                .setCancelUrl("http://localhost:3000/cancel")
+                .setSuccessUrl("https://justtechshop.netlify.app/success")
+                .setCancelUrl("https://justtechshop.netlify.app")
                 .addAllLineItem(lineItems)
                 .putMetadata("userId", userId)
                 .putMetadata("voucher", voucher)
@@ -108,54 +108,4 @@ public class CheckoutController {
 
         return response;
     }
-
-
-//    @PostMapping("/create-checkout-session")
-//    public Map<String, String> createCheckoutSession(@RequestBody Map<String, Object> data) throws StripeException {
-//
-//        Stripe.apiKey = stripeApiKey;
-//        // Lấy thông tin sản phẩm từ request body
-//        String id = (String) data.get("id");
-//        Map<String, Object> product = (Map<String, Object>) data.get("product");
-//        Map<String, Object> profileInfo = (Map<String, Object>) data.get("profileInfo");
-//        String productId = (String) product.get("id");
-//        int quantity = (int)data.get("quantity");
-//        int price = (int) product.get("price");
-//        String name = (String) product.get("name");
-//        String userId = (String) profileInfo.get("id");
-//        String email = (String) profileInfo.get("email");
-//        String address = (String) profileInfo.get("address");
-//        // Tạo session tạo Stripe
-//        SessionCreateParams params = SessionCreateParams.builder()
-//                .setMode(SessionCreateParams.Mode.PAYMENT)
-//                .setSuccessUrl("http://localhost:3000/myorder") // URL sau khi thanh toán thành công
-//                .setCancelUrl("http://localhost:3000/cancel")  // URL nếu thanh toán bị hủy
-//                .addLineItem(
-//                        SessionCreateParams.LineItem.builder()
-//                                .setQuantity((long)quantity)
-//                                .setPriceData(
-//                                        SessionCreateParams.LineItem.PriceData.builder()
-//                                                .setUnitAmount(Long.valueOf(price + 30000))
-//                                                .setCurrency("vnd")
-//                                                .setProductData(
-//                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-//                                                                .setName(name)
-//                                                                .build())
-//                                                .build())
-//                                .build())
-//                .putMetadata("productId",productId)
-//                .putMetadata("email", email)
-//                .putMetadata("address", address)
-//                .putMetadata("userId", userId)
-//                .putMetadata("price", String.valueOf(price))
-//                .putMetadata("quantity", String.valueOf(quantity))
-//                .build();
-//
-//        Session session = Session.create(params);
-//
-//        Map<String, String> response = new HashMap<>();
-//        response.put("sessionId", session.getId());
-//
-//        return response;
-//    }
 }
