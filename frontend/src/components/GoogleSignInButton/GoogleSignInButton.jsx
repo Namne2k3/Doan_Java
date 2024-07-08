@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
 
 const GoogleSignInButton = ({ setShowLogin }) => {
     const { fetchProfileData } = useContext(StoreContext);
     const clientId = '1094118264922-622e85rqng6kd6pc93o29cjs88cd8qn4.apps.googleusercontent.com'; // Thay thế bằng Client ID của bạn
-    const navigate = useNavigate()
+
     const onSuccess = async (res) => {
         fetch('http://localhost:8080/api/v1/auth/google', {
             method: 'POST',
@@ -23,10 +22,10 @@ const GoogleSignInButton = ({ setShowLogin }) => {
                 localStorage.setItem('role', "USER")
                 await fetchProfileData()
                 setShowLogin(false)
-                navigate('/')
+                window.location.href = '/'
             })
             .catch((error) => {
-                console.error('Login error:', error);
+                console.log('Login error:', error);
             });
     };
 

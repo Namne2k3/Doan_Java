@@ -12,10 +12,10 @@ const Menu = ({ category, menuList, brandList, handleSetBrand, handleSetCategory
                 {
                     menuList?.map((item, index) => {
                         return (
-                            <div onClick={() => handleSetCategory(item.name)} key={index} className='explore-menu-list-item'>
+                            <a href={`#${item.name}`} key={index} className='explore-menu-list-item'>
                                 <img src={item.image} alt='menu_image' />
                                 <p>{item.name}</p>
-                            </div>
+                            </a>
                         )
                     })
                 }

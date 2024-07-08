@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -61,7 +59,7 @@ public class ProductService {
         ReqResProduct reqRes = new ReqResProduct();
         try {
             if (search != null && !search.isEmpty()) {
-                // Kiểm tra nếu chỉ mục đã tồn tại, nếu không thì tạo mới
+
                 boolean indexExists = false;
                 for (Document index : mongoTemplate.getCollection("products").listIndexes()) {
                     if ("name_text".equals(index.get("name"))) {
@@ -69,6 +67,7 @@ public class ProductService {
                         break;
                     }
                 }
+
                 if (!indexExists) {
                     mongoTemplate.getCollection("products").createIndex(
                             new Document("name", "text")
@@ -103,7 +102,7 @@ public class ProductService {
                     reqRes.setMessage("No products found");
                 }
             } else {
-                List<Product> resultsList = productRepository.findAll();
+                List<Product> resultsList = productRepository.findAll().stream().sorted(Comparator.comparingLong(Product::getWatchCount).reversed()).collect(Collectors.toList());;
                 if (!resultsList.isEmpty()) {
                     reqRes.setDataList(resultsList);
                     reqRes.setStatusCode(200);
@@ -238,7 +237,7 @@ public class ProductService {
                         .toList();
             }
             if (!result.isEmpty()) {
-                reqRes.setDataList(result);
+                reqRes.setDataList(result.stream().sorted(Comparator.comparingLong(Product::getWatchCount).reversed()).toList());
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Successful");
             } else {

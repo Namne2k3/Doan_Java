@@ -56,7 +56,8 @@ const Home = () => {
     const handleSetCategory = async (name) => {
         console.log(name);
         try {
-            await fetchProductsByCategory(name)
+            // await fetchProductsByCategory(name)
+            setCategory(prev => name)
         } catch (e) {
             console.log(e.message);
         }
@@ -72,7 +73,7 @@ const Home = () => {
             <>
                 <Header />
                 <Menu handleSetCategory={handleSetCategory} handleSetBrand={handleSetBrand} brandList={brandList} menuList={menuList} setCategory={setCategory} />
-                <TechDisplay />
+                <TechDisplay category={category} />
             </>
         </>
     )
