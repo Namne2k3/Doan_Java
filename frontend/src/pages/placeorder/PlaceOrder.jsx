@@ -163,17 +163,25 @@ const PlaceOrder = () => {
                     </div>
                     {
                         profileInfo.id ?
-                            paymentMethod === "stripe"
-                                ?
-                                <CheckoutListButton voucher={voucher} carts={carts} text='Thanh toán quốc tế' />
-                                :
-                                paymentMethod === "momo"
+                            profileInfo?.phone && profileInfo?.address ?
+                                paymentMethod === "stripe"
                                     ?
-                                    <button onClick={() => console.log("momo")}>Thanh toán với Momo</button>
+                                    <CheckoutListButton voucher={voucher} carts={carts} text='Thanh toán quốc tế' />
                                     :
-                                    <button onClick={(e) => {
-                                        handleSubmitOrder(e)
-                                    }}>Thanh toán khi nhận hàng</button>
+                                    paymentMethod === "momo"
+                                        ?
+                                        <button onClick={() => console.log("momo")}>Thanh toán với Momo</button>
+                                        :
+                                        <button onClick={(e) => {
+                                            handleSubmitOrder(e)
+                                        }}>Thanh toán khi nhận hàng</button>
+                                :
+                                <>
+                                    <b className='text-warning'>Vui lòng cập nhật đầy đủ thông tin trước khi tiến hành thanh toán</b>
+                                    <button onClick={() => navigate('/profile')}>
+                                        Cập nhật thông tin
+                                    </button>
+                                </>
                             :
                             <button onClick={() => handleSubmitOrder()}>Thanh toán khi nhận hàng</button>
                     }

@@ -49,21 +49,23 @@ const ProfilePage = () => {
     const handleChangeProfile = async () => {
         try {
 
+            if (currentPW !== "" && password !== "" && repeatPW !== "") {
+                const resdataPW = await axios.post(`http://localhost:8080/auth/verifyPasswordToken?token=${token}&password=${currentPW}`, {
+                    headers: {
+                        'Content-Type': 'application/json' // Có thể bỏ header này vì bạn không gửi JSON body
+                    }
+                });
 
-            const resdataPW = await axios.post(`http://localhost:8080/auth/verifyPasswordToken?token=${token}&password=${currentPW}`, {
-                headers: {
-                    'Content-Type': 'application/json' // Có thể bỏ header này vì bạn không gửi JSON body
+
+                if (resdataPW.data.statusCode !== 200) {
+                    throw new Error(resdataPW.data.message)
                 }
-            });
 
-
-            if (resdataPW.data.statusCode !== 200) {
-                throw new Error(resdataPW.data.message)
+                if (password !== repeatPW) {
+                    throw new Error("Vui lòng nhập lại chính xác mật khẩu")
+                }
             }
 
-            if (password !== repeatPW) {
-                throw new Error("Vui lòng nhập lại chính xác mật khẩu")
-            }
 
 
             const response = await axios.put(`http://localhost:8080/auth/update?userId=${profileInfo.id}`, {

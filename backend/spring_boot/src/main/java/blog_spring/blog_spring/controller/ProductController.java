@@ -124,7 +124,7 @@ public class ProductController {
         ReqResBrand newbr = brandService.getById(brand);
 
         p.setBrand((Brand) newbr.getData());
-        p.setImage("/images/" + image);
+        p.setImage(image);
         p.setImages(images);
         p.setStock_quantity(quantity);
         p.setWatchCount(watchCount);
