@@ -47,7 +47,6 @@ const LoginPopup = ({ setShowLogin }) => {
     const handleSubmitRegister = async (e) => {
         e.preventDefault();
         try {
-            // Call the register method from UserService
 
             const res = await userService.register({
                 username: username,
@@ -67,8 +66,7 @@ const LoginPopup = ({ setShowLogin }) => {
 
                 alert(`${res.message}. Vui lòng xác thực email`)
                 setShowLogin(false)
-                // localStorage.setItem('token', userData.token)
-                // localStorage.setItem('role', userData.role)
+
                 navigate("/")
             } else {
                 throw new Error(res.message)
@@ -112,19 +110,6 @@ const LoginPopup = ({ setShowLogin }) => {
                         <div class="google_btn_container ">
                             <GoogleSignInButton setShowLogin={setShowLogin} />
                         </div>
-                        {/* <div class="google_btn_container ">
-                            <Link to="/oauth2/authorization/facebook">
-                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" loading="lazy" alt="google logo" />
-                                <span>Login with Facebook</span>
-                            </Link>
-                        </div>
-                        <div class="google_btn_container ">
-                            <Link to="/oauth2/authorization/github">
-                                <img src="https://www.svgrepo.com/show/512317/github-142.svg" loading="lazy" alt="google logo" />
-                                <span>Login with Github</span>
-                            </Link>
-                        </div> */}
-
                         {
                             currentState === "Login"
                                 ?
@@ -132,14 +117,25 @@ const LoginPopup = ({ setShowLogin }) => {
                                 :
                                 <p>Đã có tài khoản? <span onClick={() => setCurrentState("Login")}>Đăng nhập ở đây</span> </p>
                         }
-                        <p>
-                            <span onClick={() => {
-                                setShowLogin(false)
-                                navigate('/recovery')
-                            }}>
-                                Quên mật khẩu?
-                            </span>
-                        </p>
+                        <div className="d-flex gap-3">
+
+                            <p>
+                                <span onClick={() => {
+                                    setShowLogin(false)
+                                    navigate('/recovery')
+                                }}>
+                                    Quên mật khẩu?
+                                </span>
+                            </p>
+                            <p>
+                                <span onClick={() => {
+                                    setShowLogin(false)
+                                    navigate('/verifyEmail')
+                                }}>
+                                    Chưa xác thực email?
+                                </span>
+                            </p>
+                        </div>
 
                     </form>
                     :

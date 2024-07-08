@@ -21,12 +21,10 @@ public class SitemapController {
 
         List<Product> products = productRepository.findAll();
 
-
-
         List<String> urls = new ArrayList<>();
-        urls.add("https://justtechshop.netlify.app"); // Trang chủ
+        urls.add("http://localhost:3000"); // Trang chủ
         for (Product product : products) {
-            urls.add("https://justtechshop.netlify.app/products/" + product.getId());
+            urls.add("http://localhost:3000/products/" + product.getId());
         }
 
         StringBuilder xmlBuilder = new StringBuilder();

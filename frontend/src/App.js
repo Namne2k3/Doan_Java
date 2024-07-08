@@ -86,6 +86,7 @@ function App() {
             <Route path="/submit_recovery_password/:token" element={<SubmitRecoveryPassword />} />
             <Route path="/email_sent" element={<EmailSent setShowLogin={setShowLogin} />} />
             <Route path="/verifyEmail/:token" element={<VerifyEmail />} />
+            <Route path="/verifyEmail" element={<VerifyEmail />} />
             {
               isAdmin
               &&

@@ -24,7 +24,8 @@ public class CheckoutController {
     private String stripeApiKey;
 
     @PostMapping("/create-checkout-list-session")
-    public Map<String, String> createCheckoutListSession(@RequestBody Map<String, Object> data, @RequestParam @Nullable String voucher) throws StripeException {
+    public Map<String, String> createCheckoutListSession(@RequestBody Map<String, Object> data,
+            @RequestParam @Nullable String voucher) throws StripeException {
 
         Stripe.apiKey = stripeApiKey;
 
@@ -53,15 +54,14 @@ public class CheckoutController {
                             .setQuantity((long) quantity)
                             .setPriceData(
                                     SessionCreateParams.LineItem.PriceData.builder()
-                                            .setUnitAmount((long) price )
+                                            .setUnitAmount((long) price)
                                             .setCurrency("vnd")
                                             .setProductData(
                                                     SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                             .setName(name)
                                                             .build())
                                             .build())
-                            .build()
-            );
+                            .build());
             productIdQuantityMap.put(productId, quantity);
         }
 
@@ -83,23 +83,22 @@ public class CheckoutController {
         // Tạo session Stripe
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://justtechshop.netlify.app/success")
-                .setCancelUrl("https://justtechshop.netlify.app")
+                .setSuccessUrl("http://localhost:3000/success")
+                .setCancelUrl("http://localhost:3000")
                 .addAllLineItem(lineItems)
                 .putMetadata("userId", userId)
                 .putMetadata("email", email)
                 .putMetadata("address", address)
                 .putMetadata("phone", phone)
                 .putMetadata("productIdQuantity", productIdQuantityJson);
-        if ( voucher != null && !voucher.isEmpty() && !voucher.equals("null")) {
+        if (voucher != null && !voucher.isEmpty() && !voucher.equals("null")) {
             paramsBuilder.putMetadata("voucher", voucher);
         }
 
         // Áp dụng couponId nếu có
         if (!couponId.isEmpty()) {
             paramsBuilder.addAllDiscount(
-                    Arrays.asList(SessionCreateParams.Discount.builder().setCoupon(couponId).build())
-            );
+                    Arrays.asList(SessionCreateParams.Discount.builder().setCoupon(couponId).build()));
         }
 
         SessionCreateParams params = paramsBuilder.build();

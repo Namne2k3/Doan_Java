@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/v1/emails")
 public class EmailController {
@@ -24,9 +23,9 @@ public class EmailController {
 
     @PostMapping("/send")
     public String sendEmail(@RequestParam String to,
-                            @RequestParam String subject,
-                            @RequestParam String body,
-                            @RequestParam(required = false, defaultValue = "false") boolean isHtml) {
+            @RequestParam String subject,
+            @RequestParam String body,
+            @RequestParam(required = false, defaultValue = "false") boolean isHtml) {
         if (isHtml) {
             emailService.sendHtmlEmail(to, subject, body);
         } else {
@@ -39,15 +38,15 @@ public class EmailController {
     public ReqRes recoveryPassword_post(@Validated @RequestParam String email) {
         ReqRes reqRes = new ReqRes();
         try {
-            var user = (User)userManagementService.findByEmail(email).getData();
+            var user = (User) userManagementService.findByEmail(email).getData();
 
-            if ( user != null ) {
+            if (user != null) {
                 var token = jwtUtils.generateToken(user);
-                emailService.sendSimpleEmail(email,"Đặt lại mật khẩu","https://justtechshop.netlify.app/submit_recovery_password/" + token );
+                emailService.sendSimpleEmail(email, "Đặt lại mật khẩu",
+                        "http://localhost:3000/submit_recovery_password/" + token);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Email được gửi!");
-            }
-            else {
+            } else {
                 throw new Exception("Email chưa được đăng ký tài khoản!");
             }
 
@@ -64,13 +63,13 @@ public class EmailController {
         try {
             var user = (User) userManagementService.findByEmail(email).getData();
 
-            if ( user != null ) {
+            if (user != null) {
                 var token = jwtUtils.generateToken(user);
-                emailService.sendSimpleEmail(email,"Nhấp vào đây để xác thực email","https://justtechshop.netlify.app/verifyEmail/" + token );
+                emailService.sendSimpleEmail(email, "Nhấp vào đây để xác thực email",
+                        "http://localhost:3000/verifyEmail/" + token);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Email được gửi!");
-            }
-            else {
+            } else {
                 throw new Exception("Email chưa được đăng ký tài khoản!");
             }
 

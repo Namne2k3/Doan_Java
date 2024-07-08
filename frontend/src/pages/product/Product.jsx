@@ -157,7 +157,7 @@ const Product = () => {
             <Helmet>
                 <title>{data?.name}</title>
                 <meta name='description' content={data?.description} />
-                <link rel="canonical" href={`https://justtechshop.netlify.app/products/${data?.id}`} />
+                <link rel="canonical" href={`http://localhost:3000/products/${data?.id}`} />
             </Helmet>
             <section className="py-5">
                 <div className="container">

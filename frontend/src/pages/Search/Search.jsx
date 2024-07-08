@@ -13,7 +13,7 @@ const Search = () => {
             <Helmet>
                 <title>Kết quả tìm kiếm: {search}</title>
                 <meta name='description' content={search} />
-                <link rel="canonical" href={`https://justtechshop.netlify.app/search`} />
+                <link rel="canonical" href={`http://localhost:3000/search`} />
             </Helmet>
             <TechDisplay title='Kết quả tìm kiếm' search={search} />
         </div>
