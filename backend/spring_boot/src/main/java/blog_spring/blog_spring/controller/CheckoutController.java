@@ -76,7 +76,7 @@ public class CheckoutController {
         // Tạo session Stripe
 
         String couponId = "";
-        if (voucher != null && !voucher.isEmpty()) {
+        if (voucher != null && !voucher.isEmpty() && !voucher.equals("null")) {
             couponId = voucher;
         }
 
@@ -87,11 +87,13 @@ public class CheckoutController {
                 .setCancelUrl("https://justtechshop.netlify.app")
                 .addAllLineItem(lineItems)
                 .putMetadata("userId", userId)
-                .putMetadata("voucher", voucher)
                 .putMetadata("email", email)
                 .putMetadata("address", address)
                 .putMetadata("phone", phone)
                 .putMetadata("productIdQuantity", productIdQuantityJson);
+        if ( voucher != null && !voucher.isEmpty() && !voucher.equals("null")) {
+            paramsBuilder.putMetadata("voucher", voucher);
+        }
 
         // Áp dụng couponId nếu có
         if (!couponId.isEmpty()) {

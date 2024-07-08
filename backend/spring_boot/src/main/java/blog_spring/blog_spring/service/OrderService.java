@@ -208,25 +208,27 @@ public class OrderService {
 
             order.setDetails(savedOrderDetails);
 
-            if ( order.getVoucher().equals("10") ) {
-                findUser.setAmount(findUser.getAmount() - 10000000);
+            if ( order.getVoucher() != null ) {
+                if ( order.getVoucher().equals("10") ) {
+                    findUser.setAmount(findUser.getAmount() - 10000000);
+                }
+
+                if ( order.getVoucher().equals("15") ) {
+                    findUser.setAmount(findUser.getAmount() - 20000000);
+                }
+
+                if ( order.getVoucher().equals("25") ) {
+                    findUser.setAmount(findUser.getAmount() - 50000000);
+                }
+                userRepository.save(findUser);
+            } else {
+                findUser.setAmount(findUser.getAmount() + order.getTotalAmount());
+                userRepository.save(findUser);
             }
 
-            if ( order.getVoucher().equals("15") ) {
-                findUser.setAmount(findUser.getAmount() - 20000000);
-            }
-
-            if ( order.getVoucher().equals("25") ) {
-                findUser.setAmount(findUser.getAmount() - 50000000);
-            }
 
 
             var saved = orderRepository.save(order);
-            if ( order.getVoucher().isEmpty() ) {
-                findUser.setAmount(findUser.getAmount()+ saved.getTotalAmount());
-            }
-            userRepository.save(findUser);
-
             if ( saved.getId() != null ) {
                 resp.setStatusCode(200);
                 resp.setMessage("Saved Order Successful");

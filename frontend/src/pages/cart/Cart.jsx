@@ -6,7 +6,6 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import NotFound from '../../components/NotFound/NotFound';
 import { toast, ToastContainer } from 'react-toastify';
-import { Helmet } from 'react-helmet-async';
 
 const Cart = () => {
     const BASE_URL = "http://localhost:8080";
@@ -114,11 +113,6 @@ const Cart = () => {
 
     return (
         <>
-            <Helmet>
-                <title>Giỏ hàng - {profileInfo?.username}</title>
-                <meta name='description' content="Giỏ hàng cá nhân" />
-                <link rel="canonical" href={`https://justtechshop.netlify.app/cart`} />
-            </Helmet>
             <div className='cart'>
                 <div className="cart-items">
                     <div className="cart-items-title">
