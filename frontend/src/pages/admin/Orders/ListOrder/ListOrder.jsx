@@ -7,7 +7,9 @@ import { images } from '../../../../assets/images'
 import NotFound from "../../../../components/NotFound/NotFound"
 import axios from 'axios'
 import { exportToPDF } from '../../../../services/Export'
+import Popup from 'reactjs-popup'
 import moment from 'moment'
+import OrderDetail from '../../../../components/OrderDetail/OrderDetail'
 
 const ListOrder = () => {
     const { adminOrders, setAdminOrders, fetchAllOrder } = useContext(StoreContext);
@@ -184,6 +186,17 @@ const ListOrder = () => {
                                             <option value="canceled">Đã hủy</option>
                                         </select>
                                         <button onClick={() => exportToPDF([order])}>Xuất hóa đơn PDF</button>
+                                        <Popup
+                                            modal
+                                            nested
+                                            trigger={
+                                                <button>Chi tiết</button>
+                                            }
+                                        >
+                                            {
+                                                close => <OrderDetail close={close} order={order} />
+                                            }
+                                        </Popup>
                                     </div>
                                 ))
                             }

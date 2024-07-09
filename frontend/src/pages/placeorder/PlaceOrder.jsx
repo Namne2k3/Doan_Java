@@ -3,6 +3,7 @@ import "./placeorder.css"
 import { StoreContext } from '../../context/StoreContext'
 import CheckoutListButton from '../../components/CheckoutListButton/CheckoutListButton'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
 const PlaceOrder = () => {
@@ -31,45 +32,50 @@ const PlaceOrder = () => {
     }
 
     const handleSubmitOrder = async (e) => {
-        const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
-        const order = resOrder.data;
-        if (profileInfo?.id) {
+        try {
 
-            order.shippingAddress = profileInfo?.address
-            order.email = profileInfo?.email
-            order.phone = profileInfo?.phone
-            order.voucher = voucher
-            order.user = {
-                id: profileInfo?.id,
-                email: profileInfo?.email,
-                phone: profileInfo?.phone,
-                username: profileInfo?.username,
-            };
-        } else {
-            order.shippingAddress = address
-            order.email = email
-            order.phone = phone
-        }
+            const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
+            const order = resOrder.data;
+            if (profileInfo?.id) {
 
-        if (voucher !== null) {
-            order.totalAmount = getTotalCartAmount(carts, voucher) + 30000
-
-        } else {
-            order.totalAmount = getTotalCartAmount(carts) + 30000
-        }
-
-        order.paymentMethod = "COD"
-        order.details = carts
-
-        const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
-        if (response.data) {
-
-            if (response.data.statusCode === 200) {
-                navigate('/success')
+                order.shippingAddress = profileInfo?.address
+                order.email = profileInfo?.email
+                order.phone = profileInfo?.phone
+                order.voucher = voucher
+                order.user = {
+                    id: profileInfo?.id,
+                    email: profileInfo?.email,
+                    phone: profileInfo?.phone,
+                    username: profileInfo?.username,
+                };
+            } else {
+                order.shippingAddress = address
+                order.email = email
+                order.phone = phone
             }
-            fetchProfileData()
-        } else {
-            navigate('/error')
+
+            if (voucher !== null) {
+                order.totalAmount = getTotalCartAmount(carts, voucher) + 30000
+
+            } else {
+                order.totalAmount = getTotalCartAmount(carts) + 30000
+            }
+
+            order.paymentMethod = "COD"
+            order.details = carts
+
+            const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
+            if (response.data.statusCode === 200) {
+
+                if (response.data.statusCode === 200) {
+                    window.location.href = "/myorder"
+                }
+                fetchProfileData()
+            } else {
+                throw new Error(response.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
         }
 
     }
@@ -173,7 +179,11 @@ const PlaceOrder = () => {
                                         <button onClick={() => console.log("momo")}>Thanh toán với Momo</button>
                                         :
                                         <button onClick={(e) => {
-                                            handleSubmitOrder(e)
+                                            toast.promise(handleSubmitOrder(e), {
+                                                pending: "Đang tiến hành đặt hàng",
+                                                success: "Đơn hàng đặt thành công",
+                                                error: "Gặp lỗi khi đặt đơn hàng"
+                                            })
                                         }}>Thanh toán khi nhận hàng</button>
                                 :
                                 <>
@@ -183,7 +193,11 @@ const PlaceOrder = () => {
                                     </button>
                                 </>
                             :
-                            <button onClick={() => handleSubmitOrder()}>Thanh toán khi nhận hàng</button>
+                            <button onClick={(e) => toast.promise(handleSubmitOrder(e), {
+                                pending: "Đang tiến hành đặt hàng",
+                                success: "Đơn hàng đặt thành công",
+                                error: "Gặp lỗi khi đặt đơn hàng"
+                            })}>Thanh toán khi nhận hàng</button>
                     }
                 </div>
             </div>
@@ -220,6 +234,7 @@ const PlaceOrder = () => {
                     </>
                 }
             </div>
+            <ToastContainer draggable stacked autoClose={1500} hideProgressBar />
         </div>
     )
 }

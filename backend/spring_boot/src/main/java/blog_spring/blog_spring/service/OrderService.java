@@ -3,8 +3,10 @@ package blog_spring.blog_spring.service;
 import blog_spring.blog_spring.dto.ReqResOrder;
 import blog_spring.blog_spring.dto.ReqResOrderSearch;
 import blog_spring.blog_spring.model.Order;
+import blog_spring.blog_spring.model.OrderDetail;
 import blog_spring.blog_spring.repository.OrderDetailRepository;
 import blog_spring.blog_spring.repository.OrderRepository;
+import blog_spring.blog_spring.repository.ProductRepository;
 import blog_spring.blog_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -31,7 +33,8 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private ProductRepository productRepository;
 
 
     public Order createOrder() {
@@ -203,6 +206,14 @@ public class OrderService {
             order.setUpdatedAt(new Date());
             order.setPhone(registrationRequest.getPhone());
 
+            for (OrderDetail orderDetail: registrationRequest.getDetails()) {
+                var product = orderDetail.getProduct();
+                product.setSold(product.getSold() + orderDetail.getQuantity());
+                product.setStock_quantity(product.getStock_quantity() - orderDetail.getQuantity());
+
+                var savedProduct = productRepository.save(product);
+
+            }
 
             var savedOrderDetails = orderDetailRepository.saveAll(registrationRequest.getDetails());
 
@@ -230,10 +241,15 @@ public class OrderService {
 
             var saved = orderRepository.save(order);
             if ( saved.getId() != null ) {
+
+
+
                 resp.setStatusCode(200);
                 resp.setMessage("Saved Order Successful");
                 resp.setData(saved);
             }
+
+
 
         } catch(Exception e) {
             resp.setStatusCode(500);

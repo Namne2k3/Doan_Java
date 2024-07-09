@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
+import Popup from 'reactjs-popup';
 import "./MyOrders.css"
 import { StoreContext } from '../../context/StoreContext'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify'
 import { images } from '../../assets/images'
+import OrderDetail from '../../components/OrderDetail/OrderDetail';
+
 const MyOrders = () => {
 
     const BASE_URL = "http://localhost:8080"
-    // const [data, setData] = useState([])
     const { profileInfo, userOrders, setUserOrders } = useContext(StoreContext)
-
-    const page = 1;
-    const size = 10;
 
     const fetchOrders = async () => {
         const orders = await axios.get(`${BASE_URL}/api/v1/my_orders/${profileInfo.id}`)
@@ -95,6 +94,17 @@ const MyOrders = () => {
                                     </b>
                                 </p>
                                 <button onClick={() => fetchOrders()}>Làm mới</button>
+                                <Popup
+                                    trigger={
+                                        <button onClick={() => console.log(order)}>Chi tiết</button>
+                                    }
+                                    modal
+                                    nested
+                                >
+                                    {
+                                        close => <OrderDetail close={close} order={order} />
+                                    }
+                                </Popup>
                                 {
                                     order.status === "processed" || order.status === "canceled" ?
                                         <button style={{ opacity: "0.7" }} disabled >Hủy</button>

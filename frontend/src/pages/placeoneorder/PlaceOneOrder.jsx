@@ -33,43 +33,50 @@ const PlaceOneOrder = () => {
     }
 
     const handleSubmitOrder = async (e) => {
-        const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
-        const order = resOrder.data;
-        order.details = oneProductOrder
-        order.paymentMethod = "COD"
-        order.shippingAddress = address
-        order.email = email
-        order.phone = phone
+        try {
+            const resOrder = await axios.get(`${BASE_URL}/api/v1/orders/createOrder`)
+            const order = resOrder.data;
+            order.details = oneProductOrder
+            order.paymentMethod = "COD"
+            order.shippingAddress = address
+            order.email = email
+            order.phone = phone
 
-        if (profileInfo.id) {
-            order.shippingAddress = profileInfo.address
-            order.email = profileInfo.email
-            order.phone = profileInfo.phone
-            order.voucher = voucher
-            order.user = {
-                id: profileInfo.id,
-                email: profileInfo.email,
-                phone: profileInfo.phone,
-                username: profileInfo.username,
-            };
-        }
-        order.status = "PENDING"
-
-        if (voucher !== null) {
-            order.totalAmount = getTotalCartAmount(oneProductOrder, voucher) + 30000
-
-        } else {
-            order.totalAmount = getTotalCartAmount(oneProductOrder) + 30000
-        }
-
-        console.log("Check new order >>> ", order);
-        await axios.post(`${BASE_URL}/api/v1/orders`, order)
-        const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
-        if (response.data) {
-            fetchProfileData()
-            if (response.data.statusCode === 200) {
-                navigate('/success')
+            if (profileInfo.id) {
+                order.shippingAddress = profileInfo.address
+                order.email = profileInfo.email
+                order.phone = profileInfo.phone
+                order.voucher = voucher
+                order.user = {
+                    id: profileInfo.id,
+                    email: profileInfo.email,
+                    phone: profileInfo.phone,
+                    username: profileInfo.username,
+                };
             }
+            order.status = "PENDING"
+
+            if (voucher !== null) {
+                order.totalAmount = getTotalCartAmount(oneProductOrder, voucher) + 30000
+
+            } else {
+                order.totalAmount = getTotalCartAmount(oneProductOrder) + 30000
+            }
+
+            console.log("Check new order >>> ", order);
+            await axios.post(`${BASE_URL}/api/v1/orders`, order)
+            const response = await axios.post(`${BASE_URL}/api/v1/orders`, order)
+            if (response.data.statusCode === 200) {
+                fetchProfileData()
+                if (response.data.statusCode === 200) {
+                    window.location.href = "/myorder"
+                }
+            } else {
+                throw new Error(response.data.message)
+            }
+
+        } catch (e) {
+            toast.error(e.message)
         }
 
     }
@@ -177,7 +184,11 @@ const PlaceOneOrder = () => {
                                             <button onClick={(e) => {
                                                 // setOneProductOrder([item])
                                                 console.log("1");
-                                                handleSubmitOrder(e)
+                                                toast.promise(handleSubmitOrder(e), {
+                                                    pending: "Đang tiến hành đặt hàng",
+                                                    success: "Đơn hàng đặt thành công",
+                                                    error: "Gặp lỗi khi đặt đơn hàng"
+                                                })
                                             }}
                                             >
                                                 Thanh toán khi nhận hàng
@@ -190,12 +201,12 @@ const PlaceOneOrder = () => {
                                         </button>
                                     </>
                                 :
-                                <button onClick={() => toast.promise(
-                                    handleSubmitOrder(),
+                                <button onClick={(e) => toast.promise(
+                                    handleSubmitOrder(e),
                                     {
-                                        success: "Đang gửi hóa đơn",
-                                        pending: "Hóa đơn đã được gửi",
-                                        error: "Có lỗi khi gửi đơn"
+                                        pending: "Đang tiến hành đặt hàng",
+                                        success: "Đơn hàng đặt thành công",
+                                        error: "Gặp lỗi khi đặt đơn hàng"
                                     }
                                 )}
                                 >
@@ -238,7 +249,7 @@ const PlaceOneOrder = () => {
                     </>
                 }
             </div>
-            <ToastContainer />
+            <ToastContainer draggable stacked hideProgressBar autoClose={2000} />
         </div>
     )
 }
