@@ -157,9 +157,9 @@ const ListProduct = () => {
                                     <div className="list-table-format" key={index}>
                                         <img src={`/images/${item.image}`} alt="product_image" />
                                         <p>{item.name}</p>
-                                        <p>{item.category.name}</p>
                                         <p>{item.stock_quantity}</p>
                                         <p>{item.sold}</p>
+                                        <p>{item.category.name}</p>
                                         <p>{item.price}</p>
 
                                         {

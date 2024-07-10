@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext, useEffect, useState } from 'react'
-import CheckoutListButton from '../../components/CheckoutListButton/CheckoutListButton';
 import "./Product.css"
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
@@ -54,10 +53,15 @@ const Product = () => {
     }
 
     const getPopularProducts = async (category) => {
-        const res = await axios.get(`http://localhost:8080/api/v1/products/populars?category=${category}`)
-        if (res.data) {
-            // console.log(res.data.dataList);
-            setPopular(res.data.dataList)
+        try {
+            const res = await axios.get(`http://localhost:8080/api/v1/products/populars?category=${category}`)
+            if (res.data.statusCode === 200) {
+                setPopular(res.data.dataList)
+            } else {
+                throw new Error(res.data.message)
+            }
+        } catch (e) {
+            toast.error(e.message)
         }
     }
 
@@ -442,9 +446,9 @@ const Product = () => {
                             <div className="px-0 border rounded-2 shadow-0">
                                 <div className="card">
                                     <div className="card-body">
-                                        <h5 className="card-title">Sản phẩm nổi bật</h5>
+                                        <h5 className="card-title">Sản phẩm liên quan</h5>
                                         {
-                                            popular.map((item, index) => {
+                                            popular?.map((item, index) => {
 
                                                 return (
                                                     <div key={index} className="d-flex mb-3">

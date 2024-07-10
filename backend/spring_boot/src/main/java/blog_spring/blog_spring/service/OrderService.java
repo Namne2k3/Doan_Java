@@ -214,11 +214,7 @@ public class OrderService {
 
         try {
             Order order = new Order();
-            var id = registrationRequest.getUser().getId();
-            var findUser = userRepository.findById(id).get();
-            if ( findUser.getId() != null ) {
-                order.setUser(findUser);
-            }
+
             order.setOrderDate(new Date());
             order.setTotalAmount(registrationRequest.getTotalAmount());
             order.setStatus("pending");
@@ -242,32 +238,34 @@ public class OrderService {
             var savedOrderDetails = orderDetailRepository.saveAll(registrationRequest.getDetails());
 
             order.setDetails(savedOrderDetails);
-
-            if ( order.getVoucher() != null ) {
-                if ( order.getVoucher().equals("10") ) {
-                    findUser.setAmount(findUser.getAmount() - 10000000);
+            if ( registrationRequest.getUser() != null) {
+                var findUser = userRepository.findById(registrationRequest.getUser().getId()).get();
+                if ( findUser.getId() != null ) {
+                    order.setUser(findUser);
                 }
+                if ( order.getVoucher() != null ) {
+                    if ( order.getVoucher().equals("10") ) {
+                        findUser.setAmount(findUser.getAmount() - 10000000);
+                    }
 
-                if ( order.getVoucher().equals("15") ) {
-                    findUser.setAmount(findUser.getAmount() - 20000000);
-                }
+                    if ( order.getVoucher().equals("15") ) {
+                        findUser.setAmount(findUser.getAmount() - 20000000);
+                    }
 
-                if ( order.getVoucher().equals("25") ) {
-                    findUser.setAmount(findUser.getAmount() - 50000000);
+                    if ( order.getVoucher().equals("25") ) {
+                        findUser.setAmount(findUser.getAmount() - 50000000);
+                    }
+                    userRepository.save(findUser);
+                } else {
+                    findUser.setAmount(findUser.getAmount() + order.getTotalAmount());
+                    userRepository.save(findUser);
                 }
-                userRepository.save(findUser);
-            } else {
-                findUser.setAmount(findUser.getAmount() + order.getTotalAmount());
-                userRepository.save(findUser);
             }
 
 
 
             var saved = orderRepository.save(order);
             if ( saved.getId() != null ) {
-
-
-
                 resp.setStatusCode(200);
                 resp.setMessage("Saved Order Successful");
                 resp.setData(saved);

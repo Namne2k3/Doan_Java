@@ -108,7 +108,7 @@ const AdminBrands = () => {
                     }
                 </div>
             </div>
-            <ToastContainer draggable stacked autoClose={1500} />
+            <ToastContainer hideProgressBar draggable stacked autoClose={1500} />
         </>
     );
 }

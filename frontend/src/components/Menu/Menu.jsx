@@ -23,13 +23,14 @@ const Menu = ({ category, menuList, brandList, handleSetBrand, handleSetCategory
             <div className="explore-menu-list">
                 {
                     brandList?.map((item, index) => {
-                        return (
-                            <div key={index} className='explore-menu-list-item'>
-                                <button className='p-2 rounded'>
-                                    <a href={`#${item.name}`}>{item.name}</a>
-                                </button>
-                            </div>
-                        )
+                        if (item.hide === false)
+                            return (
+                                <div key={index} className='explore-menu-list-item'>
+                                    <button className='p-2 rounded'>
+                                        <a href={`#${item.name}`}>{item.name}</a>
+                                    </button>
+                                </div>
+                            )
                     })
                 }
             </div>

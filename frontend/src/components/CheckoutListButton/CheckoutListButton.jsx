@@ -4,6 +4,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import "./CheckoutListButton.css"
+import { ToastContainer, toast } from 'react-toastify';
+
 const stripePromise = loadStripe('pk_test_51PInmwP62Hmtd4hNYGpoY9QKGvRboVF0io0RKtIb7uipwLkaIKTgg88vAKIUS3vp9hYALO0H76MHPdHX4QZQTIAE00drpUcrZT'); // Public key từ Stripe Dashboard
 
 const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng", voucher }) => {
@@ -64,9 +66,17 @@ const CheckoutListButton = ({ carts, text = "Thanh toán giỏ hàng", voucher }
     };
 
     return (
-        <button className='checkout_btn' onClick={handleCheckout}>
-            {text}
-        </button>
+        <>
+            <button className='checkout_btn' onClick={() => {
+                toast.promise(handleCheckout, {
+                    pending: "Đang chuyến hướng thanh toán"
+                })
+            }
+            }>
+                {text}
+            </button>
+            <ToastContainer draggable stacked hideProgressBar />
+        </>
     );
 };
 

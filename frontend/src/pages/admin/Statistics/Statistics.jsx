@@ -129,8 +129,7 @@ const Statistics = () => {
                         <div className="time_section">
 
                             <input type="date" onChange={(e) => {
-                                const date = new Date(e.target.value)
-                                setDay(prev => date)
+                                setDay(prev => e.target.value)
                             }} value={day} />
                             <h4>
                                 Doanh thu ngày <span>{moment(day).format('DD-MM-YYYY')}</span>: <b>

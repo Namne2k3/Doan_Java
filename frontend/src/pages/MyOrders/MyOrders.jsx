@@ -123,10 +123,17 @@ const MyOrders = () => {
                                         }
                                     </Popup>
                                     {
-                                        order.status === "processed" || order.status === "canceled" ?
+                                        order.status !== "pending" ?
                                             <button style={{ opacity: "0.7" }} disabled >Hủy</button>
                                             :
-                                            <button onClick={() => handleCancelOrder(order.id)} >Hủy</button>
+                                            <button onClick={() => {
+                                                if (window.confirm("Bạn có chắc muốn hủy đơn hàng")) {
+                                                    toast.promise(handleCancelOrder(order.id), {
+                                                        pending: "Đang hủy đơn hàng",
+                                                        success: "Đã hủy đơn hàng"
+                                                    })
+                                                }
+                                            }} >Hủy</button>
                                     }
                                 </div>
                             )

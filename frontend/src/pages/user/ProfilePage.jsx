@@ -15,12 +15,8 @@ const ProfilePage = () => {
     const [currentPW, setCurrentPW] = useState("")
     const [password, setPassword] = useState("")
     const [repeatPW, setRepeatPW] = useState("")
-    const logout = () => {
-        userService.logout();
-        navigate("/")
-    }
 
-    const [infoData, setInfoData] = useState({
+    const [infoData, setinfoData] = useState({
         // username: profileInfo.username,
         // email: profileInfo.email,
         // password: profileInfo.password,
@@ -34,8 +30,13 @@ const ProfilePage = () => {
 
                 if (token) {
                     const response = await userService.getUserProfile(token);
-                    setInfoData(response.data);
-
+                    if (response.data.enabled === true) {
+                        setinfoData(response.data);
+                    }
+                    else {
+                        setinfoData(null);
+                        localStorage.removeItem('token')
+                    }
                 }
 
             } catch (err) {
@@ -69,12 +70,12 @@ const ProfilePage = () => {
 
 
             const response = await axios.put(`http://localhost:8080/auth/update?userId=${profileInfo.id}`, {
-                id: infoData.id,
-                username: infoData.username,
-                email: infoData.email,
+                id: infoData?.id,
+                username: infoData?.username,
+                email: infoData?.email,
                 password: password,
-                phone: infoData.phone,
-                address: infoData.address
+                phone: infoData?.phone,
+                address: infoData?.address
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -134,11 +135,11 @@ const ProfilePage = () => {
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label className="form-label">Username</label>
-                                            <input onChange={(e) => setInfoData({ ...infoData, username: e.target.value })} type="text" className="form-control mb-1" value={infoData.username} />
+                                            <input onChange={(e) => setinfoData({ ...infoData, username: e.target.value })} type="text" className="form-control mb-1" value={infoData?.username} />
                                         </div>
                                         <div className="form-group">
                                             <label className="form-label">E-mail</label>
-                                            <input onChange={(e) => setInfoData({ ...infoData, email: e.target.value })} type="email" className="form-control mb-1" value={infoData.email} />
+                                            <input onChange={(e) => setinfoData({ ...infoData, email: e.target.value })} type="email" className="form-control mb-1" value={infoData?.email} />
                                             {/* <div className="alert alert-warning mt-3">
                                                 Your email is not confirmed. Please check your inbox.<br />
                                                 <a href="javascript:void(0)">Resend confirmation</a>
@@ -171,11 +172,11 @@ const ProfilePage = () => {
                                         {/* <h6 className="mb-4">Contacts</h6> */}
                                         <div className="form-group">
                                             <label className="form-label">Phone</label>
-                                            <input onChange={(e) => setInfoData({ ...infoData, phone: e.target.value })} value={infoData.phone} type="tel" className="form-control" placeholder="+0 (123) 456 7891" />
+                                            <input onChange={(e) => setinfoData({ ...infoData, phone: e.target.value })} value={infoData?.phone} type="tel" className="form-control" placeholder="+0 (123) 456 7891" />
                                         </div>
                                         <div className="form-group">
                                             <label className="form-label">Address</label>
-                                            <input onChange={(e) => setInfoData({ ...infoData, address: e.target.value })} value={infoData.address} type="text" className="form-control" placeholder="Your address" />
+                                            <input onChange={(e) => setinfoData({ ...infoData, address: e.target.value })} value={infoData?.address} type="text" className="form-control" placeholder="Your address" />
                                         </div>
                                     </div>
                                 </div>

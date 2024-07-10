@@ -40,11 +40,15 @@ const StoreContextProvider = (props) => {
 
     const fetchProfileData = async () => {
         try {
-
             if (token) {
                 const response = await userService.getUserProfile(token);
-                setProfileInfo(prev => ({ ...prev, ...response.data }));
-
+                // console.log(response.data);
+                if (response.data.enabled === false) {
+                    setProfileInfo(null);
+                    localStorage.removeItem('token')
+                } else {
+                    setProfileInfo(prev => ({ ...prev, ...response.data }));
+                }
             }
 
         } catch (err) {

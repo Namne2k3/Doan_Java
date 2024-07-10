@@ -111,29 +111,30 @@ const TechDisplay = ({ category, search = null, brandList }) => {
                 }
                 {
                     brandList?.map((brand, brandIndex) => {
-                        return (
-                            <div id={brand.name} key={brandIndex} className='mt-5'>
-                                <h2>Thương hiệu {brand.name}</h2>
-                                {
-                                    products?.length &&
-                                    <div className="tech-display-list">
-                                        {
-                                            products?.map((item, ProductIndex) => {
-                                                if (item.brand.id === brand.id) {
-                                                    return (
-                                                        <TechItem addCartItem={addCartItem} cartItems={cartItems} item={item} key={ProductIndex} />
-                                                    )
-                                                }
-                                            })
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        )
+                        if (brand.hide === false)
+                            return (
+                                <div id={brand.name} key={brandIndex} className='mt-5'>
+                                    <h2>Thương hiệu {brand.name}</h2>
+                                    {
+                                        products?.length &&
+                                        <div className="tech-display-list">
+                                            {
+                                                products?.map((item, ProductIndex) => {
+                                                    if (item.brand.id === brand.id) {
+                                                        return (
+                                                            <TechItem addCartItem={addCartItem} cartItems={cartItems} item={item} key={ProductIndex} />
+                                                        )
+                                                    }
+                                                })
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            )
                     })
                 }
             </div>
-            <ToastContainer hideProgressBar draggable stacked autoClose={1500} containerId="C" />
+            <ToastContainer position='top-center' hideProgressBar draggable stacked autoClose={1500} containerId="C" />
         </>
     )
 }

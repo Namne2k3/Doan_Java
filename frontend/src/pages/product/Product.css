@@ -76,7 +76,7 @@
 
 .comment-detail-images img {
     max-width: 150px;
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
     border-radius: 4px;
 }
 

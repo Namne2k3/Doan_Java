@@ -68,7 +68,11 @@ const PlaceOrder = () => {
             if (response.data.statusCode === 200) {
 
                 if (response.data.statusCode === 200) {
-                    window.location.href = "/myorder"
+                    if (token) {
+                        window.location.href = "/myorder"
+                    } else {
+                        window.location.href = "/"
+                    }
                 }
                 fetchProfileData()
             } else {
