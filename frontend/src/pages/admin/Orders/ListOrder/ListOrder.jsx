@@ -10,11 +10,18 @@ import { exportToPDF } from '../../../../services/Export'
 import Popup from 'reactjs-popup'
 import moment from 'moment'
 import OrderDetail from '../../../../components/OrderDetail/OrderDetail'
+import ReactPaginate from 'react-paginate'
+import { useLocation } from 'react-router-dom'
 
 const ListOrder = () => {
-    const { adminOrders, setAdminOrders, fetchAllOrder } = useContext(StoreContext);
-    const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
+    const [adminOrders, setAdminOrders] = useState([])
+    const { profileInfo } = useContext(StoreContext);
+    const [updatingOrderId, setUpdatingOrderId] = useState(null);
+    const [pageCount, setPageCount] = useState('1')
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const currentPage = parseInt(queryParams.get('page')) || 1;
     const BASE_URL = "http://localhost:8080"
 
     const [orderSearch, setOrderSearch] = useState({
@@ -29,7 +36,27 @@ const ListOrder = () => {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        fetchAllOrder();
+        const fetchAllOrder = async () => {
+            try {
+                if (token) {
+                    const res = await axios.get(`${BASE_URL}/admin/orders?page=${currentPage}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
+                    if (res.data.statusCode === 200) {
+                        setAdminOrders(res.data.dataList);
+                        setPageCount(prev => Math.ceil(res.data.amountAllData / 10))
+                    } else {
+                        throw new Error(res.data.message)
+                    }
+                }
+
+            } catch (e) {
+                console.log(e.message);
+            }
+        }
+        fetchAllOrder()
     }, []);
 
     const updateOrderStatus = async (orderId, newStatus) => {
@@ -81,22 +108,23 @@ const ListOrder = () => {
 
 
         const searching = async () => {
-            const res = await axios.post(`${BASE_URL}/admin/orders/search`, orderSearch, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            try {
+                const res = await axios.post(`${BASE_URL}/admin/orders/search`, orderSearch, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                if (res.data.statusCode === 200) {
+                    setAdminOrders(res.data.dataList)
+                    setPageCount(null)
+                    toast.success(res.data.message)
+                } else {
+                    throw new Error(res.data.message)
                 }
-            })
-            if (res.data) {
-                console.log("Check res data >>> ", res.data);
-                setAdminOrders(res.data.dataList)
+            } catch (e) {
+                toast.error(e.message)
             }
         }
-
-        // toast.promise(searching, {
-        //     error: "Having error while searching orders data !!!",
-        //     success: "Filtered Orders data <3",
-        //     pending: "Filtering Orders data ... "
-        // })
         searching()
 
     }
@@ -132,6 +160,7 @@ const ListOrder = () => {
                             name="status"
                             id="status"
                         >
+                            <option value="paid">-- Chọn trạng thái đơn hàng</option>
                             <option value="paid">Đã thanh toán</option>
                             <option value="processed">Đã xử lý</option>
                             <option value="pending">Đang xử lý</option>
@@ -154,11 +183,11 @@ const ListOrder = () => {
                                         <p className=''>Mã đơn hàng: {order.id}</p>
                                         <p className="order-item-tech">
                                             {
-                                                order.details.map((item, index) => {
+                                                order?.details?.map((item, index) => {
                                                     if (index === order.details.length - 1) {
-                                                        return item.product.name + " x " + item.quantity;
+                                                        return item?.product?.name + " x " + item?.quantity;
                                                     }
-                                                    return item.product.name + " x " + item.quantity + ", ";
+                                                    return item?.product?.name + " x " + item?.quantity + ", ";
                                                 })
                                             }
                                         </p>
@@ -204,7 +233,21 @@ const ListOrder = () => {
                         : <NotFound />
                 }
             </div>
-            <ToastContainer hideProgressBar={false} draggable stacked position='top-center' autoClose={1000} />
+            {
+                pageCount !== null &&
+                <ReactPaginate
+                    className='pagination_order'
+                    breakLabel="..."
+                    nextLabel=">>"
+                    onPageChange={(e) => window.location.href = `/admin/orders?page=${e.selected + 1}`}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    previousLabel="<<"
+                    renderOnZeroPageCount={null}
+                    forcePage={currentPage - 1}
+                />
+            }
+            <ToastContainer hideProgressBar draggable stacked position='top-center' autoClose={1000} />
         </div>
     );
 }

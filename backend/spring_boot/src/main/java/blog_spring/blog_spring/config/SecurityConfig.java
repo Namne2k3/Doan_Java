@@ -62,7 +62,7 @@ public class SecurityConfig {
                     // Kích hoạt CORS (Cross-Origin Resource Sharing) với các thiết
                     // lập mặc định. CORS là một cơ chế bảo mật cho phép các tài nguyên
                     // trên một trang web được yêu cầu từ một domain khác với domain của trang web đó.
-                    .cors(Customizer.withDefaults())
+//                    .cors(Customizer.withDefaults())
                     .authorizeHttpRequests(request -> request
                             .requestMatchers("/api/v1/**").permitAll()
                             .requestMatchers("/sitemap.xml").permitAll()

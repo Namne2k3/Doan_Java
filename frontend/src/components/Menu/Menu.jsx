@@ -25,7 +25,9 @@ const Menu = ({ category, menuList, brandList, handleSetBrand, handleSetCategory
                     brandList?.map((item, index) => {
                         return (
                             <div key={index} className='explore-menu-list-item'>
-                                <button onClick={handleSetBrand} value={item.id} className='p-2 rounded'>{item.name}</button>
+                                <button className='p-2 rounded'>
+                                    <a href={`#${item.name}`}>{item.name}</a>
+                                </button>
                             </div>
                         )
                     })

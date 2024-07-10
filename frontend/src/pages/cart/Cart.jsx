@@ -13,8 +13,6 @@ const Cart = () => {
     const [removing, setRemoving] = useState(false);
     const navigate = useNavigate();
     const token = localStorage.getItem('token')
-    // console.log("token >>> ", token);
-
 
     const VNDONG = (number) => {
         return number.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
@@ -52,8 +50,7 @@ const Cart = () => {
                 setCarts(prev => findCarts)
                 localStorage.setItem('carts', JSON.stringify(findCarts))
             } catch (e) {
-
-
+                toast.error(e.message)
             }
         }
     };
@@ -190,7 +187,6 @@ const Cart = () => {
                             <hr />
                             <div className="cart-total-details">
                                 <p>Phí vận chuyển</p>
-                                <p>Giá</p>
                                 {
                                     carts ?
                                         <p>{getTotalCartAmount(carts) === 0 ? 0 : VNDONG(30000)}</p>
@@ -202,7 +198,6 @@ const Cart = () => {
                             <hr />
                             <div className="cart-total-details">
                                 <b>Tổng tiền</b>
-                                <p>Giá</p>
                                 {
                                     carts ?
                                         <b>{getTotalCartAmount(carts) === 0 ? 0 : VNDONG(getTotalCartAmount(carts) + 30000)}</b>
@@ -216,11 +211,11 @@ const Cart = () => {
                     </div>
                     <div className="cart-promocode">
                         <div>
-                            <p>Nếu bạn có mã khuyến mãi, Nhập tại đây</p>
+                            {/* <p>Nếu bạn có mã khuyến mãi, Nhập tại đây</p>
                             <div className="cart-promocode-input">
                                 <input type="text" placeholder='Mã khuyến mãi' />
                                 <button>Xác nhận</button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

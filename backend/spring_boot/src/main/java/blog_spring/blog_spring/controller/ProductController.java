@@ -48,8 +48,8 @@ public class ProductController {
     }
 
     @GetMapping("/admin/v1/products")
-    public ResponseEntity<ReqResProduct> getAdminProducts(@RequestParam @Nullable String category){
-        return ResponseEntity.ok(productService.getAllAdminProducts(category));
+    public ResponseEntity<ReqResProduct> getAdminProducts(@RequestParam @Nullable String category,@RequestParam @Nullable String page){
+        return ResponseEntity.ok(productService.getAllAdminProducts(category,page));
     }
 
 

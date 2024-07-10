@@ -14,7 +14,7 @@ const Avatar = props => {
                     ...{ opacity: hovered ? '1' : '0' }
                 }}
             >
-                Hey it's Nam 🤙
+                Hỏi đáp tư vấn 🤙
             </div>
 
             <div

@@ -6,6 +6,9 @@ import blog_spring.blog_spring.repository.*;
 import com.mongodb.client.AggregateIterable;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -126,7 +129,7 @@ public class ProductService {
         ReqResProduct reqRes = new ReqResProduct();
 
         try {
-            List<Product> result = productRepository.findFirst4ByOrderByWatchCountDesc();
+            List<Product> result = productRepository.findFirst5ByOrderByWatchCountDesc();
             if ( category != null && !category.equals("") ) {
                 result = result.stream()
                         .filter(p -> p.getCategory().getName().equals(category))
@@ -200,11 +203,18 @@ public class ProductService {
         }
     }
 
-    public ReqResProduct getAllAdminProducts(String category) {
+    public ReqResProduct getAllAdminProducts(String category, String pageParams) {
         ReqResProduct reqRes = new ReqResProduct();
 
         try {
             List<Product> result = productRepository.findAll();
+            if ( pageParams != null  ) {
+                int pageSize = 10;
+                int page = Integer.parseInt(pageParams);
+                Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+                reqRes.setAmountAllData(result.size());
+                result = productRepository.findAllPage(pageable);
+            }
             if ( category != null && !category.equals("") ) {
                 result = result.stream()
                         .filter(p -> p.getCategory().getName().equals(category))

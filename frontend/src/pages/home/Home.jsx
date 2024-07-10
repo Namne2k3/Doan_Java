@@ -73,7 +73,7 @@ const Home = () => {
             <>
                 <Header />
                 <Menu handleSetCategory={handleSetCategory} handleSetBrand={handleSetBrand} brandList={brandList} menuList={menuList} setCategory={setCategory} />
-                <TechDisplay category={category} />
+                <TechDisplay brandList={brandList} category={category} />
             </>
         </>
     )

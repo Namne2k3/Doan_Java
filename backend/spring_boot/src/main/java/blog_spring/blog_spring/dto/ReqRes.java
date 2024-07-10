@@ -33,6 +33,8 @@ public class ReqRes<T> {
 
     private long amount;
 
+    private int amountAllData;
+
     private String role;
 
     private String email;

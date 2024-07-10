@@ -4,6 +4,7 @@ import blog_spring.blog_spring.dto.ReqRes;
 import blog_spring.blog_spring.dto.VerifyPasswordRequest;
 import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.service.JWTUtils;
+import com.mongodb.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import blog_spring.blog_spring.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,13 +68,13 @@ public class UserManagementController {
     }
 
     @GetMapping("/admin/get-all-users")
-    public ResponseEntity<ReqRes> getAllUsers(){
-        return ResponseEntity.ok(usersManagementService.getAllUsers(null));
+    public ResponseEntity<ReqRes> getAllUsers(@RequestParam @Nullable String page){
+        return ResponseEntity.ok(usersManagementService.getAllUsers(null,page));
     }
 
     @GetMapping(value = "/admin/users/search", params = "search")
-    public ResponseEntity<ReqRes> searchUsers(@RequestParam("search") String search){
-        return ResponseEntity.ok(usersManagementService.getAllUsers(search));
+    public ResponseEntity<ReqRes> searchUsers(@RequestParam("search") String search, @RequestParam @Nullable String page){
+        return ResponseEntity.ok(usersManagementService.getAllUsers(search,page));
     }
 
     @GetMapping("/admin/get-users/{userId}")

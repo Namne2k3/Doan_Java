@@ -67,7 +67,7 @@ const Statistics = () => {
                     throw new Error(res.data.message)
                 }
             } catch (e) {
-                toast.error(e.message)
+                console.error(e.message)
             }
         }
 
@@ -81,7 +81,7 @@ const Statistics = () => {
                     throw new Error(res.data.message)
                 }
             } catch (e) {
-                toast.error(e.message)
+                console.error(e.message)
             }
         }
 
@@ -95,7 +95,7 @@ const Statistics = () => {
                     throw new Error(res.data.message)
                 }
             } catch (e) {
-                toast.error(e.message)
+                console.error(e.message)
             }
         }
 

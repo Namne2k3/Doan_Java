@@ -9,6 +9,8 @@ import blog_spring.blog_spring.repository.OrderRepository;
 import blog_spring.blog_spring.repository.ProductRepository;
 import blog_spring.blog_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,11 +108,11 @@ public class OrderService {
             // Kiểm tra kết quả lọc và thiết lập phản hồi
             if (!listFinded.isEmpty()) {
                 resp.setStatusCode(200);
-                resp.setMessage("Get orders filter successfully");
+                resp.setMessage("Lấy dữ liệu đơn hàng thành công");
                 resp.setDataList(listFinded);
             } else {
                 resp.setStatusCode(404);
-                resp.setMessage("Not Found");
+                resp.setMessage("Không tìm thấy đơn hàng");
             }
 
         } catch (Exception e) {
@@ -122,16 +124,30 @@ public class OrderService {
         }
     }
 
-    public ReqResOrder getMyOrders (String userId) {
+    public ReqResOrder getMyOrders (String userId, String stringPage) {
         ReqResOrder resp = new ReqResOrder();
         try {
             var findUser = userRepository.findById(userId).get();
+            var listOrders = orderRepository.findAllByUserId(findUser.getId());
             if ( findUser.getId() != null ) {
-                Sort sortByCreatedAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
-                var findOrderList = orderRepository.findByUserId(findUser.getId(), sortByCreatedAtDesc);
-                resp.setStatusCode(200);
-                resp.setMessage("Get my orders successfully");
-                resp.setDataList(findOrderList);
+                if ( stringPage != null) {
+
+                    int pageSize = 10;
+                    int page = Integer.parseInt(stringPage);
+
+                    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+                    var findOrderList = orderRepository.findByUserId(findUser.getId(), pageable);
+                    resp.setStatusCode(200);
+                    resp.setAmountAllData(listOrders.size());
+                    resp.setMessage("Get my orders successfully");
+                    resp.setDataList(findOrderList);
+                } else {
+                    resp.setStatusCode(200);
+                    resp.setAmountAllData(listOrders.size());
+                    resp.setMessage("Get my orders successfully");
+                    resp.setDataList(listOrders);
+                }
             }
             else {
                 throw new Exception("User not found");
@@ -164,12 +180,20 @@ public class OrderService {
         return resp;
     }
 
-    public ReqResOrder getAllOrders() {
+    public ReqResOrder getAllOrders(String pageParams) {
         ReqResOrder reqRes = new ReqResOrder();
-
         try {
             List<Order> result = orderRepository.findAll();
+
+            if ( pageParams != null ) {
+                int pageSize = 10;
+                int page = Integer.parseInt(pageParams);
+                Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+                reqRes.setAmountAllData(result.size());
+                result = orderRepository.findAllOrders(pageable);
+            }
             if (!result.isEmpty()) {
+
                 reqRes.setDataList(result);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Successful");

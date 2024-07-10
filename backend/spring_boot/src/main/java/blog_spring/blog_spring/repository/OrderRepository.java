@@ -2,6 +2,7 @@ package blog_spring.blog_spring.repository;
 
 import blog_spring.blog_spring.model.Order;
 import blog_spring.blog_spring.model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -14,5 +15,11 @@ import java.util.Optional;
 public interface OrderRepository extends MongoRepository<Order, String> {
 
     @Query("{ 'user.$_id': ?0 }")
-    List<Order> findByUserId(String userId, Sort sort);
+    List<Order> findByUserId(String userId, Pageable pageable);
+
+    @Query("{ 'user.$_id': ?0 }")
+    List<Order> findAllByUserId(String userId);
+
+    @Query("{}")
+    List<Order> findAllOrders(Pageable pageable);
 }

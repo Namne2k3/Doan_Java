@@ -6,6 +6,7 @@ import blog_spring.blog_spring.model.Order;
 import blog_spring.blog_spring.model.OrderDetail;
 import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.service.OrderService;
+import com.mongodb.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,8 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/admin/orders")
-    public ResponseEntity<ReqResOrder> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<ReqResOrder> getAllOrders(@RequestParam @Nullable String page) {
+        return ResponseEntity.ok(orderService.getAllOrders(page));
     }
 
     @PostMapping("/admin/orders/search")
@@ -29,9 +30,9 @@ public class OrderController {
         return ResponseEntity.ok(orderService.searchOrders(reqResOrderSearch));
     }
 
-    @GetMapping("/api/v1/my_orders/{userId}")
-    public ResponseEntity<ReqResOrder> getMyOrders(@PathVariable String userId) {
-            return ResponseEntity.ok(orderService.getMyOrders(userId));
+    @GetMapping(value = "/api/v1/my_orders/{userId}")
+    public ResponseEntity<ReqResOrder> getMyOrders(@PathVariable String userId, @RequestParam @Nullable String page) {
+            return ResponseEntity.ok(orderService.getMyOrders(userId, page));
     }
     @GetMapping("/api/v1/orders/{id}")
     public ResponseEntity<ReqResOrder> getOrderById(@PathVariable String id) {

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import "./ListProduct.css"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
@@ -9,6 +9,7 @@ import NotFound from '../../../../components/NotFound/NotFound'
 import { StoreContext } from '../../../../context/StoreContext'
 import { fetchALlCategories } from '../../../../services/CategoryService'
 import ProductInformation from '../../../../components/ProductInformation/ProductInformation';
+import ReactPaginate from 'react-paginate';
 import { assets } from '../../../../admin_assets/assets';
 const ListProduct = () => {
 
@@ -16,9 +17,14 @@ const ListProduct = () => {
     const navigate = useNavigate()
     const token = localStorage.getItem('token')
     const [categories, setCategories] = useState([])
-    const { setAdminProducts, adminProducts, fetchAdminProductsByCategory } = useContext(StoreContext)
+    const [adminProducts, setAdminProducts] = useState([])
+    const [pageCount, setPageCount] = useState('1')
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const currentPage = parseInt(queryParams.get('page')) || 1;
 
     useEffect(() => {
+
 
         const fetchCategories = async () => {
             try {
@@ -36,6 +42,22 @@ const ListProduct = () => {
 
 
     }, [])
+
+    const fetchAdminProductsByCategory = async () => {
+        const response = await axios.get(`${BASE_URL}/admin/v1/products?page=${currentPage}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        if (response.data.statusCode === 200) {
+            setAdminProducts(prev => response.data.dataList || [])
+            setPageCount(prev => Math.ceil(response.data.amountAllData / 10))
+        } else if (response.data.statusCode = 404) {
+            setAdminProducts(prev => response.data.dataList || [])
+        } else {
+            console.log(response.data.message)
+        }
+    }
 
     const hidingProduct = async (e, id, isHide) => {
         // alert(`Deleted >>> ${id}`)
@@ -60,10 +82,15 @@ const ListProduct = () => {
         const cateName = e.target.value
 
         try {
-            const res = await axios.get(`http://localhost:8080/api/v1/products?category=${cateName}`)
+            const res = await axios.get(`http://localhost:8080/admin/v1/products?category=${cateName}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             if (res.data.statusCode === 200) {
 
                 setAdminProducts(res.data.dataList)
+                setPageCount(prev => Math.ceil(res.data.amountAllData / 10))
 
             } else {
                 throw new Error(res.data.message)
@@ -196,6 +223,20 @@ const ListProduct = () => {
                             <NotFound />
                     }
                 </div>
+                {
+                    pageCount !== null &&
+                    <ReactPaginate
+                        className='pagination_order'
+                        breakLabel="..."
+                        nextLabel=">>"
+                        onPageChange={(e) => window.location.href = `/admin/products?page=${e.selected + 1}`}
+                        pageRangeDisplayed={5}
+                        pageCount={pageCount}
+                        previousLabel="<<"
+                        renderOnZeroPageCount={null}
+                        forcePage={currentPage - 1}
+                    />
+                }
             </div >
             <ToastContainer position="top-center" containerId="A" stacked draggable hideProgressBar />
             <ToastContainer containerId="B" stacked draggable hideProgressBar />

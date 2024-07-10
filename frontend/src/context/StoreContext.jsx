@@ -14,25 +14,10 @@ const StoreContextProvider = (props) => {
     const token = localStorage.getItem('token'); // Retrieve the token from localStorage
     const [oneProductOrder, setOneProductOrder] = useState(null);
     const [userOrders, setUserOrders] = useState([])
-    const [adminOrders, setAdminOrders] = useState([])
     const [cateAdminProducts, setCateAdminProducts] = useState("Laptop")
     const [adminProducts, setAdminProducts] = useState([])
     const [emailSent, setEmailSent] = useState("")
 
-    const fetchAdminProductsByCategory = async () => {
-        const response = await axios.get(`${BASE_URL}/admin/v1/products`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        if (response.data.statusCode === 200) {
-            setAdminProducts(prev => response.data.dataList || [])
-        } else if (response.data.statusCode = 404) {
-            setAdminProducts(prev => response.data.dataList || [])
-        } else {
-            console.log(response.data.message)
-        }
-    }
 
     const fetchProductBySearching = async (search) => {
         console.log("Searching ... ");
@@ -52,23 +37,6 @@ const StoreContextProvider = (props) => {
 
     }
 
-    const fetchAllOrder = async () => {
-        try {
-            if (token) {
-                const res = await axios.get(`${BASE_URL}/admin/orders`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                if (res.data) {
-                    setAdminOrders(res.data.dataList);
-                }
-            }
-
-        } catch (e) {
-            console.log(e.message);
-        }
-    }
 
     const fetchProfileData = async () => {
         try {
@@ -85,9 +53,9 @@ const StoreContextProvider = (props) => {
     }
     useEffect(() => {
 
-        if (userService.adminOnly() === true) {
-            fetchAllOrder()
-        }
+        // if (userService.adminOnly() === true) {
+        //     fetchAllOrder()
+        // }
 
         fetchAllCartByUser()
     }, [])
@@ -250,9 +218,6 @@ const StoreContextProvider = (props) => {
         oneProductOrder,
         setOneProductOrder,
         userOrders, setUserOrders,
-        fetchAllOrder,
-        adminOrders, setAdminOrders,
-        fetchAdminProductsByCategory,
         setCateAdminProducts, cateAdminProducts,
         adminProducts,
         setAdminProducts,

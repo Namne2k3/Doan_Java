@@ -5,19 +5,26 @@ import { toast, ToastContainer } from 'react-toastify'
 import axios from 'axios'
 import { StoreContext } from "../../../context/StoreContext"
 import Popup from 'reactjs-popup';
+import { useLocation } from 'react-router-dom'
 import 'reactjs-popup/dist/index.css';
 import UserInformation from '../../../components/UserInformation/UserInformation'
+import ReactPaginate from 'react-paginate'
 const AdminUsers = () => {
 
     const token = localStorage.getItem('token')
     const [users, setUsers] = useState([])
     const { profileInfo } = useContext(StoreContext)
+    const [pageCount, setPageCount] = useState('1')
     const [search, setSearch] = useState("")
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const currentPage = parseInt(queryParams.get('page')) || 1;
 
     useEffect(() => {
         const fetchAllUsers = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/admin/get-all-users`, {
+                const res = await axios.get(`http://localhost:8080/admin/get-all-users?page=${currentPage}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -25,6 +32,7 @@ const AdminUsers = () => {
 
                 if (res.data.statusCode === 200) {
                     setUsers(res.data.dataList)
+                    setPageCount(prev => Math.ceil(res.data.amountAllData / 10))
                 } else {
                     throw new Error(res.data.message)
                 }
@@ -46,6 +54,7 @@ const AdminUsers = () => {
             })
             if (res.data.statusCode === 200) {
                 setUsers(res.data.dataList)
+                setPageCount(prev => Math.ceil(res.data.amountAllData / 10))
             } else {
                 throw new Error(res.data.message)
             }
@@ -151,6 +160,20 @@ const AdminUsers = () => {
                             <NotFound />
                     }
                 </div>
+                {
+                    pageCount !== null &&
+                    <ReactPaginate
+                        className='pagination_order'
+                        breakLabel="..."
+                        nextLabel=">>"
+                        onPageChange={(e) => window.location.href = `/admin/users?page=${e.selected + 1}`}
+                        pageRangeDisplayed={5}
+                        pageCount={pageCount}
+                        previousLabel="<<"
+                        renderOnZeroPageCount={null}
+                        forcePage={currentPage - 1}
+                    />
+                }
             </div >
             <ToastContainer draggable stacked autoClose={2000} hideProgressBar />
         </>

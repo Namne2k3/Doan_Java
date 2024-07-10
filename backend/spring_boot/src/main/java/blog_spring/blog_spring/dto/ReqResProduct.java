@@ -24,6 +24,8 @@ public class ReqResProduct<T> {
 
     private String content;
 
+    private int amountAllData;
+
     private String description;
 
     private long sold;

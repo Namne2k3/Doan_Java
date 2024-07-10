@@ -43,6 +43,8 @@ public class ReqResOrder<T> {
 
     private String shippingAddress;
 
+    private int amountAllData;
+
     private String paymentMethod;
 
     private Date createdAt;

@@ -4,6 +4,9 @@ import blog_spring.blog_spring.dto.ReqRes;
 import blog_spring.blog_spring.model.User;
 import blog_spring.blog_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.parameters.P;
@@ -271,11 +274,18 @@ public class UserManagementService {
         return resp;
     }
 
-    public ReqRes getAllUsers(String search) {
-        ReqRes reqRes = new ReqRes();
+    public ReqRes getAllUsers(String search,String pageParams) {
 
+        ReqRes reqRes = new ReqRes();
         try {
-            List<User> result = usersRepo.findAll();
+            var result = usersRepo.findAll();
+            if ( pageParams != null ) {
+                int pageSize = 10;
+                int page = Integer.parseInt(pageParams);
+                Pageable pageable = PageRequest.of(page - 1, pageSize);
+                reqRes.setAmountAllData(result.size());
+                result = usersRepo.findAllPage(pageable);
+            }
 
             if ( search != null && !search.equals("undefined")) {
                 result = result.stream().filter(

@@ -121,6 +121,7 @@ public class StripeWebhookController {
             userRepository.save(findUser);
         }
         order.setPhone(metadata.get("phone"));
+        order.setPaymentMethod("BANKING");
         order.setShippingAddress(metadata.get("address"));
         order.setCreatedAt(new Date());
         order.setUpdatedAt(new Date());
